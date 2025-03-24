@@ -145,11 +145,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto bg-gray-800 shadow-lg rounded-2xl p-8 space-y-6 text-gray-100">
-        <h1 className="text-2xl font-bold text-blue-300 text-center">
-          Loan Estimate Generator
-        </h1>
+    <div className="min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto bg-gray-800 shadow-lg rounded-2xl p-6 sm:p-8 space-y-6 text-gray-100">
+        <h1 className="text-xl sm:text-2xl font-bold text-blue-300 text-center">Loan Estimate Generator</h1>
 
         <div className="grid gap-4">
           <input
@@ -215,28 +213,27 @@ export default function App() {
             </select>
           )}
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={calculateEstimate}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
             >
               Get Estimate
             </button>
             <button
               onClick={clearForm}
-              className="flex-1 bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold py-2 px-4 rounded-lg transition"
+              className="w-full bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold py-2 px-4 rounded-lg transition"
             >
               Clear
             </button>
           </div>
         </div>
 
-        {/* 🧾 Formatted Estimate Output */}
         {result && (
-          <div className="space-y-6 bg-gray-700 border border-gray-600 p-6 rounded-xl">
+          <div className="space-y-6 bg-gray-700 border border-gray-600 p-4 sm:p-6 rounded-xl overflow-auto">
             {/* Loan Summary */}
             <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">💬 Loan Summary</h2>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">Loan Summary</h2>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
                 <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
@@ -248,7 +245,7 @@ export default function App() {
 
             {/* Monthly Payment */}
             <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">📆 Monthly Payment</h2>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">Monthly Payment</h2>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between font-semibold text-green-400"><span>PITI - Homestead:</span><span>{result.pitiHomestead}</span></div>
                 <div className="flex justify-between font-semibold text-green-400"><span>PITI - Non-Homestead:</span><span>{result.pitiNonHomestead}</span></div>
@@ -257,7 +254,7 @@ export default function App() {
 
             {/* Closing Costs */}
             <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">💼 Closing Costs</h2>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">Closing Costs</h2>
               <div className="space-y-1 text-sm">
                 {result.closingCosts.map((item, idx) => (
                   <div key={idx} className="flex justify-between">
@@ -273,7 +270,7 @@ export default function App() {
 
             {/* Prepaids & Escrows */}
             <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">📦 Prepaids & Escrows</h2>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">Prepaids & Escrows</h2>
               <div className="space-y-1 text-sm">
                 {result.prepaids.map((item, idx) => (
                   <div key={idx} className="flex justify-between">
@@ -289,7 +286,7 @@ export default function App() {
 
             {/* Final Total */}
             <div className="text-xl font-bold text-orange-400 border-t border-gray-500 pt-4 flex justify-between">
-              <span>💰 Final Cash to Close:</span><span>{result.totalCashToClose}</span>
+              <span>Final Cash to Close:</span><span>{result.totalCashToClose}</span>
             </div>
           </div>
         )}
