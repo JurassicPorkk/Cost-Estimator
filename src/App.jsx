@@ -64,7 +64,9 @@ export default function App() {
     const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
     const homeownersInsurance = insurance / 12;
 
-    const monthlyPMI = loanType === 'Conventional' ? (loanAmount * 0.0035) / 12 : 0;
+    let monthlyMI = 0;
+    if (loanType === 'Conventional') monthlyMI = (loanAmount * 0.0035) / 12;
+    if (loanType === 'FHA') monthlyMI = (loanAmount * 0.0055) / 12;
 
     let yearlyTaxHomestead = 0;
     let yearlyTaxNonHomestead = 0;
@@ -96,8 +98,8 @@ export default function App() {
     const monthlyTaxHomestead = yearlyTaxHomestead / 12;
     const monthlyTaxNonHomestead = yearlyTaxNonHomestead / 12;
 
-    const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead + monthlyPMI;
-    const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead + monthlyPMI;
+    const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead + monthlyMI;
+    const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead + monthlyMI;
 
     const underwritingFee = 1320;
     const attorneyFee = 1075;
@@ -152,7 +154,7 @@ export default function App() {
       loanAmount: formatCurrency(loanAmount),
       principalInterest: formatCurrency(principalInterest),
       homeownersInsurance: formatCurrency(homeownersInsurance),
-      monthlyPMI: formatCurrency(monthlyPMI),
+      monthlyMI: formatCurrency(monthlyMI),
       monthlyTaxHomestead: formatCurrency(monthlyTaxHomestead),
       monthlyTaxNonHomestead: formatCurrency(monthlyTaxNonHomestead),
       pitiHomestead: formatCurrency(pitiHomestead),
@@ -231,8 +233,8 @@ export default function App() {
             <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
             <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
             <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
-            {loanType === 'Conventional' && (
-              <div className="flex justify-between"><span>Mortgage Insurance:</span><span>{result.monthlyPMI}</span></div>
+            {(loanType === 'Conventional' || loanType === 'FHA') && (
+              <div className="flex justify-between"><span>Mortgage Insurance:</span><span>{result.monthlyMI}</span></div>
             )}
             <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
             <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
