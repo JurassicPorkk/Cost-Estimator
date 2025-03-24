@@ -1,4 +1,4 @@
-// Full App.jsx regenerated with all features retained and updated Harris County tax logic
+// Full App.jsx with down payment selector and PMI logic for Conventional loans
 import React, { useState, useEffect } from 'react';
 
 function unformatCurrency(value) {
@@ -15,6 +15,7 @@ export default function App() {
   const [loanType, setLoanType] = useState('VA First');
   const [location, setLocation] = useState('Columbus, GA');
   const [cityLimits, setCityLimits] = useState('Inside');
+  const [downPayment, setDownPayment] = useState(5);
   const [result, setResult] = useState(null);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export default function App() {
     setLoanType('VA First');
     setLocation('Columbus, GA');
     setCityLimits('Inside');
+    setDownPayment(5);
     setResult(null);
   };
 
@@ -55,8 +57,10 @@ export default function App() {
     const termMonths = 360;
 
     let loanAmount = 0;
-    if (loanType === 'Conventional') loanAmount = sales * 0.95;
-    else if (loanType === 'FHA') loanAmount = sales * 0.965 * 1.0175;
+    if (loanType === 'Conventional') {
+      const downPaymentPercent = downPayment / 100;
+      loanAmount = sales * (1 - downPaymentPercent);
+    } else if (loanType === 'FHA') loanAmount = sales * 0.965 * 1.0175;
     else if (loanType === 'VA First') loanAmount = sales * 1.0215;
     else if (loanType === 'VA Second') loanAmount = sales * 1.033;
     else if (loanType === 'VA Exempt') loanAmount = sales;
@@ -66,7 +70,13 @@ export default function App() {
     const homeownersInsurance = insurance / 12;
 
     let monthlyMI = 0;
-    if (loanType === 'Conventional') monthlyMI = (loanAmount * 0.0035) / 12;
+    if (loanType === 'Conventional') {
+      const dp = downPayment;
+      if (dp < 10) monthlyMI = (loanAmount * 0.0035) / 12;
+      else if (dp < 15) monthlyMI = (loanAmount * 0.0025) / 12;
+      else if (dp < 20) monthlyMI = (loanAmount * 0.0015) / 12;
+      else monthlyMI = 0;
+    }
     if (loanType === 'FHA') monthlyMI = (loanAmount * 0.0055) / 12;
 
     let yearlyTaxHomestead = 0;
@@ -125,10 +135,7 @@ export default function App() {
 
     let mortgageTax = 0;
     let transferTax = 0;
-    if (location === 'Columbus, GA') {
-      mortgageTax = (loanAmount / 100) * 0.30;
-      transferTax = (sales / 1000) * 1.00;
-    } else if (location === 'Harris County, GA') {
+    if (location === 'Columbus, GA' || location === 'Harris County, GA') {
       mortgageTax = (loanAmount / 100) * 0.30;
       transferTax = (sales / 1000) * 1.00;
     } else {
@@ -187,8 +194,10 @@ export default function App() {
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-xl mx-auto space-y-6">
         <h1 className="text-2xl font-bold text-center">Loan Estimate Generator</h1>
+
         <input type="text" placeholder="Sales Price" value={salesPrice} onChange={handleSalesPriceChange} className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
         <input type="text" placeholder="Interest Rate" value={interestRate} onChange={handleInterestRateChange} className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
+
         <select value={loanType} onChange={(e) => setLoanType(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
           <option>VA First</option>
           <option>VA Second</option>
@@ -196,22 +205,35 @@ export default function App() {
           <option>FHA</option>
           <option>Conventional</option>
         </select>
+
+        {loanType === 'Conventional' && (
+          <select value={downPayment} onChange={(e) => setDownPayment(Number(e.target.value))} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
+            <option value={5}>5% Down</option>
+            <option value={10}>10% Down</option>
+            <option value={15}>15% Down</option>
+            <option value={20}>20% Down</option>
+          </select>
+        )}
+
         <select value={location} onChange={(e) => setLocation(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
           <option>Columbus, GA</option>
           <option>Lee County, AL</option>
           <option>Russell County, AL</option>
           <option>Harris County, GA</option>
         </select>
+
         {(location !== 'Columbus, GA' && location !== 'Harris County, GA') && (
           <select value={cityLimits} onChange={(e) => setCityLimits(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
             <option>Inside</option>
             <option>Outside</option>
           </select>
         )}
+
         <div className="flex gap-4">
           <button onClick={calculateEstimate} className="flex-1 bg-blue-600 hover:bg-blue-700 p-2 rounded">Get Estimate</button>
           <button onClick={clearForm} className="flex-1 bg-gray-400 text-black hover:bg-gray-500 p-2 rounded">Clear</button>
         </div>
+
         {result && (
           <div className="bg-gray-800 p-4 rounded border border-gray-600 space-y-4">
             <h2 className="text-xl font-semibold text-blue-300">Loan Summary</h2>
@@ -219,9 +241,7 @@ export default function App() {
               <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
               <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
               <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
-              {(loanType === 'Conventional' || loanType === 'FHA') && (
-                <div className="flex justify-between"><span>Mortgage Insurance:</span><span>{result.monthlyMI}</span></div>
-              )}
+              <div className="flex justify-between"><span>Mortgage Insurance:</span><span>{result.monthlyMI}</span></div>
               <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
               <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
             </div>
