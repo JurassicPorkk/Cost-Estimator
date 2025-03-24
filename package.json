@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postinstall": "tailwindcss -i ./src/index.css -o ./src/index.css"
+    "postinstall": "tailwindcss -i ./src/index.css -o ./src/tailwind.output.css"
   },
   "dependencies": {
     "react": "^18.2.0",
