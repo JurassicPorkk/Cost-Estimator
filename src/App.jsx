@@ -29,6 +29,24 @@ export default function App() {
     setResult(null);
   };
 
+  const handleSalesPriceChange = (e) => {
+    const raw = e.target.value.replace(/[^0-9]/g, '');
+    const formatted = raw
+      ? Number(raw).toLocaleString('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+        })
+      : '';
+    setSalesPrice(formatted);
+  };
+
+  const handleInterestRateChange = (e) => {
+    const raw = e.target.value.replace(/[^0-9.]/g, '');
+    const formatted = raw ? `${raw}%` : '';
+    setInterestRate(formatted);
+  };
+
   const calculateEstimate = () => {
     const sales = parseFloat(unformatCurrency(salesPrice));
     const rate = parseFloat(unformatCurrency(interestRate)) / 100;
@@ -105,8 +123,8 @@ export default function App() {
       { label: 'Recording Fee', value: formatCurrency(recordingFee) },
       { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
       { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
-      { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
-      { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
+      { label: \"Owner's Title Insurance\", value: formatCurrency(ownerTitle) },
+      { label: \"Lender's Title Insurance\", value: formatCurrency(lenderTitle) },
       { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
       { label: 'Transfer Tax', value: formatCurrency(transferTax) },
     ];
@@ -152,7 +170,7 @@ export default function App() {
           type="text"
           placeholder="Sales Price"
           value={salesPrice}
-          onChange={(e) => setSalesPrice(e.target.value)}
+          onChange={handleSalesPriceChange}
           className="w-full p-2 rounded bg-gray-700 border border-gray-600"
         />
 
@@ -160,7 +178,7 @@ export default function App() {
           type="text"
           placeholder="Interest Rate"
           value={interestRate}
-          onChange={(e) => setInterestRate(e.target.value)}
+          onChange={handleInterestRateChange}
           className="w-full p-2 rounded bg-gray-700 border border-gray-600"
         />
 
