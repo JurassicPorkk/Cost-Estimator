@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 
+// Helper to remove $, %, , and other formatting before math
+function unformatCurrency(value) {
+  return value.replace(/[^0-9.]/g, '');
+}
+
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
   const [interestRate, setInterestRate] = useState('');
@@ -9,8 +14,8 @@ export default function App() {
   const [result, setResult] = useState('');
 
   const calculateEstimate = () => {
-    const sales = parseFloat(salesPrice);
-    const rate = parseFloat(interestRate) / 100;
+    const sales = parseFloat(unformatCurrency(salesPrice));
+    const rate = parseFloat(unformatCurrency(interestRate)) / 100;
     const insurance = 1500;
     const termMonths = 360;
 
@@ -134,14 +139,31 @@ Prepaids & Escrows Total: $${prepaidsEscrows.toFixed(2)}
             type="text"
             placeholder="Sales Price"
             value={salesPrice}
-            onChange={(e) => setSalesPrice(e.target.value)}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9]/g, '');
+              const formatted = raw
+                ? Number(raw).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0,
+                  })
+                : '';
+              setSalesPrice(formatted);
+            }}
             className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
           />
+
           <input
             type="text"
             placeholder="Interest Rate"
             value={interestRate}
-            onChange={(e) => setInterestRate(e.target.value)}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9.]/g, '');
+              const formatted = raw
+                ? `${raw}%`
+                : '';
+              setInterestRate(formatted);
+            }}
             className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
           />
 
