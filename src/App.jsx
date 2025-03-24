@@ -123,8 +123,8 @@ export default function App() {
       { label: 'Recording Fee', value: formatCurrency(recordingFee) },
       { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
       { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
-      { label: \"Owner's Title Insurance\", value: formatCurrency(ownerTitle) },
-      { label: \"Lender's Title Insurance\", value: formatCurrency(lenderTitle) },
+      { label: 'Owner\'s Title Insurance', value: formatCurrency(ownerTitle) },
+      { label: 'Lender\'s Title Insurance', value: formatCurrency(lenderTitle) },
       { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
       { label: 'Transfer Tax', value: formatCurrency(transferTax) },
     ];
