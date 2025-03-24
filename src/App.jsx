@@ -56,20 +56,73 @@ export default function App() {
 
     const monthlyTaxHomestead = yearlyTaxHomestead / 12;
     const monthlyTaxNonHomestead = yearlyTaxNonHomestead / 12;
-
     const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead;
     const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead;
 
-    setResult(`💬 Loan Estimate
+    // Closing Costs
+    const underwritingFee = 1320;
+    const attorneyFee = 1075;
+    const titleSearchFee = 250;
+    const recordingFee = 70;
+    const creditReportFee = 140;
+    const appraisalFee = loanType === 'VA First' || loanType === 'VA Second' || loanType === 'VA Exempt' ?
+      (location.includes('GA') ? 650 : 600) : loanType === 'FHA' ? 600 : 525;
+
+    const ownerTitle = location === 'Columbus, GA' ? sales * 0.0022 : sales * 0.0011;
+    const lenderTitle = location === 'Columbus, GA' ? loanAmount * 0.00352 : loanAmount * 0.00216;
+
+    const mortgageTax = location === 'Columbus, GA'
+      ? (loanAmount / 100) * 0.30
+      : (loanAmount / 100) * 0.15;
+
+    let transferTax = location === 'Columbus, GA'
+      ? (sales / 1000) * 1.0
+      : (sales - loanAmount) / 1000;
+    if (transferTax < 0) transferTax = 0;
+
+    const closingCosts = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
+
+    // Prepaids & Escrows
+    const prepaidInterest = (loanAmount * rate / 365) * 15; // assume 15 days avg
+    const insuranceCushion = insurance / 12 * 3;
+    const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 5;
+
+    const prepaidsEscrows = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
+
+    const totalCashToClose = closingCosts + prepaidsEscrows;
+
+    setResult(`💬 Loan Estimate Breakdown
 -----------------------------
 Loan Amount: $${loanAmount.toFixed(2)}
 Principal & Interest: $${principalInterest.toFixed(2)}
 Homeowners Insurance: $${homeownersInsurance.toFixed(2)}
-Property Tax (Homestead): $${monthlyTaxHomestead.toFixed(2)}
-Property Tax (Non-Homestead): $${monthlyTaxNonHomestead.toFixed(2)}
+Monthly Tax (Homestead): $${monthlyTaxHomestead.toFixed(2)}
+Monthly Tax (Non-Homestead): $${monthlyTaxNonHomestead.toFixed(2)}
 
-Total PITI (Homestead): $${pitiHomestead.toFixed(2)}
-Total PITI (Non-Homestead): $${pitiNonHomestead.toFixed(2)}
+Total Monthly Payment (PITI - Homestead): $${pitiHomestead.toFixed(2)}
+Total Monthly Payment (PITI - Non-Homestead): $${pitiNonHomestead.toFixed(2)}
+
+--- Closing Costs ---
+Underwriting Fee: $${underwritingFee}
+Attorney Fee: $${attorneyFee}
+Title Search Fee: $${titleSearchFee}
+Recording Fee: $${recordingFee}
+Credit Report Fee: $${creditReportFee}
+Appraisal Fee: $${appraisalFee}
+Owner's Title Insurance: $${ownerTitle.toFixed(2)}
+Lender's Title Insurance: $${lenderTitle.toFixed(2)}
+Mortgage Tax: $${mortgageTax.toFixed(2)}
+Transfer Tax: $${transferTax.toFixed(2)}
+Closing Costs Total: $${closingCosts.toFixed(2)}
+
+--- Prepaids & Escrows ---
+Prepaid Interest (15 days): $${prepaidInterest.toFixed(2)}
+Insurance (1yr prepaid): $${insurance}
+Insurance Cushion (3 mo): $${insuranceCushion.toFixed(2)}
+Property Tax Escrow (5 mo): $${propertyTaxEscrow.toFixed(2)}
+Prepaids & Escrows Total: $${prepaidsEscrows.toFixed(2)}
+
+💰 Final Cash to Close: $${totalCashToClose.toFixed(2)}
 `);
   };
 
