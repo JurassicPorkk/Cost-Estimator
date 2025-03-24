@@ -127,7 +127,9 @@ Prepaids & Escrows Total: $${prepaidsEscrows.toFixed(2)}
   };
 
   return (
-    <div style={{ padding: 24 }}>
+     <center>
+  
+    <div style={{ padding: 24 border: 1px solid black }}>
       <h1>Loan Estimate Generator</h1>
       <input placeholder="Sales Price" value={salesPrice} onChange={(e) => setSalesPrice(e.target.value)} />
       <input placeholder="Interest Rate" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} />
@@ -151,7 +153,8 @@ Prepaids & Escrows Total: $${prepaidsEscrows.toFixed(2)}
       )}
       <br />
       <button onClick={calculateEstimate}>Get Estimate</button>
-      <pre style={{ marginTop: 20, background: '#f1f1f1', padding: 12 }}>{result}</pre>
+      <pre style={{ marginTop: 20, background: '#b4b4b4', padding: 12 }}>{result}</pre>
     </div>
   );
 }
+</center>
