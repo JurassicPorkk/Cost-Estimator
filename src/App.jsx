@@ -52,9 +52,7 @@ export default function App() {
     if (location === 'Columbus, GA') {
       yearlyTaxHomestead = sales * 0.4 * 0.04153 - 543;
       yearlyTaxNonHomestead = sales * 0.4 * 0.04153;
-    }
-
-    if (location === 'Lee County, AL') {
+    } else if (location === 'Lee County, AL') {
       if (cityLimits === 'Inside') {
         yearlyTaxHomestead = sales * 0.1 * 0.054 + 169;
         yearlyTaxNonHomestead = sales * 0.2 * 0.054 + 169;
@@ -62,9 +60,7 @@ export default function App() {
         yearlyTaxHomestead = sales * 0.1 * 0.041 + 169;
         yearlyTaxNonHomestead = sales * 0.2 * 0.041 + 169;
       }
-    }
-
-    if (location === 'Russell County, AL') {
+    } else if (location === 'Russell County, AL') {
       if (cityLimits === 'Inside') {
         yearlyTaxHomestead = sales * 0.1 * 0.059 - 74;
         yearlyTaxNonHomestead = sales * 0.2 * 0.059 - 74;
@@ -72,6 +68,9 @@ export default function App() {
         yearlyTaxHomestead = sales * 0.1 * 0.036 - 74;
         yearlyTaxNonHomestead = sales * 0.2 * 0.036 - 74;
       }
+    } else if (location === 'Harris County, GA') {
+      yearlyTaxHomestead = sales * 0.4 * 0.02764;
+      yearlyTaxNonHomestead = sales * 0.4 * 0.02764 - 50;
     }
 
     const monthlyTaxHomestead = yearlyTaxHomestead / 12;
@@ -140,152 +139,108 @@ export default function App() {
       totalClosingCosts: formatCurrency(closingCostsTotal),
       prepaids: prepaidsItems,
       totalPrepaids: formatCurrency(prepaidsTotal),
-      totalCashToClose: formatCurrency(totalCashToClose),
+      totalCashToClose: formatCurrency(totalCashToClose)
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto bg-gray-800 shadow-lg rounded-2xl p-6 sm:p-8 space-y-6 text-gray-100">
-        <h1 className="text-xl sm:text-2xl font-bold text-blue-300 text-center">Loan Estimate Generator</h1>
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      <div className="max-w-xl mx-auto space-y-6">
+        <h1 className="text-2xl font-bold text-center">Loan Estimate Generator</h1>
 
-        <div className="grid gap-4">
-          <input
-            type="text"
-            placeholder="Sales Price"
-            value={salesPrice}
-            onChange={(e) => {
-              const raw = e.target.value.replace(/[^0-9]/g, '');
-              const formatted = raw
-                ? Number(raw).toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    minimumFractionDigits: 0,
-                  })
-                : '';
-              setSalesPrice(formatted);
-            }}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
-          />
+        <input
+          type="text"
+          placeholder="Sales Price"
+          value={salesPrice}
+          onChange={(e) => setSalesPrice(e.target.value)}
+          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
+        />
 
-          <input
-            type="text"
-            placeholder="Interest Rate"
-            value={interestRate}
-            onChange={(e) => {
-              const raw = e.target.value.replace(/[^0-9.]/g, '');
-              const formatted = raw ? `${raw}%` : '';
-              setInterestRate(formatted);
-            }}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
-          />
+        <input
+          type="text"
+          placeholder="Interest Rate"
+          value={interestRate}
+          onChange={(e) => setInterestRate(e.target.value)}
+          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
+        />
 
+        <select
+          value={loanType}
+          onChange={(e) => setLoanType(e.target.value)}
+          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
+        >
+          <option>VA First</option>
+          <option>VA Second</option>
+          <option>VA Exempt</option>
+          <option>FHA</option>
+          <option>Conventional</option>
+        </select>
+
+        <select
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
+        >
+          <option>Columbus, GA</option>
+          <option>Lee County, AL</option>
+          <option>Russell County, AL</option>
+          <option>Harris County, GA</option>
+        </select>
+
+        {(location !== 'Columbus, GA' && location !== 'Harris County, GA') && (
           <select
-            value={loanType}
-            onChange={(e) => setLoanType(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
+            value={cityLimits}
+            onChange={(e) => setCityLimits(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 border border-gray-600"
           >
-            <option>VA First</option>
-            <option>VA Second</option>
-            <option>VA Exempt</option>
-            <option>FHA</option>
-            <option>Conventional</option>
+            <option>Inside</option>
+            <option>Outside</option>
           </select>
+        )}
 
-          <select
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
-          >
-            <option>Columbus, GA</option>
-            <option>Lee County, AL</option>
-            <option>Russell County, AL</option>
-          </select>
-
-          {location !== 'Columbus, GA' && (
-            <select
-              value={cityLimits}
-              onChange={(e) => setCityLimits(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
-            >
-              <option>Inside</option>
-              <option>Outside</option>
-            </select>
-          )}
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={calculateEstimate}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-            >
-              Get Estimate
-            </button>
-            <button
-              onClick={clearForm}
-              className="w-full bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold py-2 px-4 rounded-lg transition"
-            >
-              Clear
-            </button>
-          </div>
+        <div className="flex gap-4">
+          <button onClick={calculateEstimate} className="flex-1 bg-blue-600 hover:bg-blue-700 p-2 rounded">Get Estimate</button>
+          <button onClick={clearForm} className="flex-1 bg-gray-400 text-black hover:bg-gray-500 p-2 rounded">Clear</button>
         </div>
 
         {result && (
-          <div className="space-y-6 bg-gray-700 border border-gray-600 p-4 sm:p-6 rounded-xl overflow-auto">
-            {/* Loan Summary */}
-            <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">Loan Summary</h2>
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
-                <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
-                <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
-                <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
-                <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
-              </div>
+          <div className="bg-gray-800 p-4 rounded border border-gray-600 space-y-2">
+            <h2 className="text-xl font-semibold text-blue-300">Estimate Breakdown</h2>
+            <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
+            <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
+            <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
+            <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
+            <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
+            <div className="flex justify-between font-bold text-green-400 pt-2 border-t border-gray-600">
+              <span>Total PITI (Homestead):</span><span>{result.pitiHomestead}</span>
+            </div>
+            <div className="flex justify-between font-bold text-green-400">
+              <span>Total PITI (Non-Homestead):</span><span>{result.pitiNonHomestead}</span>
             </div>
 
-            {/* Monthly Payment */}
-            <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">Monthly Payment</h2>
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between font-semibold text-green-400"><span>PITI - Homestead:</span><span>{result.pitiHomestead}</span></div>
-                <div className="flex justify-between font-semibold text-green-400"><span>PITI - Non-Homestead:</span><span>{result.pitiNonHomestead}</span></div>
+            <h3 className="pt-4 font-semibold text-blue-300">Closing Costs</h3>
+            {result.closingCosts.map((item, idx) => (
+              <div key={idx} className="flex justify-between text-sm">
+                <span>{item.label}</span>
+                <span>{item.value}</span>
               </div>
+            ))}
+            <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
+              <span>Total Closing Costs:</span><span>{result.totalClosingCosts}</span>
             </div>
 
-            {/* Closing Costs */}
-            <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">Closing Costs</h2>
-              <div className="space-y-1 text-sm">
-                {result.closingCosts.map((item, idx) => (
-                  <div key={idx} className="flex justify-between">
-                    <span>{item.label}</span>
-                    <span>{item.value}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between mt-2 font-semibold text-yellow-400 border-t border-gray-500 pt-2">
-                  <span>Total Closing Costs:</span><span>{result.totalClosingCosts}</span>
-                </div>
+            <h3 className="pt-4 font-semibold text-blue-300">Prepaids & Escrows</h3>
+            {result.prepaids.map((item, idx) => (
+              <div key={idx} className="flex justify-between text-sm">
+                <span>{item.label}</span>
+                <span>{item.value}</span>
               </div>
+            ))}
+            <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
+              <span>Total Prepaids:</span><span>{result.totalPrepaids}</span>
             </div>
 
-            {/* Prepaids & Escrows */}
-            <div>
-              <h2 className="text-lg font-bold text-blue-300 mb-2">Prepaids & Escrows</h2>
-              <div className="space-y-1 text-sm">
-                {result.prepaids.map((item, idx) => (
-                  <div key={idx} className="flex justify-between">
-                    <span>{item.label}</span>
-                    <span>{item.value}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between mt-2 font-semibold text-yellow-400 border-t border-gray-500 pt-2">
-                  <span>Total Prepaids & Escrows:</span><span>{result.totalPrepaids}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Final Total */}
-            <div className="text-xl font-bold text-orange-400 border-t border-gray-500 pt-4 flex justify-between">
+            <div className="flex justify-between font-bold text-orange-400 border-t border-gray-600 pt-4 text-lg">
               <span>Final Cash to Close:</span><span>{result.totalCashToClose}</span>
             </div>
           </div>
