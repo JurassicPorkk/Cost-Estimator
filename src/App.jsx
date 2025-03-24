@@ -85,7 +85,7 @@ export default function App() {
     // Prepaids & Escrows
     const prepaidInterest = (loanAmount * rate / 365) * 15; // assume 15 days avg
     const insuranceCushion = insurance / 12 * 3;
-    const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 5;
+    const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
 
     const prepaidsEscrows = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
 
