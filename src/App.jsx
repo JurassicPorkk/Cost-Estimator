@@ -1,3 +1,4 @@
+// Full App.jsx regenerated with all features retained and updated Harris County tax logic
 import React, { useState, useEffect } from 'react';
 
 function unformatCurrency(value) {
@@ -136,11 +137,31 @@ export default function App() {
       if (transferTax < 0) transferTax = 0;
     }
 
+    const closingCostsItems = [
+      { label: 'Underwriting Fee', value: formatCurrency(underwritingFee) },
+      { label: 'Attorney Fee', value: formatCurrency(attorneyFee) },
+      { label: 'Title Search Fee', value: formatCurrency(titleSearchFee) },
+      { label: 'Recording Fee', value: formatCurrency(recordingFee) },
+      { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
+      { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
+      { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
+      { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
+      { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
+      { label: 'Transfer Tax', value: formatCurrency(transferTax) },
+    ];
+
     const closingCostsTotal = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
 
     const prepaidInterest = (loanAmount * rate / 365) * 15;
     const insuranceCushion = insurance / 12 * 3;
     const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
+
+    const prepaidsItems = [
+      { label: 'Prepaid Interest (15 days)', value: formatCurrency(prepaidInterest) },
+      { label: 'Insurance (1yr prepaid)', value: formatCurrency(insurance) },
+      { label: 'Insurance Cushion (3 mo)', value: formatCurrency(insuranceCushion) },
+      { label: 'Property Tax Escrow (4 mo)', value: formatCurrency(propertyTaxEscrow) },
+    ];
 
     const prepaidsTotal = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
     const totalCashToClose = closingCostsTotal + prepaidsTotal;
@@ -154,7 +175,9 @@ export default function App() {
       monthlyTaxNonHomestead: formatCurrency(monthlyTaxNonHomestead),
       pitiHomestead: formatCurrency(pitiHomestead),
       pitiNonHomestead: formatCurrency(pitiNonHomestead),
+      closingCosts: closingCostsItems,
       totalClosingCosts: formatCurrency(closingCostsTotal),
+      prepaids: prepaidsItems,
       totalPrepaids: formatCurrency(prepaidsTotal),
       totalCashToClose: formatCurrency(totalCashToClose),
     });
@@ -164,92 +187,70 @@ export default function App() {
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-xl mx-auto space-y-6">
         <h1 className="text-2xl font-bold text-center">Loan Estimate Generator</h1>
-
-        <input
-          type="text"
-          placeholder="Sales Price"
-          value={salesPrice}
-          onChange={handleSalesPriceChange}
-          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
-        />
-
-        <input
-          type="text"
-          placeholder="Interest Rate"
-          value={interestRate}
-          onChange={handleInterestRateChange}
-          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
-        />
-
-        <select
-          value={loanType}
-          onChange={(e) => setLoanType(e.target.value)}
-          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
-        >
+        <input type="text" placeholder="Sales Price" value={salesPrice} onChange={handleSalesPriceChange} className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
+        <input type="text" placeholder="Interest Rate" value={interestRate} onChange={handleInterestRateChange} className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
+        <select value={loanType} onChange={(e) => setLoanType(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
           <option>VA First</option>
           <option>VA Second</option>
           <option>VA Exempt</option>
           <option>FHA</option>
           <option>Conventional</option>
         </select>
-
-        <select
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-2 rounded bg-gray-700 border border-gray-600"
-        >
+        <select value={location} onChange={(e) => setLocation(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
           <option>Columbus, GA</option>
           <option>Lee County, AL</option>
           <option>Russell County, AL</option>
           <option>Harris County, GA</option>
         </select>
-
         {(location !== 'Columbus, GA' && location !== 'Harris County, GA') && (
-          <select
-            value={cityLimits}
-            onChange={(e) => setCityLimits(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600"
-          >
+          <select value={cityLimits} onChange={(e) => setCityLimits(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
             <option>Inside</option>
             <option>Outside</option>
           </select>
         )}
-
         <div className="flex gap-4">
           <button onClick={calculateEstimate} className="flex-1 bg-blue-600 hover:bg-blue-700 p-2 rounded">Get Estimate</button>
           <button onClick={clearForm} className="flex-1 bg-gray-400 text-black hover:bg-gray-500 p-2 rounded">Clear</button>
         </div>
-
         {result && (
-          <div className="bg-gray-800 p-4 rounded border border-gray-600 space-y-2">
-            <h2 className="text-xl font-semibold text-blue-300">Estimate Breakdown</h2>
-            <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
-            <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
-            <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
-            {(loanType === 'Conventional' || loanType === 'FHA') && (
-              <div className="flex justify-between"><span>Mortgage Insurance:</span><span>{result.monthlyMI}</span></div>
-            )}
-            <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
-            <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
+          <div className="bg-gray-800 p-4 rounded border border-gray-600 space-y-4">
+            <h2 className="text-xl font-semibold text-blue-300">Loan Summary</h2>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
+              <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
+              <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
+              {(loanType === 'Conventional' || loanType === 'FHA') && (
+                <div className="flex justify-between"><span>Mortgage Insurance:</span><span>{result.monthlyMI}</span></div>
+              )}
+              <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
+              <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
+            </div>
             <div className="flex justify-between font-bold text-green-400 pt-2 border-t border-gray-600">
-              <span>Total PITI (Homestead):</span><span>{result.pitiHomestead}</span>
+              <span>PITI - Homestead:</span><span>{result.pitiHomestead}</span>
             </div>
             <div className="flex justify-between font-bold text-green-400">
-              <span>Total PITI (Non-Homestead):</span><span>{result.pitiNonHomestead}</span>
+              <span>PITI - Non-Homestead:</span><span>{result.pitiNonHomestead}</span>
             </div>
-
-            <h3 className="pt-4 font-semibold text-blue-300">Totals</h3>
-            <div className="flex justify-between text-sm">
-              <span>Total Closing Costs:</span>
-              <span>{result.totalClosingCosts}</span>
+            <h2 className="text-xl font-semibold text-blue-300 pt-4">Closing Costs</h2>
+            {result.closingCosts.map((item, idx) => (
+              <div key={idx} className="flex justify-between text-sm">
+                <span>{item.label}</span><span>{item.value}</span>
+              </div>
+            ))}
+            <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
+              <span>Total Closing Costs:</span><span>{result.totalClosingCosts}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span>Total Prepaids & Escrows:</span>
-              <span>{result.totalPrepaids}</span>
+            <h2 className="text-xl font-semibold text-blue-300 pt-4">Prepaids & Escrows</h2>
+            {result.prepaids.map((item, idx) => (
+              <div key={idx} className="flex justify-between text-sm">
+                <span>{item.label}</span><span>{item.value}</span>
+              </div>
+            ))}
+            <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
+              <span>Total Prepaids:</span><span>{result.totalPrepaids}</span>
             </div>
-            <div className="flex justify-between font-bold text-orange-400 border-t border-gray-600 pt-2 text-lg">
-              <span>Final Cash to Close:</span>
-              <span>{result.totalCashToClose}</span>
+            <div className="flex justify-between font-bold text-orange-400 border-t border-gray-600 pt-4 text-lg">
+              <span>Final Cash to Close:</span><span>{result.totalCashToClose}</span>
             </div>
           </div>
         )}
