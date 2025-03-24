@@ -25,7 +25,6 @@ export default function App() {
     const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
     const homeownersInsurance = insurance / 12;
 
-    // Taxes
     let yearlyTaxHomestead = 0;
     let yearlyTaxNonHomestead = 0;
 
@@ -59,14 +58,14 @@ export default function App() {
     const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead;
     const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead;
 
-    // Closing Costs
     const underwritingFee = 1320;
     const attorneyFee = 1075;
     const titleSearchFee = 250;
     const recordingFee = 70;
     const creditReportFee = 140;
-    const appraisalFee = loanType === 'VA First' || loanType === 'VA Second' || loanType === 'VA Exempt' ?
-      (location.includes('GA') ? 650 : 600) : loanType === 'FHA' ? 600 : 525;
+    const appraisalFee = loanType === 'VA First' || loanType === 'VA Second' || loanType === 'VA Exempt'
+      ? (location.includes('GA') ? 650 : 600)
+      : loanType === 'FHA' ? 600 : 525;
 
     const ownerTitle = location === 'Columbus, GA' ? sales * 0.0022 : sales * 0.0011;
     const lenderTitle = location === 'Columbus, GA' ? loanAmount * 0.00352 : loanAmount * 0.00216;
@@ -82,8 +81,7 @@ export default function App() {
 
     const closingCosts = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
 
-    // Prepaids & Escrows
-    const prepaidInterest = (loanAmount * rate / 365) * 15; // assume 15 days avg
+    const prepaidInterest = (loanAmount * rate / 365) * 15;
     const insuranceCushion = insurance / 12 * 3;
     const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
 
@@ -127,31 +125,73 @@ Prepaids & Escrows Total: $${prepaidsEscrows.toFixed(2)}
   };
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Loan Estimate Generator</h1>
-      <input placeholder="Sales Price" value={salesPrice} onChange={(e) => setSalesPrice(e.target.value)} />
-      <input placeholder="Interest Rate" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} />
-      <select value={loanType} onChange={(e) => setLoanType(e.target.value)}>
-        <option>VA First</option>
-        <option>VA Second</option>
-        <option>VA Exempt</option>
-        <option>FHA</option>
-        <option>Conventional</option>
-      </select>
-      <select value={location} onChange={(e) => setLocation(e.target.value)}>
-        <option>Columbus, GA</option>
-        <option>Lee County, AL</option>
-        <option>Russell County, AL</option>
-      </select>
-      {(location !== 'Columbus, GA') && (
-        <select value={cityLimits} onChange={(e) => setCityLimits(e.target.value)}>
-          <option>Inside</option>
-          <option>Outside</option>
-        </select>
-      )}
-      <br />
-      <button onClick={calculateEstimate}>Get Estimate</button>
-      <pre style={{ marginTop: 20, background: '#f1f1f1', padding: 12 }}>{result}</pre>
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-8 space-y-6">
+        <h1 className="text-2xl font-bold text-center text-blue-700">Loan Estimate Generator</h1>
+
+        <div className="grid gap-4">
+          <input
+            type="text"
+            placeholder="Sales Price"
+            value={salesPrice}
+            onChange={(e) => setSalesPrice(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
+          />
+          <input
+            type="text"
+            placeholder="Interest Rate"
+            value={interestRate}
+            onChange={(e) => setInterestRate(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
+          />
+
+          <select
+            value={loanType}
+            onChange={(e) => setLoanType(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
+          >
+            <option>VA First</option>
+            <option>VA Second</option>
+            <option>VA Exempt</option>
+            <option>FHA</option>
+            <option>Conventional</option>
+          </select>
+
+          <select
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
+          >
+            <option>Columbus, GA</option>
+            <option>Lee County, AL</option>
+            <option>Russell County, AL</option>
+          </select>
+
+          {location !== 'Columbus, GA' && (
+            <select
+              value={cityLimits}
+              onChange={(e) => setCityLimits(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
+            >
+              <option>Inside</option>
+              <option>Outside</option>
+            </select>
+          )}
+
+          <button
+            onClick={calculateEstimate}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+          >
+            Get Estimate
+          </button>
+        </div>
+
+        {result && (
+          <pre className="whitespace-pre-wrap bg-gray-100 border border-gray-300 p-4 rounded-lg text-sm text-gray-800 overflow-auto">
+            {result}
+          </pre>
+        )}
+      </div>
     </div>
   );
 }
