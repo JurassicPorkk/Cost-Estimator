@@ -14,9 +14,8 @@ export default function App() {
   const [loanType, setLoanType] = useState('VA First');
   const [location, setLocation] = useState('Columbus, GA');
   const [cityLimits, setCityLimits] = useState('Inside');
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState(null);
 
-  // ✅ Force dark mode permanently
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
@@ -27,7 +26,7 @@ export default function App() {
     setLoanType('VA First');
     setLocation('Columbus, GA');
     setCityLimits('Inside');
-    setResult('');
+    setResult(null);
   };
 
   const calculateEstimate = () => {
@@ -91,7 +90,6 @@ export default function App() {
 
     const ownerTitle = location === 'Columbus, GA' ? sales * 0.0022 : sales * 0.0011;
     const lenderTitle = location === 'Columbus, GA' ? loanAmount * 0.00352 : loanAmount * 0.00216;
-
     const mortgageTax = location === 'Columbus, GA'
       ? (loanAmount / 100) * 0.30
       : (loanAmount / 100) * 0.15;
@@ -101,52 +99,53 @@ export default function App() {
       : (sales - loanAmount) / 1000;
     if (transferTax < 0) transferTax = 0;
 
-    const closingCosts = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
+    const closingCostsItems = [
+      { label: 'Underwriting Fee', value: formatCurrency(underwritingFee) },
+      { label: 'Attorney Fee', value: formatCurrency(attorneyFee) },
+      { label: 'Title Search Fee', value: formatCurrency(titleSearchFee) },
+      { label: 'Recording Fee', value: formatCurrency(recordingFee) },
+      { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
+      { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
+      { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
+      { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
+      { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
+      { label: 'Transfer Tax', value: formatCurrency(transferTax) },
+    ];
+
+    const closingCostsTotal = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
 
     const prepaidInterest = (loanAmount * rate / 365) * 15;
     const insuranceCushion = insurance / 12 * 3;
     const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
 
-    const prepaidsEscrows = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
-    const totalCashToClose = closingCosts + prepaidsEscrows;
+    const prepaidsItems = [
+      { label: 'Prepaid Interest (15 days)', value: formatCurrency(prepaidInterest) },
+      { label: 'Insurance (1yr prepaid)', value: formatCurrency(insurance) },
+      { label: 'Insurance Cushion (3 mo)', value: formatCurrency(insuranceCushion) },
+      { label: 'Property Tax Escrow (4 mo)', value: formatCurrency(propertyTaxEscrow) },
+    ];
 
-    setResult(`💬 Loan Estimate Breakdown
------------------------------
-Loan Amount: ${formatCurrency(loanAmount)}
-Principal & Interest: ${formatCurrency(principalInterest)}
-Homeowners Insurance: ${formatCurrency(homeownersInsurance)}
-Monthly Tax (Homestead): ${formatCurrency(monthlyTaxHomestead)}
-Monthly Tax (Non-Homestead): ${formatCurrency(monthlyTaxNonHomestead)}
+    const prepaidsTotal = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
+    const totalCashToClose = closingCostsTotal + prepaidsTotal;
 
-Total Monthly Payment (PITI - Homestead): ${formatCurrency(pitiHomestead)}
-Total Monthly Payment (PITI - Non-Homestead): ${formatCurrency(pitiNonHomestead)}
-
---- Closing Costs ---
-Underwriting Fee: ${formatCurrency(underwritingFee)}
-Attorney Fee: ${formatCurrency(attorneyFee)}
-Title Search Fee: ${formatCurrency(titleSearchFee)}
-Recording Fee: ${formatCurrency(recordingFee)}
-Credit Report Fee: ${formatCurrency(creditReportFee)}
-Appraisal Fee: ${formatCurrency(appraisalFee)}
-Owner's Title Insurance: ${formatCurrency(ownerTitle)}
-Lender's Title Insurance: ${formatCurrency(lenderTitle)}
-Mortgage Tax: ${formatCurrency(mortgageTax)}
-Transfer Tax: ${formatCurrency(transferTax)}
-Closing Costs Total: ${formatCurrency(closingCosts)}
-
---- Prepaids & Escrows ---
-Prepaid Interest (15 days): ${formatCurrency(prepaidInterest)}
-Insurance (1yr prepaid): ${formatCurrency(insurance)}
-Insurance Cushion (3 mo): ${formatCurrency(insuranceCushion)}
-Property Tax Escrow (4 mo): ${formatCurrency(propertyTaxEscrow)}
-Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
-
-💰 Final Cash to Close: ${formatCurrency(totalCashToClose)}
-`);
+    setResult({
+      loanAmount: formatCurrency(loanAmount),
+      principalInterest: formatCurrency(principalInterest),
+      homeownersInsurance: formatCurrency(homeownersInsurance),
+      monthlyTaxHomestead: formatCurrency(monthlyTaxHomestead),
+      monthlyTaxNonHomestead: formatCurrency(monthlyTaxNonHomestead),
+      pitiHomestead: formatCurrency(pitiHomestead),
+      pitiNonHomestead: formatCurrency(pitiNonHomestead),
+      closingCosts: closingCostsItems,
+      totalClosingCosts: formatCurrency(closingCostsTotal),
+      prepaids: prepaidsItems,
+      totalPrepaids: formatCurrency(prepaidsTotal),
+      totalCashToClose: formatCurrency(totalCashToClose),
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-all duration-300">
+    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto bg-gray-800 shadow-lg rounded-2xl p-8 space-y-6 text-gray-100">
         <h1 className="text-2xl font-bold text-blue-300 text-center">
           Loan Estimate Generator
@@ -168,7 +167,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
                 : '';
               setSalesPrice(formatted);
             }}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
           />
 
           <input
@@ -180,13 +179,13 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
               const formatted = raw ? `${raw}%` : '';
               setInterestRate(formatted);
             }}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
           />
 
           <select
             value={loanType}
             onChange={(e) => setLoanType(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
           >
             <option>VA First</option>
             <option>VA Second</option>
@@ -198,7 +197,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
           >
             <option>Columbus, GA</option>
             <option>Lee County, AL</option>
@@ -209,7 +208,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
             <select
               value={cityLimits}
               onChange={(e) => setCityLimits(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg"
             >
               <option>Inside</option>
               <option>Outside</option>
@@ -219,23 +218,80 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
           <div className="flex gap-4">
             <button
               onClick={calculateEstimate}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
             >
               Get Estimate
             </button>
             <button
               onClick={clearForm}
-              className="flex-1 bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold py-2 px-4 rounded-lg transition duration-200"
+              className="flex-1 bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold py-2 px-4 rounded-lg transition"
             >
               Clear
             </button>
           </div>
         </div>
 
+        {/* 🧾 Formatted Estimate Output */}
         {result && (
-          <pre className="whitespace-pre-wrap bg-gray-700 border border-gray-600 p-4 rounded-lg text-sm text-gray-100 overflow-auto">
-            {result}
-          </pre>
+          <div className="space-y-6 bg-gray-700 border border-gray-600 p-6 rounded-xl">
+            {/* Loan Summary */}
+            <div>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">💬 Loan Summary</h2>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
+                <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
+                <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
+                <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
+                <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
+              </div>
+            </div>
+
+            {/* Monthly Payment */}
+            <div>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">📆 Monthly Payment</h2>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between font-semibold text-green-400"><span>PITI - Homestead:</span><span>{result.pitiHomestead}</span></div>
+                <div className="flex justify-between font-semibold text-green-400"><span>PITI - Non-Homestead:</span><span>{result.pitiNonHomestead}</span></div>
+              </div>
+            </div>
+
+            {/* Closing Costs */}
+            <div>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">💼 Closing Costs</h2>
+              <div className="space-y-1 text-sm">
+                {result.closingCosts.map((item, idx) => (
+                  <div key={idx} className="flex justify-between">
+                    <span>{item.label}</span>
+                    <span>{item.value}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between mt-2 font-semibold text-yellow-400 border-t border-gray-500 pt-2">
+                  <span>Total Closing Costs:</span><span>{result.totalClosingCosts}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Prepaids & Escrows */}
+            <div>
+              <h2 className="text-lg font-bold text-blue-300 mb-2">📦 Prepaids & Escrows</h2>
+              <div className="space-y-1 text-sm">
+                {result.prepaids.map((item, idx) => (
+                  <div key={idx} className="flex justify-between">
+                    <span>{item.label}</span>
+                    <span>{item.value}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between mt-2 font-semibold text-yellow-400 border-t border-gray-500 pt-2">
+                  <span>Total Prepaids & Escrows:</span><span>{result.totalPrepaids}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Final Total */}
+            <div className="text-xl font-bold text-orange-400 border-t border-gray-500 pt-4 flex justify-between">
+              <span>💰 Final Cash to Close:</span><span>{result.totalCashToClose}</span>
+            </div>
+          </div>
         )}
       </div>
     </div>
