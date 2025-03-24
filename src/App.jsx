@@ -15,19 +15,11 @@ export default function App() {
   const [location, setLocation] = useState('Columbus, GA');
   const [cityLimits, setCityLimits] = useState('Inside');
   const [result, setResult] = useState('');
-  const [darkMode, setDarkMode] = useState(true); // Default to dark mode
 
-  // ✅ Apply or remove the dark class on <html>
+  // ✅ Force dark mode permanently
   useEffect(() => {
-    const html = document.documentElement;
-    if (darkMode) {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
-  }, [darkMode]);
-
-  const toggleDarkMode = () => setDarkMode(!darkMode);
+    document.documentElement.classList.add('dark');
+  }, []);
 
   const clearForm = () => {
     setSalesPrice('');
@@ -154,19 +146,11 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-all duration-300">
-      <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 space-y-6 text-gray-800 dark:text-gray-100">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-            Loan Estimate Generator
-          </h1>
-          <button
-            onClick={toggleDarkMode}
-            className="text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded transition"
-          >
-            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-          </button>
-        </div>
+    <div className="min-h-screen bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-all duration-300">
+      <div className="max-w-2xl mx-auto bg-gray-800 shadow-lg rounded-2xl p-8 space-y-6 text-gray-100">
+        <h1 className="text-2xl font-bold text-blue-300 text-center">
+          Loan Estimate Generator
+        </h1>
 
         <div className="grid gap-4">
           <input
@@ -184,7 +168,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
                 : '';
               setSalesPrice(formatted);
             }}
-            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
           />
 
           <input
@@ -196,13 +180,13 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
               const formatted = raw ? `${raw}%` : '';
               setInterestRate(formatted);
             }}
-            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300"
           />
 
           <select
             value={loanType}
             onChange={(e) => setLoanType(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg shadow-sm dark:bg-gray-700 dark:border-gray-600"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm"
           >
             <option>VA First</option>
             <option>VA Second</option>
@@ -214,7 +198,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg shadow-sm dark:bg-gray-700 dark:border-gray-600"
+            className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm"
           >
             <option>Columbus, GA</option>
             <option>Lee County, AL</option>
@@ -225,7 +209,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
             <select
               value={cityLimits}
               onChange={(e) => setCityLimits(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg shadow-sm dark:bg-gray-700 dark:border-gray-600"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg shadow-sm"
             >
               <option>Inside</option>
               <option>Outside</option>
@@ -241,7 +225,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
             </button>
             <button
               onClick={clearForm}
-              className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 dark:text-gray-900 font-semibold py-2 px-4 rounded-lg transition duration-200"
+              className="flex-1 bg-gray-400 hover:bg-gray-500 text-gray-900 font-semibold py-2 px-4 rounded-lg transition duration-200"
             >
               Clear
             </button>
@@ -249,7 +233,7 @@ Prepaids & Escrows Total: ${formatCurrency(prepaidsEscrows)}
         </div>
 
         {result && (
-          <pre className="whitespace-pre-wrap bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-4 rounded-lg text-sm text-gray-800 dark:text-gray-100 overflow-auto">
+          <pre className="whitespace-pre-wrap bg-gray-700 border border-gray-600 p-4 rounded-lg text-sm text-gray-100 overflow-auto">
             {result}
           </pre>
         )}
