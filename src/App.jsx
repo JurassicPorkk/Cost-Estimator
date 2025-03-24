@@ -97,7 +97,6 @@ export default function App() {
 
     const monthlyTaxHomestead = yearlyTaxHomestead / 12;
     const monthlyTaxNonHomestead = yearlyTaxNonHomestead / 12;
-
     const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead + monthlyMI;
     const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead + monthlyMI;
 
@@ -123,27 +122,19 @@ export default function App() {
       lenderTitle = loanAmount * 0.00216;
     }
 
-    const mortgageTax = location === 'Columbus, GA'
-      ? (loanAmount / 100) * 0.30
-      : (loanAmount / 100) * 0.15;
-
-    let transferTax = location === 'Columbus, GA'
-      ? (sales / 1000) * 1.0
-      : (sales - loanAmount) / 1000;
-    if (transferTax < 0) transferTax = 0;
-
-    const closingCostsItems = [
-      { label: 'Underwriting Fee', value: formatCurrency(underwritingFee) },
-      { label: 'Attorney Fee', value: formatCurrency(attorneyFee) },
-      { label: 'Title Search Fee', value: formatCurrency(titleSearchFee) },
-      { label: 'Recording Fee', value: formatCurrency(recordingFee) },
-      { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
-      { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
-      { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
-      { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
-      { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
-      { label: 'Transfer Tax', value: formatCurrency(transferTax) },
-    ];
+    let mortgageTax = 0;
+    let transferTax = 0;
+    if (location === 'Columbus, GA') {
+      mortgageTax = (loanAmount / 100) * 0.30;
+      transferTax = (sales / 1000) * 1.00;
+    } else if (location === 'Harris County, GA') {
+      mortgageTax = (loanAmount / 100) * 0.30;
+      transferTax = (sales / 1000) * 1.00;
+    } else {
+      mortgageTax = (loanAmount / 100) * 0.15;
+      transferTax = (sales - loanAmount) / 1000;
+      if (transferTax < 0) transferTax = 0;
+    }
 
     const closingCostsTotal = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
 
@@ -163,7 +154,6 @@ export default function App() {
       monthlyTaxNonHomestead: formatCurrency(monthlyTaxNonHomestead),
       pitiHomestead: formatCurrency(pitiHomestead),
       pitiNonHomestead: formatCurrency(pitiNonHomestead),
-      closingCosts: closingCostsItems,
       totalClosingCosts: formatCurrency(closingCostsTotal),
       totalPrepaids: formatCurrency(prepaidsTotal),
       totalCashToClose: formatCurrency(totalCashToClose),
@@ -248,19 +238,18 @@ export default function App() {
               <span>Total PITI (Non-Homestead):</span><span>{result.pitiNonHomestead}</span>
             </div>
 
-            <h3 className="pt-4 font-semibold text-blue-300">Closing Costs</h3>
-            {result.closingCosts.map((item, idx) => (
-              <div key={idx} className="flex justify-between text-sm">
-                <span>{item.label}</span>
-                <span>{item.value}</span>
-              </div>
-            ))}
-            <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
-              <span>Total Closing Costs:</span><span>{result.totalClosingCosts}</span>
+            <h3 className="pt-4 font-semibold text-blue-300">Totals</h3>
+            <div className="flex justify-between text-sm">
+              <span>Total Closing Costs:</span>
+              <span>{result.totalClosingCosts}</span>
             </div>
-
-            <div className="pt-4 flex justify-between font-bold text-orange-400 border-t border-gray-600 text-lg">
-              <span>Final Cash to Close:</span><span>{result.totalCashToClose}</span>
+            <div className="flex justify-between text-sm">
+              <span>Total Prepaids & Escrows:</span>
+              <span>{result.totalPrepaids}</span>
+            </div>
+            <div className="flex justify-between font-bold text-orange-400 border-t border-gray-600 pt-2 text-lg">
+              <span>Final Cash to Close:</span>
+              <span>{result.totalCashToClose}</span>
             </div>
           </div>
         )}
