@@ -119,7 +119,7 @@ Closing Costs Total: $${closingCosts.toFixed(2)}
 Prepaid Interest (15 days): $${prepaidInterest.toFixed(2)}
 Insurance (1yr prepaid): $${insurance}
 Insurance Cushion (3 mo): $${insuranceCushion.toFixed(2)}
-Property Tax Escrow (5 mo): $${propertyTaxEscrow.toFixed(2)}
+Property Tax Escrow (4 mo): $${propertyTaxEscrow.toFixed(2)}
 Prepaids & Escrows Total: $${prepaidsEscrows.toFixed(2)}
 
 💰 Final Cash to Close: $${totalCashToClose.toFixed(2)}
