@@ -64,6 +64,8 @@ export default function App() {
     const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
     const homeownersInsurance = insurance / 12;
 
+    const monthlyPMI = loanType === 'Conventional' ? (loanAmount * 0.0035) / 12 : 0;
+
     let yearlyTaxHomestead = 0;
     let yearlyTaxNonHomestead = 0;
 
@@ -93,8 +95,9 @@ export default function App() {
 
     const monthlyTaxHomestead = yearlyTaxHomestead / 12;
     const monthlyTaxNonHomestead = yearlyTaxNonHomestead / 12;
-    const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead;
-    const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead;
+
+    const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead + monthlyPMI;
+    const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead + monthlyPMI;
 
     const underwritingFee = 1320;
     const attorneyFee = 1075;
@@ -123,8 +126,8 @@ export default function App() {
       { label: 'Recording Fee', value: formatCurrency(recordingFee) },
       { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
       { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
-      { label: 'Owner\'s Title Insurance', value: formatCurrency(ownerTitle) },
-      { label: 'Lender\'s Title Insurance', value: formatCurrency(lenderTitle) },
+      { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
+      { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
       { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
       { label: 'Transfer Tax', value: formatCurrency(transferTax) },
     ];
@@ -149,6 +152,7 @@ export default function App() {
       loanAmount: formatCurrency(loanAmount),
       principalInterest: formatCurrency(principalInterest),
       homeownersInsurance: formatCurrency(homeownersInsurance),
+      monthlyPMI: formatCurrency(monthlyPMI),
       monthlyTaxHomestead: formatCurrency(monthlyTaxHomestead),
       monthlyTaxNonHomestead: formatCurrency(monthlyTaxNonHomestead),
       pitiHomestead: formatCurrency(pitiHomestead),
@@ -227,6 +231,9 @@ export default function App() {
             <div className="flex justify-between"><span>Loan Amount:</span><span>{result.loanAmount}</span></div>
             <div className="flex justify-between"><span>Principal & Interest:</span><span>{result.principalInterest}</span></div>
             <div className="flex justify-between"><span>Homeowners Insurance:</span><span>{result.homeownersInsurance}</span></div>
+            {loanType === 'Conventional' && (
+              <div className="flex justify-between"><span>Mortgage Insurance:</span><span>{result.monthlyPMI}</span></div>
+            )}
             <div className="flex justify-between"><span>Monthly Tax (Homestead):</span><span>{result.monthlyTaxHomestead}</span></div>
             <div className="flex justify-between"><span>Monthly Tax (Non-Homestead):</span><span>{result.monthlyTaxNonHomestead}</span></div>
             <div className="flex justify-between font-bold text-green-400 pt-2 border-t border-gray-600">
