@@ -110,8 +110,19 @@ export default function App() {
       ? (location.includes('GA') ? 650 : 600)
       : loanType === 'FHA' ? 600 : 525;
 
-    const ownerTitle = location === 'Columbus, GA' ? sales * 0.0022 : sales * 0.0011;
-    const lenderTitle = location === 'Columbus, GA' ? loanAmount * 0.00352 : loanAmount * 0.00216;
+    let ownerTitle = 0;
+    let lenderTitle = 0;
+    if (location === 'Columbus, GA') {
+      ownerTitle = sales * 0.0022;
+      lenderTitle = loanAmount * 0.00352;
+    } else if (location === 'Harris County, GA') {
+      ownerTitle = sales * 0.0024;
+      lenderTitle = loanAmount * 0.0036;
+    } else {
+      ownerTitle = sales * 0.0011;
+      lenderTitle = loanAmount * 0.00216;
+    }
+
     const mortgageTax = location === 'Columbus, GA'
       ? (loanAmount / 100) * 0.30
       : (loanAmount / 100) * 0.15;
@@ -140,13 +151,6 @@ export default function App() {
     const insuranceCushion = insurance / 12 * 3;
     const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
 
-    const prepaidsItems = [
-      { label: 'Prepaid Interest (15 days)', value: formatCurrency(prepaidInterest) },
-      { label: 'Insurance (1yr prepaid)', value: formatCurrency(insurance) },
-      { label: 'Insurance Cushion (3 mo)', value: formatCurrency(insuranceCushion) },
-      { label: 'Property Tax Escrow (4 mo)', value: formatCurrency(propertyTaxEscrow) },
-    ];
-
     const prepaidsTotal = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
     const totalCashToClose = closingCostsTotal + prepaidsTotal;
 
@@ -161,9 +165,8 @@ export default function App() {
       pitiNonHomestead: formatCurrency(pitiNonHomestead),
       closingCosts: closingCostsItems,
       totalClosingCosts: formatCurrency(closingCostsTotal),
-      prepaids: prepaidsItems,
       totalPrepaids: formatCurrency(prepaidsTotal),
-      totalCashToClose: formatCurrency(totalCashToClose)
+      totalCashToClose: formatCurrency(totalCashToClose),
     });
   };
 
@@ -256,18 +259,7 @@ export default function App() {
               <span>Total Closing Costs:</span><span>{result.totalClosingCosts}</span>
             </div>
 
-            <h3 className="pt-4 font-semibold text-blue-300">Prepaids & Escrows</h3>
-            {result.prepaids.map((item, idx) => (
-              <div key={idx} className="flex justify-between text-sm">
-                <span>{item.label}</span>
-                <span>{item.value}</span>
-              </div>
-            ))}
-            <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
-              <span>Total Prepaids:</span><span>{result.totalPrepaids}</span>
-            </div>
-
-            <div className="flex justify-between font-bold text-orange-400 border-t border-gray-600 pt-4 text-lg">
+            <div className="pt-4 flex justify-between font-bold text-orange-400 border-t border-gray-600 text-lg">
               <span>Final Cash to Close:</span><span>{result.totalCashToClose}</span>
             </div>
           </div>
