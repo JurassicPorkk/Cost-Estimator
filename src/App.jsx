@@ -151,7 +151,7 @@ Prepaids & Escrows Total: $${prepaidsEscrows.toFixed(2)}
       )}
       <br />
       <button onClick={calculateEstimate}>Get Estimate</button>
-      <pre style={{ marginTop: 20, background: '#f1f1f1', padding: 12 }}>{result}</pre>
+      <pre style={{ marginTop: 20, background: '#ffa500', padding: 12 }}>{result}</pre>
     </div>
   );
 }
