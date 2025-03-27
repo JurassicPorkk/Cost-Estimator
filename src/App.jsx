@@ -446,7 +446,7 @@ const resetForm = () => {
         </div>
 
         {/* Final Cash to Close */}
-                  <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
+                            <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
             <span>Final Cash to Close:</span>
             <span>{res.totalCashToClose}</span>
           </div>
@@ -454,6 +454,7 @@ const resetForm = () => {
       ))}
     </div>
   )}
-    </div>
+      </div> {/* closes max-w-4xl container */}
+    </div>   {/* closes min-h-screen wrapper */}
   );
 }
