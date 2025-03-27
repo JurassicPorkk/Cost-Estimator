@@ -1,12 +1,11 @@
-// ✅ FULL APP.JSX FILE
-// Includes:
-// - Preset + custom down payment for FHA & Conventional
-// - Custom input hidden unless selected
-// - Live currency formatting
-// - 3% PMI logic (0.4%) for Conventional
-// - FHA MIP drop at 5%
-// - Minimum down payment enforcement (3% Conv, 3.5% FHA)
-// - Full UI with itemized cost breakdowns and dark mode
+// ✅ FULL APP.JSX FILE WITH VA PRESET DOWN PAYMENT OPTIONS
+// Includes everything from previous versions:
+// - Preset + custom down payments for Conventional, FHA, and VA
+// - Preset VA: 5%, 10%, 15%, 20%
+// - Custom input revealed only when 'Custom Amount' is selected
+// - Currency formatting, validation logic (FHA 3.5%, Conv 3%)
+// - Accurate MI, MIP, VA Funding Fee logic
+// - Full UI, itemized cost sections, dark mode styling
 
 import React, { useState, useEffect } from 'react';
 
@@ -33,9 +32,16 @@ export default function App() {
   }, []);
 
   const getSales = () => parseFloat(unformatCurrency(salesPrice)) || 0;
+
   const getDownPayment = () => {
     const custom = parseFloat(unformatCurrency(customDown));
     return downOption === 'custom' && custom > 0 ? custom : parseFloat(downOption) || 0;
+  };
+
+  const validateMinDown = (sales, down) => {
+    if (loanType === 'FHA') return Math.max(down, sales * 0.035);
+    if (loanType === 'Conventional') return Math.max(down, sales * 0.03);
+    return down;
   };
 
   const formatInput = (val) => {
@@ -43,13 +49,13 @@ export default function App() {
     return raw ? `$${Number(raw).toLocaleString()}` : '';
   };
 
-  const validateMinDown = (sales, down) => {
-    const minFHA = sales * 0.035;
-    const minConv = sales * 0.03;
-    if (loanType === 'FHA' && down < minFHA) return minFHA;
-    if (loanType === 'Conventional' && down < minConv) return minConv;
-    return down;
-  };
+  const downOptions = loanType === 'FHA'
+    ? [3.5, 5]
+    : loanType === 'Conventional'
+    ? [3, 5, 10, 15, 20]
+    : loanType.includes('VA')
+    ? [5, 10, 15, 20]
+    : [];
 
   const calculate = () => {
     const sales = getSales();
@@ -60,9 +66,12 @@ export default function App() {
     const insurance = 1500;
     let loan = 0;
 
-    if (loanType === 'Conventional') loan = sales - downPayment;
-    else if (loanType === 'FHA') loan = (sales - downPayment) * 1.0175;
-    else if (loanType.includes('VA')) {
+    if (loanType === 'Conventional') {
+      loan = sales - downPayment;
+    } else if (loanType === 'FHA') {
+      const baseLoan = sales - downPayment;
+      loan = baseLoan * 1.0175;
+    } else if (loanType.includes('VA')) {
       const baseLoan = sales - downPayment;
       let fee = 0;
       if (loanType === 'VA First') fee = percentDown >= 0.1 ? 0.0125 : percentDown >= 0.05 ? 0.015 : 0.0215;
@@ -73,14 +82,17 @@ export default function App() {
     const monthlyRate = rate / 12;
     const PI = (monthlyRate * loan) / (1 - Math.pow(1 + monthlyRate, -360));
     const HI = insurance / 12;
+
     let MI = 0;
     if (loanType === 'Conventional') {
-      if (percentDown < 0.03) MI = (loan * 0.004) / 12;
+      if (percentDown === 0.03) MI = (loan * 0.004) / 12;
       else if (percentDown < 0.10) MI = (loan * 0.0035) / 12;
       else if (percentDown < 0.15) MI = (loan * 0.0025) / 12;
       else if (percentDown < 0.20) MI = (loan * 0.0015) / 12;
     }
-    if (loanType === 'FHA') MI = (loan * (percentDown >= 0.05 ? 0.005 : 0.0055)) / 12;
+    if (loanType === 'FHA') {
+      MI = (loan * (percentDown >= 0.05 ? 0.005 : 0.0055)) / 12;
+    }
 
     let taxHomestead = 0;
     let taxNon = 0;
@@ -123,8 +135,8 @@ export default function App() {
       { label: 'Mortgage Tax', value: MT },
       { label: 'Transfer Tax', value: TT }
     ];
-    const closingTotal = closingItems.reduce((acc, item) => acc + item.value, 0);
 
+    const closingTotal = closingItems.reduce((acc, item) => acc + item.value, 0);
     const preItems = [
       { label: 'Prepaid Interest (15 days)', value: (loan * rate / 365) * 15 },
       { label: 'Insurance (1yr prepaid)', value: insurance },
@@ -153,12 +165,6 @@ export default function App() {
     });
   };
 
-  const downOptions = loanType === 'FHA'
-    ? [3.5, 5]
-    : loanType === 'Conventional'
-    ? [3, 5, 10, 15, 20]
-    : [];
-
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-xl mx-auto space-y-4">
@@ -175,7 +181,7 @@ export default function App() {
           <option>VA Exempt</option>
         </select>
 
-        {(loanType === 'FHA' || loanType === 'Conventional') && getSales() > 0 && (
+        {(loanType === 'FHA' || loanType === 'Conventional' || loanType.includes('VA')) && getSales() > 0 && (
           <>
             <select value={downOption} onChange={e => setDownOption(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
               <option value="">Select Down Payment</option>
@@ -189,10 +195,6 @@ export default function App() {
               <input value={customDown} onChange={e => setCustomDown(formatInput(e.target.value))} placeholder="Custom Down Payment" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
             )}
           </>
-        )}
-
-        {loanType.includes('VA') && (
-          <input value={customDown} onChange={e => setCustomDown(formatInput(e.target.value))} placeholder="Down Payment Amount" className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
         )}
 
         <select value={location} onChange={e => setLocation(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
