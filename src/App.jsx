@@ -214,7 +214,141 @@ const resetForm = () => {
         <h1 className="text-3xl font-bold text-center text-blue-300">Loan Estimate Generator</h1>
         <p className="text-center text-gray-400 text-sm">Compare multiple loan types side-by-side with detailed itemized estimates</p>
 
-        {/* You'll place all input UI elements (Section 5) above here if not already done */}
+        <div className="grid gap-4 sm:grid-cols-2 mt-6">
+  <input
+    type="text"
+    placeholder="Sales Price"
+    value={salesPrice}
+    onChange={(e) => {
+      const raw = e.target.value.replace(/[^0-9]/g, '');
+      const formatted = raw ? Number(raw).toLocaleString('en-US', {
+        style: 'currency', currency: 'USD', minimumFractionDigits: 0
+      }) : '';
+      setSalesPrice(formatted);
+    }}
+    className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
+  />
+
+  <select
+    value={location}
+    onChange={(e) => setLocation(e.target.value)}
+    className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
+  >
+    <option>Columbus, GA</option>
+    <option>Harris County, GA</option>
+    <option>Lee County, AL</option>
+    <option>Russell County, AL</option>
+  </select>
+
+  {location !== 'Columbus, GA' && (
+    <select
+      value={cityLimits}
+      onChange={(e) => setCityLimits(e.target.value)}
+      className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
+    >
+      <option>Inside</option>
+      <option>Outside</option>
+    </select>
+  )}
+</div>
+
+<div>
+  <p className="text-blue-200 font-semibold mt-6 mb-2">Select Loan Types to Compare:</p>
+  <div className="flex flex-wrap gap-2">
+    {loanOptions.map((type) => (
+      <button
+        key={type}
+        className={`px-3 py-1 rounded border ${
+          selectedLoanTypes.includes(type)
+            ? 'bg-blue-600 border-blue-400'
+            : 'bg-gray-700 border-gray-500'
+        }`}
+        onClick={() => toggleLoanType(type)}
+      >
+        {type}
+      </button>
+    ))}
+  </div>
+</div>
+
+{selectedLoanTypes.map((type) => {
+  const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
+  const presetOptions =
+    type === 'FHA' ? [3.5, 5] :
+    type === 'Conventional' ? [3, 5, 10, 15, 20] :
+    [5, 10, 15, 20];
+
+  return (
+    <div key={type} className="bg-gray-800 p-4 rounded-lg border border-gray-700 mt-4">
+      <h2 className="font-bold text-blue-400 mb-2">{type} Options</h2>
+      <select
+        value={downPayments[type] || ''}
+        onChange={(e) => handleDownChange(type, e.target.value)}
+        className="w-full px-4 py-2 border border-gray-600 bg-gray-900 rounded mb-2"
+      >
+        <option value="">Select Down Payment</option>
+        {presetOptions.map((percent) => (
+          <option key={percent} value={percent}>
+            {`${percent}% – ${formatCurrency(sales * (percent / 100))}`}
+          </option>
+        ))}
+        <option value="custom">Custom Amount</option>
+      </select>
+
+      {downPayments[type] === 'custom' && (
+        <input
+          type="text"
+          placeholder="Custom Down Payment"
+          value={customDowns[type] || ''}
+          onChange={(e) => {
+            const raw = e.target.value.replace(/[^0-9]/g, '');
+            const formatted = raw ? Number(raw).toLocaleString('en-US', {
+              style: 'currency', currency: 'USD', minimumFractionDigits: 0
+            }) : '';
+            handleCustomChange(type, formatted);
+          }}
+          className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded mb-2"
+        />
+      )}
+
+      <input
+        type="text"
+        placeholder={`${type} Interest Rate`}
+        value={interestRates[type] || ''}
+        onChange={(e) => {
+          const raw = e.target.value.replace(/[^0-9.]/g, '');
+          const formatted = raw ? `${raw}%` : '';
+          setInterestRates((prev) => ({ ...prev, [type]: formatted }));
+        }}
+        className="w-full px-4 py-2 border border-gray-600 bg-gray-900 rounded"
+      />
+    </div>
+  );
+})}
+
+<div className="grid gap-4 sm:grid-cols-2 mt-6">
+  <input
+    type="date"
+    value={closingDate}
+    onChange={(e) => setClosingDate(e.target.value)}
+    className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
+  />
+  <div className="flex gap-2">
+    <button
+      onClick={calculateEstimate}
+      className="bg-green-600 hover:bg-green-700 transition text-white font-bold px-4 py-2 rounded w-full"
+    >
+      Get Estimate
+    </button>
+    <button
+      onClick={resetForm}
+      className="bg-red-600 hover:bg-red-700 transition text-white font-bold px-4 py-2 rounded w-full"
+    >
+      Clear
+    </button>
+  </div>
+</div>
+
 
         {results.length > 0 && (
           <div className="space-y-10 mt-10" ref={resultsRef}>
