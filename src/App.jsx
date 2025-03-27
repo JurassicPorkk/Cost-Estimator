@@ -150,7 +150,7 @@ const calculateEstimate = () => {
       const daysUntilNextMonth = closing.endOf('month').diff(closing, 'day');
       const prepaidInterest = (loanAmount * rate / 365) * daysUntilNextMonth;
       const insuranceCushion = insurance / 12 * 3;
-      const propertyTaxEscrow = monthlyTaxHomestead * 4;
+      const propertyTaxEscrow = monthlyTaxHomestead * 3;
       const prepaids = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
 
       const totalCashToClose = downPaymentAmount + closingCosts + prepaids;
@@ -183,7 +183,7 @@ const calculateEstimate = () => {
           { label: `Prepaid Interest (${daysUntilNextMonth} days)`, value: formatCurrency(prepaidInterest) },
           { label: 'Insurance (1yr prepaid)', value: formatCurrency(insurance) },
           { label: 'Insurance Cushion (3 mo)', value: formatCurrency(insuranceCushion) },
-          { label: 'Property Tax Escrow (4 mo)', value: formatCurrency(propertyTaxEscrow) }
+          { label: 'Property Tax Escrow (3 mo)', value: formatCurrency(propertyTaxEscrow) }
         ],
         prepaids: formatCurrency(prepaids),
         totalCashToClose: formatCurrency(totalCashToClose)
