@@ -1,4 +1,4 @@
-// FULL APP.JSX WITH FHA DOWN PAYMENT FIX AND VISIBLE UI
+// FULL APP.JSX WITH HYBRID DOWN PAYMENT SYSTEM FOR FHA & CONVENTIONAL
 import React, { useState, useEffect } from 'react';
 
 function unformatCurrency(value) {
@@ -9,18 +9,37 @@ function formatCurrency(value) {
   return `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 }
 
+function generateDownPaymentOptions(percentages, sales) {
+  return percentages.map((p) => {
+    const amount = sales * (p / 100);
+    return {
+      label: `${p}% – ${formatCurrency(amount)}`,
+      value: amount
+    };
+  });
+}
+
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
   const [interestRate, setInterestRate] = useState('');
   const [loanType, setLoanType] = useState('VA First');
   const [location, setLocation] = useState('Columbus, GA');
   const [cityLimits, setCityLimits] = useState('Inside');
-  const [downPayment, setDownPayment] = useState(5);
+  const [downPaymentPreset, setDownPaymentPreset] = useState('');
+  const [customDownPayment, setCustomDownPayment] = useState('');
   const [result, setResult] = useState(null);
 
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
+
+  const getSales = () => parseFloat(unformatCurrency(salesPrice)) || 0;
+
+  const getDownPaymentAmount = () => {
+    const preset = parseFloat(downPaymentPreset);
+    const custom = parseFloat(unformatCurrency(customDownPayment));
+    return !isNaN(custom) && custom > 0 ? custom : !isNaN(preset) ? preset : 0;
+  };
 
   const clearForm = () => {
     setSalesPrice('');
@@ -28,7 +47,8 @@ export default function App() {
     setLoanType('VA First');
     setLocation('Columbus, GA');
     setCityLimits('Inside');
-    setDownPayment(5);
+    setDownPaymentPreset('');
+    setCustomDownPayment('');
     setResult(null);
   };
 
@@ -49,25 +69,35 @@ export default function App() {
   };
 
   const calculateEstimate = () => {
-    const sales = parseFloat(unformatCurrency(salesPrice));
+    const sales = getSales();
     const rate = parseFloat(unformatCurrency(interestRate)) / 100;
     const insurance = 1500;
     const termMonths = 360;
+    const downPaymentAmount = getDownPaymentAmount();
+    const downPercent = downPaymentAmount / sales;
 
     let loanAmount = 0;
-    let downPaymentAmount = 0;
-
     if (loanType === 'Conventional') {
-      const downPaymentPercent = downPayment / 100;
-      downPaymentAmount = sales * downPaymentPercent;
       loanAmount = sales - downPaymentAmount;
     } else if (loanType === 'FHA') {
-      downPaymentAmount = sales * 0.035;
       const baseLoan = sales - downPaymentAmount;
       loanAmount = baseLoan * 1.0175;
-    } else if (loanType === 'VA First') loanAmount = sales * 1.0215;
-    else if (loanType === 'VA Second') loanAmount = sales * 1.033;
-    else if (loanType === 'VA Exempt') loanAmount = sales;
+    } else if (loanType.includes('VA')) {
+      const baseLoan = sales - downPaymentAmount;
+      let feePercent = 0;
+      if (loanType === 'VA First') {
+        if (downPercent >= 0.1) feePercent = 0.0125;
+        else if (downPercent >= 0.05) feePercent = 0.015;
+        else feePercent = 0.0215;
+      } else if (loanType === 'VA Second') {
+        if (downPercent >= 0.1) feePercent = 0.0125;
+        else if (downPercent >= 0.05) feePercent = 0.015;
+        else feePercent = 0.033;
+      } else {
+        feePercent = 0;
+      }
+      loanAmount = baseLoan * (1 + feePercent);
+    }
 
     const monthlyRate = rate / 12;
     const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
@@ -75,15 +105,16 @@ export default function App() {
 
     let monthlyMI = 0;
     if (loanType === 'Conventional') {
-      if (downPayment < 10) monthlyMI = (loanAmount * 0.0035) / 12;
-      else if (downPayment < 15) monthlyMI = (loanAmount * 0.0025) / 12;
-      else if (downPayment < 20) monthlyMI = (loanAmount * 0.0015) / 12;
+      if (downPercent < 0.10) monthlyMI = (loanAmount * 0.0035) / 12;
+      else if (downPercent < 0.15) monthlyMI = (loanAmount * 0.0025) / 12;
+      else if (downPercent < 0.20) monthlyMI = (loanAmount * 0.0015) / 12;
     }
-    if (loanType === 'FHA') monthlyMI = (loanAmount * 0.0055) / 12;
+    if (loanType === 'FHA') {
+      monthlyMI = (loanAmount * (downPercent >= 0.05 ? 0.005 : 0.0055)) / 12;
+    }
 
     let yearlyTaxHomestead = 0;
     let yearlyTaxNonHomestead = 0;
-
     if (location === 'Columbus, GA') {
       yearlyTaxHomestead = sales * 0.4 * 0.04153 - 543;
       yearlyTaxNonHomestead = sales * 0.4 * 0.04153;
@@ -150,28 +181,7 @@ export default function App() {
     const insuranceCushion = insurance / 12 * 3;
     const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
     const prepaidsTotal = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
-
     const totalCashToClose = closingCostsTotal + prepaidsTotal + downPaymentAmount;
-
-    const closingCostsItems = [
-      { label: 'Underwriting Fee', value: formatCurrency(underwritingFee) },
-      { label: 'Attorney Fee', value: formatCurrency(attorneyFee) },
-      { label: 'Title Search Fee', value: formatCurrency(titleSearchFee) },
-      { label: 'Recording Fee', value: formatCurrency(recordingFee) },
-      { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
-      { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
-      { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
-      { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
-      { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
-      { label: 'Transfer Tax', value: formatCurrency(transferTax) }
-    ];
-
-    const prepaidsItems = [
-      { label: 'Prepaid Interest (15 days)', value: formatCurrency(prepaidInterest) },
-      { label: 'Insurance (1yr prepaid)', value: formatCurrency(insurance) },
-      { label: 'Insurance Cushion (3 mo)', value: formatCurrency(insuranceCushion) },
-      { label: 'Property Tax Escrow (4 mo)', value: formatCurrency(propertyTaxEscrow) }
-    ];
 
     setResult({
       salesPrice: formatCurrency(sales),
@@ -184,9 +194,7 @@ export default function App() {
       monthlyTaxNonHomestead: formatCurrency(monthlyTaxNonHomestead),
       pitiHomestead: formatCurrency(pitiHomestead),
       pitiNonHomestead: formatCurrency(pitiNonHomestead),
-      closingCosts: closingCostsItems,
       totalClosingCosts: formatCurrency(closingCostsTotal),
-      prepaids: prepaidsItems,
       totalPrepaids: formatCurrency(prepaidsTotal),
       totalCashToClose: formatCurrency(totalCashToClose)
     });
@@ -194,7 +202,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      <div className="max-w-xl mx-auto space-y-6">
+      <div className="max-w-xl mx-auto space-y-4">
         <h1 className="text-2xl font-bold text-center">Loan Estimate Generator</h1>
 
         <input type="text" placeholder="Sales Price" value={salesPrice} onChange={handleSalesPriceChange} className="w-full p-2 rounded bg-gray-700 border border-gray-600" />
@@ -208,13 +216,38 @@ export default function App() {
           <option>Conventional</option>
         </select>
 
-        {loanType === 'Conventional' && (
-          <select value={downPayment} onChange={(e) => setDownPayment(Number(e.target.value))} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
-            <option value={5}>5% Down</option>
-            <option value={10}>10% Down</option>
-            <option value={15}>15% Down</option>
-            <option value={20}>20% Down</option>
-          </select>
+        {(loanType === 'Conventional' || loanType === 'FHA') && getSales() > 0 && (
+          <>
+            <select
+              className="w-full p-2 rounded bg-gray-700 border border-gray-600"
+              value={downPaymentPreset}
+              onChange={(e) => setDownPaymentPreset(e.target.value)}>
+              <option value="">Select Down Payment</option>
+              {generateDownPaymentOptions(
+                loanType === 'FHA' ? [3.5, 5, 10, 15] : [5, 10, 15, 20],
+                getSales()
+              ).map((opt, i) => (
+                <option key={i} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Or enter custom down payment"
+              value={customDownPayment}
+              onChange={(e) => setCustomDownPayment(e.target.value)}
+              className="w-full p-2 rounded bg-gray-700 border border-gray-600"
+            />
+          </>
+        )}
+
+        {loanType.includes('VA') && (
+          <input
+            type="text"
+            placeholder="VA Down Payment Amount"
+            value={customDownPayment}
+            onChange={(e) => setCustomDownPayment(e.target.value)}
+            className="w-full p-2 rounded bg-gray-700 border border-gray-600"
+          />
         )}
 
         <select value={location} onChange={(e) => setLocation(e.target.value)} className="w-full p-2 rounded bg-gray-700 border border-gray-600">
@@ -258,30 +291,12 @@ export default function App() {
 
             <h2 className="text-xl font-semibold text-blue-300">Closing Costs</h2>
             <div className="space-y-1 text-sm">
-              {result.closingCosts.map((item, index) => (
-                <div key={index} className="flex justify-between">
-                  <span>{item.label}:</span>
-                  <span>{item.value}</span>
-                </div>
-              ))}
-              <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
-                <span>Total Closing Costs:</span>
-                <span>{result.totalClosingCosts}</span>
-              </div>
+              <div className="flex justify-between"><span>Total Closing Costs:</span><span>{result.totalClosingCosts}</span></div>
             </div>
 
             <h2 className="text-xl font-semibold text-blue-300">Prepaids & Escrows</h2>
             <div className="space-y-1 text-sm">
-              {result.prepaids.map((item, index) => (
-                <div key={index} className="flex justify-between">
-                  <span>{item.label}:</span>
-                  <span>{item.value}</span>
-                </div>
-              ))}
-              <div className="flex justify-between font-semibold text-yellow-400 border-t border-gray-600 pt-2">
-                <span>Total Prepaids & Escrows:</span>
-                <span>{result.totalPrepaids}</span>
-              </div>
+              <div className="flex justify-between"><span>Total Prepaids & Escrows:</span><span>{result.totalPrepaids}</span></div>
             </div>
 
             <div className="flex justify-between font-bold text-orange-400 border-t border-gray-600 pt-4 text-lg">
