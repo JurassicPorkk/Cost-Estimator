@@ -40,12 +40,23 @@ export default function App() {
   };
 
   const getDownPaymentAmount = (loanType) => {
-    const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
-    const custom = parseFloat(unformatCurrency(customDowns[loanType] || '')) || 0;
-    const preset = parseFloat(downPayments[loanType]);
-    if (downPayments[loanType] === 'custom' && custom > 0) return custom;
-    return sales * (preset / 100);
-  };
+  const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
+  const custom = parseFloat(unformatCurrency(customDowns[loanType] || '')) || 0;
+  const preset = parseFloat(downPayments[loanType]);
+
+  if (downPayments[loanType] === 'custom' && custom > 0) return custom;
+
+  // Default to 0 down for VA loans if no selection made
+  if (
+    (loanType === 'VA First' || loanType === 'VA Second' || loanType === 'VA Exempt') &&
+    !downPayments[loanType]
+  ) {
+    return 0;
+  }
+
+  return sales * (preset / 100);
+};
+
 
   const getTaxValues = (location, cityLimits, sales) => {
     let taxHomestead = 0;
