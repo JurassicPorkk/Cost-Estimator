@@ -137,6 +137,7 @@ const calculateEstimate = () => {
       const recordingFee = 70;
       const creditReportFee = 140;
       const appraisalFee = loanType.includes('VA') ? location.includes('GA') ? 650 : 600 : loanType === 'FHA' ? 600 : 525;
+      const grmaFee = location === 'Columbus, GA' || location === 'Harris County, GA' ? 10 : 0;
 
       const ownerTitle = location === 'Columbus, GA' ? sales * 0.0022 : location === 'Harris County, GA' ? sales * 0.0024 : sales * 0.0011;
       const lenderTitle = location === 'Columbus, GA' ? loanAmount * 0.00352 : location === 'Harris County, GA' ? loanAmount * 0.0036 : loanAmount * 0.00216;
@@ -144,7 +145,7 @@ const calculateEstimate = () => {
       let transferTax = location === 'Columbus, GA' || location === 'Harris County, GA' ? sales / 1000 : (sales - loanAmount) / 1000;
       if (transferTax < 0) transferTax = 0;
 
-      const closingCosts = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
+      const closingCosts = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax + grmaFee;
 
       const closing = dayjs(closingDate);
       const daysUntilNextMonth = closing.endOf('month').diff(closing, 'day');
@@ -177,6 +178,7 @@ const calculateEstimate = () => {
           { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
           { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
           { label: 'Transfer Tax', value: formatCurrency(transferTax) }
+          { label: 'GRMA Fee', value: formatCurrency(grmaFee) }
         ],
         closingCosts: formatCurrency(closingCosts),
         prepaidsBreakdown: [
