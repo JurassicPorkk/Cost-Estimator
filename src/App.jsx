@@ -88,23 +88,38 @@ export default function App() {
 
     selectedLoanTypes.forEach((loanType) => {
       const downPaymentAmount = getDownPaymentAmount(loanType);
-      const loanBase = sales - downPaymentAmount;
-      let loanAmount = 0;
-      let fundingFee = 0;
+const loanBase = sales - downPaymentAmount;
+let loanAmount = 0;
+let fundingFee = 0;
 
-      if (loanType === 'Conventional') {
-        loanAmount = loanBase;
-      } else if (loanType === 'FHA') {
-        loanAmount = loanBase * 1.0175;
-      } else if (loanType === 'VA First') {
-        fundingFee = downPaymentAmount >= sales * 0.05 ? 0.015 : 0.0215;
-        loanAmount = loanBase * (1 + fundingFee);
-      } else if (loanType === 'VA Second') {
-        fundingFee = downPaymentAmount >= sales * 0.10 ? 0.0125 : 0.033;
-        loanAmount = loanBase * (1 + fundingFee);
-      } else if (loanType === 'VA Exempt') {
-        loanAmount = loanBase;
-      }
+const downPaymentPercent = (downPaymentAmount / sales) * 100;
+
+if (loanType === 'Conventional') {
+  loanAmount = loanBase;
+} else if (loanType === 'FHA') {
+  loanAmount = loanBase * 1.0175;
+} else if (loanType === 'VA First') {
+  if (downPaymentPercent >= 10) {
+    fundingFee = 0.0125;
+  } else if (downPaymentPercent >= 5) {
+    fundingFee = 0.015;
+  } else {
+    fundingFee = 0.0215;
+  }
+  loanAmount = loanBase + (loanBase * fundingFee);
+} else if (loanType === 'VA Second') {
+  if (downPaymentPercent >= 10) {
+    fundingFee = 0.0125;
+  } else if (downPaymentPercent >= 5) {
+    fundingFee = 0.015;
+  } else {
+    fundingFee = 0.033;
+  }
+  loanAmount = loanBase + (loanBase * fundingFee);
+} else if (loanType === 'VA Exempt') {
+  loanAmount = loanBase;
+}
+
 
       const monthlyRate = rate / 12;
       const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
