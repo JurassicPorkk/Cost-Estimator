@@ -240,16 +240,16 @@ const resetForm = () => {
     <option>Russell County, AL</option>
   </select>
 
-  {location !== 'Columbus, GA' && (
-    <select
-      value={cityLimits}
-      onChange={(e) => setCityLimits(e.target.value)}
-      className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
-    >
-      <option>Inside</option>
-      <option>Outside</option>
-    </select>
-  )}
+  {(location === 'Lee County, AL' || location === 'Russell County, AL') && (
+  <select
+    value={cityLimits}
+    onChange={(e) => setCityLimits(e.target.value)}
+    className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
+  >
+    <option>Inside</option>
+    <option>Outside</option>
+  </select>
+)}
 </div>
 
 <div>
