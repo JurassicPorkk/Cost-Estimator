@@ -445,16 +445,17 @@ const resetForm = () => {
           </div>
         </div>
 
-        {/* Final Cash to Close */}
-                            <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
+                  {/* Final Cash to Close */}
+          <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
             <span>Final Cash to Close:</span>
             <span>{res.totalCashToClose}</span>
           </div>
-        </div>
-      ))}
-    </div>
-  )}
-      </div> {/* closes max-w-4xl container */}
-    </div>   {/* closes min-h-screen wrapper */}
-  );
-}
+        </div> // closes loan estimate box
+      ))}      // closes map loop
+    </div>     // closes resultsRef container
+  )}           // closes conditional rendering
+
+      </div>   {/* closes max-w-4xl container */}
+    </div>     {/* closes min-h-screen wrapper */}
+  );           // closes return statement
+}             // closes App component
