@@ -1,3 +1,4 @@
+// FULL APP.JSX WITH FHA DOWN PAYMENT FIX AND VISIBLE UI
 import React, { useState, useEffect } from 'react';
 
 function unformatCurrency(value) {
@@ -60,8 +61,11 @@ export default function App() {
       const downPaymentPercent = downPayment / 100;
       downPaymentAmount = sales * downPaymentPercent;
       loanAmount = sales - downPaymentAmount;
-    } else if (loanType === 'FHA') loanAmount = sales * 0.965 * 1.0175;
-    else if (loanType === 'VA First') loanAmount = sales * 1.0215;
+    } else if (loanType === 'FHA') {
+      downPaymentAmount = sales * 0.035;
+      const baseLoan = sales - downPaymentAmount;
+      loanAmount = baseLoan * 1.0175;
+    } else if (loanType === 'VA First') loanAmount = sales * 1.0215;
     else if (loanType === 'VA Second') loanAmount = sales * 1.033;
     else if (loanType === 'VA Exempt') loanAmount = sales;
 
@@ -106,7 +110,6 @@ export default function App() {
 
     const monthlyTaxHomestead = yearlyTaxHomestead / 12;
     const monthlyTaxNonHomestead = yearlyTaxNonHomestead / 12;
-
     const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead + monthlyMI;
     const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead + monthlyMI;
 
@@ -141,6 +144,15 @@ export default function App() {
       if (transferTax < 0) transferTax = 0;
     }
 
+    const closingCostsTotal = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
+
+    const prepaidInterest = (loanAmount * rate / 365) * 15;
+    const insuranceCushion = insurance / 12 * 3;
+    const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
+    const prepaidsTotal = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
+
+    const totalCashToClose = closingCostsTotal + prepaidsTotal + downPaymentAmount;
+
     const closingCostsItems = [
       { label: 'Underwriting Fee', value: formatCurrency(underwritingFee) },
       { label: 'Attorney Fee', value: formatCurrency(attorneyFee) },
@@ -154,21 +166,12 @@ export default function App() {
       { label: 'Transfer Tax', value: formatCurrency(transferTax) }
     ];
 
-    const closingCostsTotal = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax;
-
-    const prepaidInterest = (loanAmount * rate / 365) * 15;
-    const insuranceCushion = insurance / 12 * 3;
-    const propertyTaxEscrow = (yearlyTaxHomestead / 12) * 4;
-
     const prepaidsItems = [
       { label: 'Prepaid Interest (15 days)', value: formatCurrency(prepaidInterest) },
       { label: 'Insurance (1yr prepaid)', value: formatCurrency(insurance) },
       { label: 'Insurance Cushion (3 mo)', value: formatCurrency(insuranceCushion) },
       { label: 'Property Tax Escrow (4 mo)', value: formatCurrency(propertyTaxEscrow) }
     ];
-
-    const prepaidsTotal = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
-    const totalCashToClose = closingCostsTotal + prepaidsTotal + downPaymentAmount;
 
     setResult({
       salesPrice: formatCurrency(sales),
