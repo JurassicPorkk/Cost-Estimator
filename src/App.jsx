@@ -177,7 +177,7 @@ const calculateEstimate = () => {
           { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
           { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
           { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
-          { label: 'Transfer Tax', value: formatCurrency(transferTax) }
+          { label: 'Transfer Tax', value: formatCurrency(transferTax) },
           { label: 'GRMA Fee', value: formatCurrency(grmaFee) }
         ],
         closingCosts: formatCurrency(closingCosts),
