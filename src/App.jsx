@@ -451,7 +451,7 @@ const resetForm = () => {
             <span>{res.totalCashToClose}</span>
           </div>
         </div> {/* closes loan estimate box */}
-))} {/* closes map loop */}
+)) {/* closes map loop */}
 </div> {/* closes resultsRef container */}
 )} {/* closes conditional rendering */}
 
