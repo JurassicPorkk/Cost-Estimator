@@ -15,6 +15,7 @@ export default function App() {
   const [selectedLoanTypes, setSelectedLoanTypes] = useState([]);
   const [downPayments, setDownPayments] = useState({});
   const [customDowns, setCustomDowns] = useState({});
+  const [interestRates, setInterestRates] = useState({});
   const [closingDate, setClosingDate] = useState(dayjs().format('YYYY-MM-DD'));
   const [location, setLocation] = useState('Columbus, GA');
   const [cityLimits, setCityLimits] = useState('Inside');
@@ -81,7 +82,6 @@ export default function App() {
   };
   const calculateEstimate = () => {
     const sales = parseFloat(unformatCurrency(salesPrice));
-    const rate = parseFloat(unformatCurrency(interestRate)) / 100;
     const insurance = 1500;
     const termMonths = 360;
     const resultsArray = [];
@@ -89,6 +89,7 @@ export default function App() {
     selectedLoanTypes.forEach((loanType) => {
       const downPaymentAmount = getDownPaymentAmount(loanType);
 const loanBase = sales - downPaymentAmount;
+const rate = parseFloat(unformatCurrency(interestRates[loanType])) / 100 || 0;
 let loanAmount = 0;
 let fundingFee = 0;
 
@@ -323,6 +324,17 @@ return (
               ))}
               <option value="custom">Custom Amount</option>
             </select>
+<input
+  type="text"
+  placeholder={`${type} Interest Rate`}
+  value={interestRates[type] || ''}
+  onChange={(e) => {
+    const raw = e.target.value.replace(/[^0-9.]/g, '');
+    const formatted = raw ? `${raw}%` : '';
+    setInterestRates((prev) => ({ ...prev, [type]: formatted }));
+  }}
+  className="w-full px-4 py-2 border border-gray-600 bg-gray-900 rounded mb-2"
+/>
 
             {downPayments[type] === 'custom' && (
               <input
