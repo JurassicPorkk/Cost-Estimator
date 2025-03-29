@@ -360,8 +360,7 @@ const resetForm = () => {
   </div>
 </div>
 
-
-        {results.length > 0 && (
+{results.length > 0 && (
   <div className="space-y-10 mt-10" ref={resultsRef}>
     <h2 className="text-2xl font-bold text-center text-blue-400 mb-6">Estimate Results</h2>
     <div className="grid md:grid-cols-2 gap-6">
@@ -422,9 +421,15 @@ const resetForm = () => {
             </div>
           </div>
 
-<div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
-      <span>Final Cash to Close:</span>
-      <span>{res.totalCashToClose}</span>
+          {/* Final Cash to Close */}
+          <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
+            <span>Final Cash to Close:</span>
+            <span>{res.totalCashToClose}</span>
+          </div>
+        </div>
+      ))}
     </div>
   </div>
-))}
+)}
+
+       
