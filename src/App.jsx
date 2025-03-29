@@ -216,7 +216,8 @@ const resetForm = () => {
         <h1 className="text-4xl font-semibold text-center text-blue-300 tracking-tight">Snapshot Pro</h1>
         <p className="text-center text-gray-400 text-sm font-light">by Dustin Steele</p>
 
-        <div className="bg-gray/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20">
+       <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20 space-y-6">
+  {/* Sales Price & Location */}
   <div className="grid gap-4 sm:grid-cols-2">
     <input
       type="text"
@@ -233,13 +234,13 @@ const resetForm = () => {
           : '';
         setSalesPrice(formatted);
       }}
-      className="w-full px-4 py-2 border border-gray-600 bg-gray-800/10 text-white rounded backdrop-blur-md placeholder-white/60"
+      className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded placeholder-white/60 backdrop-blur-md"
     />
 
     <select
       value={location}
       onChange={(e) => setLocation(e.target.value)}
-      className="w-full px-4 py-2 border border-gray-600 bg-gray-800 text-white rounded backdrop-blur-md"
+      className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded backdrop-blur-md"
     >
       <option>Columbus, GA</option>
       <option>Harris County, GA</option>
@@ -251,7 +252,7 @@ const resetForm = () => {
       <select
         value={cityLimits}
         onChange={(e) => setCityLimits(e.target.value)}
-        className="w-full px-4 py-2 border border-gray-600 bg-gray-800 text-white rounded backdrop-blur-md"
+        className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded backdrop-blur-md"
       >
         <option>Inside</option>
         <option>Outside</option>
@@ -259,7 +260,8 @@ const resetForm = () => {
     )}
   </div>
 
-  <div className="mt-6">
+  {/* Loan Type Selection */}
+  <div>
     <p className="text-blue-200 font-semibold mb-2">Select Loan Types to Compare:</p>
     <div className="flex flex-wrap gap-2">
       {loanOptions.map((type) => (
