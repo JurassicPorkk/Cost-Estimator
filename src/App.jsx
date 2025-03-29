@@ -287,12 +287,13 @@ const resetForm = () => {
     [5, 10, 15, 20];
 
   return (
-    <div key={type} className="bg-gray-800 p-4 rounded-lg border border-gray-700 mt-4">
-      <h2 className="font-bold text-blue-400 mb-2">{type} Options</h2>
+    <div key={type} className="bg-white/10 backdrop-blur-lg p-6 mt-6 rounded-xl shadow-lg border border-white/20 space-y-4">
+      <h2 className="text-xl font-semibold text-blue-300">{type} Options</h2>
+
       <select
         value={downPayments[type] || ''}
         onChange={(e) => handleDownChange(type, e.target.value)}
-        className="w-full px-4 py-2 border border-gray-600 bg-gray-900 rounded mb-2"
+        className="w-full px-4 py-2 border border-gray-400 bg-white/10 text-white rounded"
       >
         <option value="">Select Down Payment</option>
         {presetOptions.map((percent) => (
@@ -311,11 +312,13 @@ const resetForm = () => {
           onChange={(e) => {
             const raw = e.target.value.replace(/[^0-9]/g, '');
             const formatted = raw ? Number(raw).toLocaleString('en-US', {
-              style: 'currency', currency: 'USD', minimumFractionDigits: 0
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0
             }) : '';
             handleCustomChange(type, formatted);
           }}
-          className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded mb-2"
+          className="w-full px-4 py-2 border border-gray-400 bg-white/10 text-white rounded"
         />
       )}
 
@@ -328,7 +331,7 @@ const resetForm = () => {
           const formatted = raw ? `${raw}%` : '';
           setInterestRates((prev) => ({ ...prev, [type]: formatted }));
         }}
-        className="w-full px-4 py-2 border border-gray-600 bg-gray-900 rounded"
+        className="w-full px-4 py-2 border border-gray-400 bg-white/10 text-white rounded"
       />
     </div>
   );
