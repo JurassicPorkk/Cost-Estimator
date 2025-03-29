@@ -356,18 +356,23 @@ const resetForm = () => {
     className="w-full px-4 py-2 border border-white/20 bg-white/10 text-white rounded-md backdrop-blur-md placeholder-white/60"
   />
   <div className="flex gap-2">
-    <button
-      onClick={calculateEstimate}
-      className="bg-green-600 hover:bg-green-700 transition text-white font-bold px-4 py-2 rounded-md w-full shadow-md"
-    >
-      Get Estimate
-    </button>
-    <button
-      onClick={resetForm}
-      className="bg-red-600 hover:bg-red-700 transition text-white font-bold px-4 py-2 rounded-md w-full shadow-md"
-    >
-      Clear
-    </button>
+    <motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={calculateEstimate}
+  className="bg-green-600 hover:bg-green-700 transition text-white font-bold px-4 py-2 rounded-md w-full shadow-md"
+>
+  Get Estimate
+</motion.button>
+    <motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={calculateEstimate}
+  className="bg-red-600 hover:bg-red-700 transition text-white font-bold px-4 py-2 rounded-md w-full shadow-md"
+>
+  Clear
+</motion.button>
+
   </div>
 </div>
 
