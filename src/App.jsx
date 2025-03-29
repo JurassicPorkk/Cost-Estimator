@@ -233,7 +233,7 @@ const resetForm = () => {
           : '';
         setSalesPrice(formatted);
       }}
-      className="w-full px-4 py-2 border border-gray-600 bg-gray/10 text-white rounded backdrop-blur-md placeholder-white/60"
+      className="w-full px-4 py-2 border border-gray-600 bg-gray-800/10 text-white rounded backdrop-blur-md placeholder-white/60"
     />
 
     <select
