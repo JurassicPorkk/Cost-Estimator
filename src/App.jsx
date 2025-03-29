@@ -216,7 +216,7 @@ const resetForm = () => {
         <h1 className="text-3xl font-bold text-center text-blue-300">Loan Estimate Generator</h1>
         <p className="text-center text-gray-400 text-sm">Compare multiple loan types side-by-side with detailed itemized estimates</p>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20">
+        <div className="bg-gray/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20">
   <div className="grid gap-4 sm:grid-cols-2">
     <input
       type="text"
