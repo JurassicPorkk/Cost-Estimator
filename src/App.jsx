@@ -214,7 +214,15 @@ const resetForm = () => {
     return (
     <div className="min-h-screen bg-gray-900 text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
-        <h1 className="text-4xl font-semibold text-center text-blue-300 tracking-tight">Snapshot Pro</h1>
+       <motion.h1
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.6 }}
+  className="text-3xl font-bold text-center text-blue-300"
+>
+  Snapshot Pro
+</motion.h1>
+
         <p className="text-center text-gray-400 text-sm font-light">by Dustin Steele</p>
 
        <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20 space-y-6">
