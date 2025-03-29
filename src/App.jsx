@@ -211,10 +211,10 @@ const resetForm = () => {
     setResults([]);
   };
     return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-gray-900 text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
-        <h1 className="text-3xl font-bold text-center text-blue-300">Loan Estimate Generator</h1>
-        <p className="text-center text-gray-400 text-sm">Compare multiple loan types side-by-side with detailed itemized estimates</p>
+        <h1 className="text-4xl font-semibold text-center text-blue-300 tracking-tight">Loan Estimate Generator</h1>
+        <p className="text-center text-gray-400 text-sm font-light">Compare multiple loan types side-by-side with detailed itemized estimates</p>
 
         <div className="bg-gray/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20">
   <div className="grid gap-4 sm:grid-cols-2">
