@@ -371,14 +371,18 @@ const resetForm = () => {
   </div>
 </div>
 
-{results.map((res, index) => (
-  <motion.div
-    key={index}
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6, delay: index * 0.2 }}
-  className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20 text-white space-y-4"
->
+{results.length > 0 && (
+  <div className="space-y-10 mt-10" ref={resultsRef}>
+    <h2 className="text-2xl font-bold text-center text-blue-400 mb-6">Estimate Results</h2>
+    <div className="grid md:grid-cols-2 gap-6">
+      {results.map((res, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: index * 0.2 }}
+          className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20 text-white space-y-4"
+        >
           <h2 className="text-xl font-bold text-blue-300 text-center">{res.loanType} Loan</h2>
 
           {/* Loan Summary */}
@@ -436,11 +440,11 @@ const resetForm = () => {
             <span>Final Cash to Close:</span>
             <span>{res.totalCashToClose}</span>
           </div>
-        </motion.div> /
+        </motion.div>
       ))}
     </div>
   </div>
-        )}
+)}
       </div>
     </div>
   );
