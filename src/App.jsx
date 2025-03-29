@@ -216,60 +216,66 @@ const resetForm = () => {
         <h1 className="text-3xl font-bold text-center text-blue-300">Loan Estimate Generator</h1>
         <p className="text-center text-gray-400 text-sm">Compare multiple loan types side-by-side with detailed itemized estimates</p>
 
-        <div className="grid gap-4 sm:grid-cols-2 mt-6">
-  <input
-    type="text"
-    placeholder="Sales Price"
-    value={salesPrice}
-    onChange={(e) => {
-      const raw = e.target.value.replace(/[^0-9]/g, '');
-      const formatted = raw ? Number(raw).toLocaleString('en-US', {
-        style: 'currency', currency: 'USD', minimumFractionDigits: 0
-      }) : '';
-      setSalesPrice(formatted);
-    }}
-    className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
-  />
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20">
+  <div className="grid gap-4 sm:grid-cols-2">
+    <input
+      type="text"
+      placeholder="Sales Price"
+      value={salesPrice}
+      onChange={(e) => {
+        const raw = e.target.value.replace(/[^0-9]/g, '');
+        const formatted = raw
+          ? Number(raw).toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0
+            })
+          : '';
+        setSalesPrice(formatted);
+      }}
+      className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded backdrop-blur-md placeholder-white/60"
+    />
 
-  <select
-    value={location}
-    onChange={(e) => setLocation(e.target.value)}
-    className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
-  >
-    <option>Columbus, GA</option>
-    <option>Harris County, GA</option>
-    <option>Lee County, AL</option>
-    <option>Russell County, AL</option>
-  </select>
+    <select
+      value={location}
+      onChange={(e) => setLocation(e.target.value)}
+      className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded backdrop-blur-md"
+    >
+      <option>Columbus, GA</option>
+      <option>Harris County, GA</option>
+      <option>Lee County, AL</option>
+      <option>Russell County, AL</option>
+    </select>
 
-  {(location === 'Lee County, AL' || location === 'Russell County, AL') && (
-  <select
-    value={cityLimits}
-    onChange={(e) => setCityLimits(e.target.value)}
-    className="w-full px-4 py-2 border border-gray-600 bg-gray-800 rounded"
-  >
-    <option>Inside</option>
-    <option>Outside</option>
-  </select>
-)}
-</div>
-
-<div>
-  <p className="text-blue-200 font-semibold mt-6 mb-2">Select Loan Types to Compare:</p>
-  <div className="flex flex-wrap gap-2">
-    {loanOptions.map((type) => (
-      <button
-        key={type}
-        className={`px-3 py-1 rounded border ${
-          selectedLoanTypes.includes(type)
-            ? 'bg-blue-600 border-blue-400'
-            : 'bg-gray-700 border-gray-500'
-        }`}
-        onClick={() => toggleLoanType(type)}
+    {(location === 'Lee County, AL' || location === 'Russell County, AL') && (
+      <select
+        value={cityLimits}
+        onChange={(e) => setCityLimits(e.target.value)}
+        className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded backdrop-blur-md"
       >
-        {type}
-      </button>
-    ))}
+        <option>Inside</option>
+        <option>Outside</option>
+      </select>
+    )}
+  </div>
+
+  <div className="mt-6">
+    <p className="text-blue-200 font-semibold mb-2">Select Loan Types to Compare:</p>
+    <div className="flex flex-wrap gap-2">
+      {loanOptions.map((type) => (
+        <button
+          key={type}
+          className={`px-3 py-1 rounded border transition ${
+            selectedLoanTypes.includes(type)
+              ? 'bg-blue-600 border-blue-400'
+              : 'bg-white/10 border-gray-500 text-white'
+          }`}
+          onClick={() => toggleLoanType(type)}
+        >
+          {type}
+        </button>
+      ))}
+    </div>
   </div>
 </div>
 
