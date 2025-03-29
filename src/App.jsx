@@ -374,7 +374,12 @@ const resetForm = () => {
 {results.length > 0 && (
   <div className="space-y-10 mt-10" ref={resultsRef}>
     <h2 className="text-2xl font-bold text-center text-blue-400 mb-6">Estimate Results</h2>
-    <div className="grid md:grid-cols-2 gap-6">
+    <motion.div
+  className="grid md:grid-cols-2 gap-6"
+  initial={{ opacity: 0, y: 30 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, ease: 'easeOut' }}
+>
       {results.map((res, index) => (
         <motion.div
           key={index}
@@ -442,7 +447,7 @@ const resetForm = () => {
           </div>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
   </div>
 )}
       </div>
