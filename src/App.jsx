@@ -361,73 +361,67 @@ const resetForm = () => {
 </div>
 
 {results.length > 0 && (
-  <div className="space-y-10 mt-10" ref={resultsRef}>
-    <h2 className="text-2xl font-bold text-center text-blue-400 mb-6">Estimate Results</h2>
-    <div className="grid md:grid-cols-2 gap-6">
-      {results.map((res, index) => (
-        <div
-          key={index}
-          className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20 text-white space-y-4"
-        >
-          <h2 className="text-xl font-bold text-blue-300 text-center">{res.loanType} Loan</h2>
-
-          {/* Loan Summary */}
-          <div className="text-sm space-y-1">
-            <div className="font-semibold text-blue-200">Loan Summary</div>
-            <div>Loan Amount: {res.loanAmount}</div>
-            <div>Down Payment: {res.downPaymentAmount}</div>
-            <div>Principal & Interest: {res.principalInterest}</div>
-            <div>Insurance: {res.homeownersInsurance}</div>
-            <div>Tax (Homestead): {res.monthlyTaxHomestead}</div>
-            <div>Tax (Non-Homestead): {res.monthlyTaxNonHomestead}</div>
-            <div>Monthly MI: {res.monthlyMI}</div>
-          </div>
-
-          {/* PITI Summary */}
-          <div className="mt-2 font-semibold text-green-400 text-sm">
-            <div>PITI (Homestead): {res.pitiHomestead}</div>
-            <div>PITI (Non-Homestead): {res.pitiNonHomestead}</div>
-          </div>
-
-          {/* Closing Costs */}
-          <div>
-            <div className="text-blue-200 font-semibold mb-1">Closing Costs</div>
-            <div className="space-y-1 text-sm">
-              {res.closingCostsBreakdown.map((item, i) => (
-                <div key={i} className="flex justify-between">
-                  <span>{item.label}</span>
-                  <span>{item.value}</span>
+          <div className="space-y-10 mt-10" ref={resultsRef}>
+            <h2 className="text-2xl font-bold text-center text-blue-400 mb-6">Estimate Results</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {results.map((res, index) => (
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20 text-white space-y-4"
+                >
+                  <h2 className="text-xl font-bold text-blue-300 text-center">{res.loanType} Loan</h2>
+                  <div className="text-sm space-y-1">
+                    <div className="font-semibold text-blue-200">Loan Summary</div>
+                    <div>Loan Amount: {res.loanAmount}</div>
+                    <div>Down Payment: {res.downPaymentAmount}</div>
+                    <div>Principal & Interest: {res.principalInterest}</div>
+                    <div>Insurance: {res.homeownersInsurance}</div>
+                    <div>Tax (Homestead): {res.monthlyTaxHomestead}</div>
+                    <div>Tax (Non-Homestead): {res.monthlyTaxNonHomestead}</div>
+                    <div>Monthly MI: {res.monthlyMI}</div>
+                  </div>
+                  <div className="mt-2 font-semibold text-green-400 text-sm">
+                    <div>PITI (Homestead): {res.pitiHomestead}</div>
+                    <div>PITI (Non-Homestead): {res.pitiNonHomestead}</div>
+                  </div>
+                  <div>
+                    <div className="text-blue-200 font-semibold mb-1">Closing Costs</div>
+                    <div className="space-y-1 text-sm">
+                      {res.closingCostsBreakdown.map((item, i) => (
+                        <div key={i} className="flex justify-between">
+                          <span>{item.label}</span>
+                          <span>{item.value}</span>
+                        </div>
+                      ))}
+                      <div className="font-bold text-yellow-400 border-t border-gray-600 pt-2 mt-2">
+                        Total Closing Costs: {res.closingCosts}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-blue-200 font-semibold mb-1">Prepaids & Escrows</div>
+                    <div className="space-y-1 text-sm">
+                      {res.prepaidsBreakdown.map((item, i) => (
+                        <div key={i} className="flex justify-between">
+                          <span>{item.label}</span>
+                          <span>{item.value}</span>
+                        </div>
+                      ))}
+                      <div className="font-bold text-yellow-400 border-t border-gray-600 pt-2 mt-2">
+                        Total Prepaids: {res.prepaids}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
+                    <span>Final Cash to Close:</span>
+                    <span>{res.totalCashToClose}</span>
+                  </div>
                 </div>
               ))}
-              <div className="font-bold text-yellow-400 border-t border-gray-600 pt-2 mt-2">
-                Total Closing Costs: {res.closingCosts}
-              </div>
             </div>
           </div>
-
-          {/* Prepaids & Escrows */}
-          <div>
-            <div className="text-blue-200 font-semibold mb-1">Prepaids & Escrows</div>
-            <div className="space-y-1 text-sm">
-              {res.prepaidsBreakdown.map((item, i) => (
-                <div key={i} className="flex justify-between">
-                  <span>{item.label}</span>
-                  <span>{item.value}</span>
-                </div>
-              ))}
-              <div className="font-bold text-yellow-400 border-t border-gray-600 pt-2 mt-2">
-                Total Prepaids: {res.prepaids}
-              </div>
-            </div>
-          </div>
-
-          {/* Final Cash to Close */}
-          <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-gray-600 pt-4 mt-4">
-            <span>Final Cash to Close:</span>
-            <span>{res.totalCashToClose}</span>
-          </div>
-        </div>
-      ))}
+        )}
+      </div>
     </div>
-  </div>
-)}
+  );
+}
