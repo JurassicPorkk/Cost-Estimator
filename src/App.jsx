@@ -251,7 +251,7 @@ const resetForm = () => {
       <select
         value={cityLimits}
         onChange={(e) => setCityLimits(e.target.value)}
-        className="w-full px-4 py-2 border border-gray-600 bg-gray-800/10 text-white rounded backdrop-blur-md"
+        className="w-full px-4 py-2 border border-gray-600 bg-gray-800 text-white rounded backdrop-blur-md"
       >
         <option>Inside</option>
         <option>Outside</option>
