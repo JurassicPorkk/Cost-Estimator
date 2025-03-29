@@ -226,8 +226,7 @@ const resetForm = () => {
 
         <p className="text-center text-gray-400 text-sm font-light">by Dustin Steele</p>
 
-       <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-white/20 space-y-6">
-  {/* Sales Price & Location */}
+       <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-8 space-y-6">
   <div className="grid gap-4 sm:grid-cols-2">
     <input
       type="text"
@@ -244,13 +243,13 @@ const resetForm = () => {
           : '';
         setSalesPrice(formatted);
       }}
-      className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded placeholder-white/60 backdrop-blur-md"
+      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
 
     <select
       value={location}
       onChange={(e) => setLocation(e.target.value)}
-      className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded backdrop-blur-md"
+      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
     >
       <option>Columbus, GA</option>
       <option>Harris County, GA</option>
@@ -262,7 +261,7 @@ const resetForm = () => {
       <select
         value={cityLimits}
         onChange={(e) => setCityLimits(e.target.value)}
-        className="w-full px-4 py-2 border border-gray-600 bg-white/10 text-white rounded backdrop-blur-md"
+        className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option>Inside</option>
         <option>Outside</option>
@@ -270,18 +269,17 @@ const resetForm = () => {
     )}
   </div>
 
-  {/* Loan Type Selection */}
   <div>
     <p className="text-blue-200 font-semibold mb-2">Select Loan Types to Compare:</p>
     <div className="flex flex-wrap gap-2">
       {loanOptions.map((type) => (
         <button
           key={type}
-          className={`px-3 py-1 rounded border transition ${
+          className={`px-4 py-2 rounded-full border transition text-sm font-medium ${
             selectedLoanTypes.includes(type)
               ? 'bg-blue-600 border-blue-400'
-              : 'bg-white/10 border-gray-500 text-white'
-          }`}
+              : 'bg-white/10 border-white/20 text-white'
+          } hover:bg-blue-700/80`}
           onClick={() => toggleLoanType(type)}
         >
           {type}
