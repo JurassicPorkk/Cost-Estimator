@@ -435,7 +435,7 @@ const resetForm = () => {
             <span>Final Cash to Close:</span>
             <span>{res.totalCashToClose}</span>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   </div>
