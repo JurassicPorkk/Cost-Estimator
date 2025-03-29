@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
+import { motion } from 'framer-motion';
 
 const formatCurrency = (value) => {
   return `$${Number(value).toLocaleString(undefined, {
