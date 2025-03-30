@@ -323,9 +323,8 @@ const calculateEstimates = (id) => {
 <div className="mt-12">
   <div className="grid md:grid-cols-3 gap-6">
     {/* Result cards will be rendered here later */}
-    <div className="bg-white/10 border border-white/20 p-4 rounded-xl shadow text-sm text-white text-center italic">
     </div>
   </div>
 </div>
 </div>
-</div></div>)}
+</div>}
