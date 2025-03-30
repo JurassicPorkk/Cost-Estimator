@@ -174,6 +174,7 @@ const calculateEstimates = (id) => {
       3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
     });
     setExpandedEstimate(null);
+    setResults({});
   }; 
 
   return (
