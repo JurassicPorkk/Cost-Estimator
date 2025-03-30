@@ -353,42 +353,6 @@ const calculateEstimates = (id) => {
       </AnimatePresence>
     </motion.div>
   ))}
-  {/* Step 10: Results Summary Cards */}
-  {Object.keys(results).length > 0 && (
-  <div className="mt-16 space-y-10">
-    <h2 className="text-2xl font-bold text-center text-blue-400 mb-8">
-      All Estimate Summaries
-    </h2>
-    <div className="grid md:grid-cols-3 gap-6">
-    {Object.entries(results).map(([id, result]) => (
-        <motion.div
-          key={result.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="bg-white/5 border border-white/20 p-6 rounded-xl text-white text-sm space-y-2 shadow-md backdrop-blur-md"
-        >
-          <h3 className="text-xl font-bold text-blue-300 text-center">
-            Estimate {result.id}: {result.loanType}
-          </h3>
-          <div><strong>Loan Amount:</strong> {result.loanAmount}</div>
-          <div><strong>Down Payment:</strong> {result.downPayment}</div>
-          <div><strong>Principal & Interest:</strong> {result.principalAndInterest}</div>
-          <div><strong>Homeowners Insurance:</strong> {result.homeownersInsurance}</div>
-          <div><strong>Estimated Property Tax:</strong> {result.monthlyTax}</div>
-          <div><strong>Monthly MI:</strong> {result.monthlyMI}</div>
-          <div className="font-semibold text-green-400 border-t border-white/20 pt-2">
-            Total Monthly Payment: {result.totalPayment}
-          </div>
-          <div className="text-orange-400 font-bold flex justify-between border-t border-white/20 pt-4 mt-2 text-lg">
-            <span>Cash to Close:</span>
-            <span>{result.finalCashToClose}</span>
-          </div>
-        </motion.div>
-      ))}
-    </div>
-  </div>
-)}
 
  {/* Placeholder for Step 4: Estimate Results Display */}
 <div className="mt-12">
