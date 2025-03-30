@@ -3,10 +3,13 @@
 @tailwind utilities;
 
 body {
- [
-    option{
-    background-color: gray-800;
-    color: white;
+select{
+    background-color: #ffffff !important;
+}
+
+option{
+    background-color: gray-800 !important;
+    color: #ffffff;
 }
   
   font-family: 'Inter', sans-serif;
