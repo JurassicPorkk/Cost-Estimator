@@ -116,7 +116,7 @@ const calculateEstimates = (id) => {
   }; 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6 font-sans">
+    <div className="min-h-screen text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }}
