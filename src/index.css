@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 body {
+select{
+    background-color: hotpink !important;
+}
+
+option{
+    background-color: lime !important;
+    color: red !important;
+}
+  
   font-family: 'Inter', sans-serif;
 
   /* ✨ Optimized Mortgage Background for Snapshot Pro */
