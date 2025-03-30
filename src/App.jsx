@@ -282,7 +282,7 @@ const resetForm = () => {
       <select
         value={loanData[id]?.loanType || ''}
         onChange={(e) => handleLoanChange(id, 'loanType', e.target.value)}
-        className="w-full px-4 py-2 rounded-md border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-4 py-2 rounded-md border border-white/20 backdrop-blur-lg bg-transparent text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option value="">Select</option>
         <option value="Conventional">Conventional</option>
