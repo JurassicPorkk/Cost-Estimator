@@ -321,13 +321,11 @@ const calculateEstimates = (id) => {
 
  {/* Placeholder for Step 4: Estimate Results Display */}
 <div className="mt-12">
-  <h2 className="text-2xl font-bold text-center text-blue-300 mb-6">Estimate Results</h2>
   <div className="grid md:grid-cols-3 gap-6">
     {/* Result cards will be rendered here later */}
     <div className="bg-white/10 border border-white/20 p-4 rounded-xl shadow text-sm text-white text-center italic">
-      Results will appear here after calculation.
     </div>
   </div>
 </div>
 </div>
-</div>//</div>)}
+</div></div>)}
