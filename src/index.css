@@ -19,9 +19,12 @@ select {
 }
 
 select:hover {
-  background-color: ##5dade2;
+  background-color: dimgray;
 }
 
+  select:active {
+  background-color: darkgray;
+}
   
   font-family: 'Inter', sans-serif;
 
