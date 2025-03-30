@@ -18,8 +18,8 @@ select {
   background-color: gray-800;
 }
 
-  select:active {
-  background-color: darkgray;
+  select:hover {
+  background-color: dimgray;
 }
   
   font-family: 'Inter', sans-serif;
