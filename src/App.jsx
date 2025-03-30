@@ -390,9 +390,9 @@ const resetForm = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: index * 0.2 }}
-          className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20 text-white space-y-4"
+          className="bg-white/5 backdrop-blur-lg p-6 rounded-2xl shadow-2xl border border-white/10 text-white space-y-6 hover:ring-2 hover:ring-blue-500 transition-all duration-300"
         >
-          <h2 className="text-xl font-bold text-blue-300 text-center">{res.loanType} Loan</h2>
+          <h2 className="text-xl font-semibold text-center text-white/80 tracking-wide">{res.loanType} Loan</h2>
 
           {/* Loan Summary */}
           <div className="text-sm space-y-1">
@@ -415,14 +415,14 @@ const resetForm = () => {
           {/* Closing Costs */}
           <div>
             <div className="text-blue-200 font-semibold mb-1">Closing Costs</div>
-            <div className="space-y-1 text-sm">
+            <div className="space-y-1 text-sm text-white/80">
               {res.closingCostsBreakdown.map((item, i) => (
                 <div key={i} className="flex justify-between">
                   <span>{item.label}</span>
                   <span>{item.value}</span>
                 </div>
               ))}
-              <div className="font-bold text-yellow-400 border-t border-white/20 pt-2 mt-2">
+              <div className="font-semibold text-yellow-300 border-t border-white/10 pt-3 mt-4 text-sm">
                 Total Closing Costs: {res.closingCosts}
               </div>
             </div>
@@ -431,14 +431,14 @@ const resetForm = () => {
           {/* Prepaids & Escrows */}
           <div>
             <div className="text-blue-200 font-semibold mb-1">Prepaids & Escrows</div>
-            <div className="space-y-1 text-sm">
+            <div className="space-y-1 text-sm text-white/80">
               {res.prepaidsBreakdown.map((item, i) => (
                 <div key={i} className="flex justify-between">
                   <span>{item.label}</span>
                   <span>{item.value}</span>
                 </div>
               ))}
-              <div className="font-bold text-yellow-400 border-t border-white/20 pt-2 mt-2">
+              <div className="font-semibold text-yellow-300 border-t border-white/10 pt-3 mt-4 text-sm">
                 Total Prepaids: {res.prepaids}
               </div>
             </div>
