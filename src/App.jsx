@@ -166,23 +166,48 @@ const calculateEstimates = (id) => {
   }));
 };
 
-  const resetForm = () => {
-    setSalesPrice('');
-    setLoanData({
-      1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-      2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-      3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-    });
-    setExpandedEstimate(null);
-    setExpandedEstimates({
-      1: false,
-      2: false,
-      3: false,
-    });
-    setSelectedDownPaymentType({});
-    setCustomDownPayments({});
-    setResults({});
-  }; 
+const resetForm = () => {
+  setSalesPrice('');
+
+  setLoanData({
+    1: {
+      loanType: '',
+      interestRate: '',
+      downPayment: '',
+      location: 'Columbus, GA',
+      closingDate: dayjs().format('YYYY-MM-DD'),
+    },
+    2: {
+      loanType: '',
+      interestRate: '',
+      downPayment: '',
+      location: 'Columbus, GA',
+      closingDate: dayjs().format('YYYY-MM-DD'),
+    },
+    3: {
+      loanType: '',
+      interestRate: '',
+      downPayment: '',
+      location: 'Columbus, GA',
+      closingDate: dayjs().format('YYYY-MM-DD'),
+    },
+  });
+
+  setExpandedEstimates({
+    1: false,
+    2: false,
+    3: false,
+  });
+
+  setResults({
+    1: null,
+    2: null,
+    3: null,
+  });
+
+  setSelectedDownPaymentType({});
+  setCustomDownPayments({});
+}; 
 
   return (
     <div className="min-h-screen text-white p-6 font-sans">
@@ -394,14 +419,12 @@ const calculateEstimates = (id) => {
     transition={{ duration: 0.3 }}
     className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
   >
-    {/* Loan Summary */}
     <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">
       Loan Summary
     </h3>
     <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
     <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
 
-    {/* Monthly Payment */}
     <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
       Monthly Payment
     </h3>
@@ -413,7 +436,6 @@ const calculateEstimates = (id) => {
       Total Monthly Payment: {results[id].totalPayment}
     </div>
 
-    {/* Closing Costs */}
     <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
       Closing Costs
     </h3>
@@ -426,11 +448,10 @@ const calculateEstimates = (id) => {
     <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
     <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
     <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
-    <div className="text-orange-400 font-semibold pt-1">
+    <div className="text-orange-400 font-bold pt-1">
       Total Closing Costs: {results[id].totalClosingCosts}
     </div>
 
-    {/* Prepaids & Escrows */}
     <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
       Prepaids & Escrows
     </h3>
@@ -438,11 +459,10 @@ const calculateEstimates = (id) => {
     <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
     <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
     <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
-    <div className="text-orange-400 font-semibold pt-1">
+    <div className="text-orange-400 font-bold pt-1">
       Total Prepaids & Escrows: {results[id].totalPrepaids}
     </div>
 
-    {/* Final Total */}
     <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
       <span>Final Cash to Close:</span>
       <span>{results[id].finalCashToClose}</span>
