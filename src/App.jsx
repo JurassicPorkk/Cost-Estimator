@@ -213,8 +213,8 @@ const resetForm = () => {
     setResults([]);
   };
     return (
-    <div className="min-h-screen bg-gray-900 text-white p-6 font-sans">
-      <div className="max-w-6xl mx-auto space-y-10">
+      <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-black text-white font-sans antialiased">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
        <motion.h1
   initial={{ opacity: 0, scale: 0.9 }}
   animate={{ opacity: 1, scale: 1 }}
