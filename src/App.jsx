@@ -243,13 +243,13 @@ const resetForm = () => {
           : '';
         setSalesPrice(formatted);
       }}
-      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-white placeholder-white/60 backdrop-blur-md shadow-inner transition focus:outline-none focus:ring-2 focus:ring-blue-400"
     />
 
     <select
       value={location}
       onChange={(e) => setLocation(e.target.value)}
-      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-white placeholder-white/60 backdrop-blur-md shadow-inner transition focus:outline-none focus:ring-2 focus:ring-blue-400"
     >
       <option>Columbus, GA</option>
       <option>Harris County, GA</option>
@@ -261,7 +261,7 @@ const resetForm = () => {
       <select
         value={cityLimits}
         onChange={(e) => setCityLimits(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-white placeholder-white/60 backdrop-blur-md shadow-inner transition focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <option>Inside</option>
         <option>Outside</option>
