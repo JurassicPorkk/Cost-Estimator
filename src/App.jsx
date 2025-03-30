@@ -418,7 +418,7 @@ const calculateEstimates = (id) => {
     <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
     <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
     <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
-    <div className="text-white font-semibold pt-1">
+    <div className="text-orange-400 font-semibold pt-1">
       Total Closing Costs: {results[id].totalClosingCosts}
     </div>
 
@@ -430,7 +430,7 @@ const calculateEstimates = (id) => {
     <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
     <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
     <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
-    <div className="text-white font-semibold pt-1">
+    <div className="text-orange-400 font-semibold pt-1">
       Total Prepaids & Escrows: {results[id].totalPrepaids}
     </div>
 
