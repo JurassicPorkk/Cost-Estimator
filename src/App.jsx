@@ -380,27 +380,67 @@ const calculateEstimates = (id) => {
 
     {/* Results Display */}
     {results[id] && (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
-      >
-        <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
-        <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
-        <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
-        <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
-        <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
-        <div className="text-green-400 font-bold border-t border-white/10 pt-2">
-          Total Monthly Payment: {results[id].totalPayment}
-        </div>
-        {/* Final Cash to Close */}
-<div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
-  <span>Final Cash to Close:</span>
-  <span>{results[id].finalCashToClose}</span>
-</div>
-      </motion.div>
-    )}
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
+  >
+    {/* Loan Summary */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">
+      Loan Summary
+    </h3>
+    <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
+    <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
+
+    {/* Monthly Payment */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
+      Monthly Payment
+    </h3>
+    <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
+    <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
+    <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
+    <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
+    <div className="text-green-400 font-bold border-t border-white/10 pt-2">
+      Total Monthly Payment: {results[id].totalPayment}
+    </div>
+
+    {/* Closing Costs */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
+      Closing Costs
+    </h3>
+    <div><strong>Underwriting Fee:</strong> {results[id].breakdown.underwritingFee}</div>
+    <div><strong>Appraisal Fee:</strong> {results[id].breakdown.appraisalFee}</div>
+    <div><strong>Credit Report:</strong> {results[id].breakdown.creditReport}</div>
+    <div><strong>Attorney Fee:</strong> {results[id].breakdown.attorneyFee}</div>
+    <div><strong>Title Search:</strong> {results[id].breakdown.titleSearch}</div>
+    <div><strong>Recording Fee:</strong> {results[id].breakdown.recording}</div>
+    <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
+    <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
+    <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
+    <div className="text-white font-semibold pt-1">
+      Total Closing Costs: {results[id].totalClosingCosts}
+    </div>
+
+    {/* Prepaids & Escrows */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
+      Prepaids & Escrows
+    </h3>
+    <div><strong>Prepaid Interest:</strong> {results[id].breakdown.prepaidInterest}</div>
+    <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
+    <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
+    <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
+    <div className="text-white font-semibold pt-1">
+      Total Prepaids & Escrows: {results[id].totalPrepaids}
+    </div>
+
+    {/* Final Total */}
+    <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
+      <span>Final Cash to Close:</span>
+      <span>{results[id].finalCashToClose}</span>
+    </div>
+  </motion.div>
+)}
   </motion.div>
 )}
       </AnimatePresence>
