@@ -21,7 +21,7 @@ export default function App() {
       2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
       3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
     });
-  const [expandedEstimate, setExpandedEstimate] = useState(null);
+    const [expandedEstimates, setExpandedEstimates] = useState({});
   const handleLoanChange = (id, field, value) => {
     setLoanData((prev) => ({
       ...prev,
@@ -163,14 +163,19 @@ const calculateEstimates = (id) => {
       className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md"
     >
       <button
-        onClick={() => setExpandedEstimate((prev) => (prev === id ? null : id))}
+        onClick={() =>
+          setExpandedEstimates((prev) => ({
+            ...prev,
+            [id]: !prev[id],
+          }))
+        }        
         className="w-full font-semibold text-white text-center text-lg py-2 px-4 bg-blue-600 hover:bg-blue-700 transition rounded-lg shadow"
       >
         {`Estimate ${id}`}
       </button>
 
       <AnimatePresence>
-      {expandedEstimate === id && (
+      {expandedEstimates[id] && (
   <motion.div
     initial={{ opacity: 0, height: 0 }}
     animate={{ opacity: 1, height: 'auto' }}
