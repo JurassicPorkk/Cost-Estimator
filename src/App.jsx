@@ -161,7 +161,7 @@ const calculateEstimates = (id) => {
 </div>
 </div>
         
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
   {[1, 2, 3].map((id) => (
     <motion.div
       key={id}
