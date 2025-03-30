@@ -130,26 +130,27 @@ const calculateEstimates = (id) => {
 
         {/* Sales Price Input */}
         <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20 text-center">
-  <label className="block mb-2 text-blue-200 font-semibold text-center">Sales Price</label>
-  <div className="flex justify-center">
-    <input
-      type="text"
-      placeholder="Enter Sales Price"
-      value={salesPrice}
-      onChange={(e) => {
-        const raw = e.target.value.replace(/[^0-9]/g, '');
-        const formatted = raw
-          ? Number(raw).toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0
-            })
-          : '';
-        setSalesPrice(formatted);
-      }}
-      className="w-full max-w-sm px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
+  <label className="block mb-2 text-blue-200 font-semibold text-center">
+    Sales Price
+  </label>
+  <input
+    type="text"
+    placeholder="Enter"
+    value={salesPrice}
+    onChange={(e) => {
+      const raw = e.target.value.replace(/[^0-9]/g, '');
+      const formatted = raw
+        ? Number(raw).toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+          })
+        : '';
+      setSalesPrice(formatted);
+    }}
+    className="mx-auto block w-full max-w-xs px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
 </div>
         
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -326,6 +327,5 @@ const calculateEstimates = (id) => {
     {/* Result cards will be rendered here later */}
     </div>
   </div>
-</div>
 </div>
 </div>)}
