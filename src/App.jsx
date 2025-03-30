@@ -149,8 +149,7 @@ const calculateEstimates = (id) => {
             className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        // Step 2: Add Expandable Estimate Sections with Loan Info Inputs
-
+        
 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
   {[1, 2, 3].map((id) => (
     <motion.div
