@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 body {
-select{
-option{
+ [
+    option{
     background-color: gray-800;
     color: white;
 }
