@@ -1,15 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body {
-    font-family: 'Inter', sans-serif;
-  
-/* background.css - Snapshot Pro Lending Background */
-  background: linear-gradient(to bottom right, #0a0f24, #1e2a38);
-  background-image: 
-    url('https://github.com/JurassicPorkk/Cost-Estimator/blob/main/ChatGPT%20Image%20Mar%2030,%202025,%2001_00_40%20AM.png?raw=true'),
+  font-family: 'Inter', sans-serif;
+
+  /* ✨ Optimized Mortgage Background for Snapshot Pro */
+  background: 
+    linear-gradient(to bottom right, rgba(10, 15, 36, 0.9), rgba(30, 42, 56, 0.9)),
+    url('/ChatGPT%20Image%20Mar%2030,%202025,%2001_00_40%20AM.png'),
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.03), transparent 60%),
     radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 70%);
+  
   background-repeat: no-repeat, repeat, no-repeat;
   background-size: cover, auto, auto;
   background-attachment: fixed;
