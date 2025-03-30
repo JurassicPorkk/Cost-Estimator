@@ -270,12 +270,12 @@ const resetForm = () => {
   </div>
 
  <div>
-    <p className="text-blue-200 font-semibold mb-2">Select Loan Types to Compare:</p>
+    <p className="text-center-blue-200 font-semibold mb-2">Select Loan Types to Compare:</p>
     <div className="flex flex-wrap gap-2">
       {loanOptions.map((type) => (
         <button
           key={type}
-          className={`px-4 py-2 rounded-full border transition text-sm font-medium ${
+          className={`px-4 py-2 rounded-full border transition text-sm text-center font-medium ${
             selectedLoanTypes.includes(type)
               ? 'bg-blue-600 border-blue-400'
               : 'bg-white/10 border-white/20 text-white'
