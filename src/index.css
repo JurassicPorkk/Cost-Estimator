@@ -16,13 +16,6 @@ select {
   padding: 0.65em 2.5em 0.55em 0.75em;
   border-radius: var(--radius);
   background-color: gray-800;
- background-image:url(https://scontent.fhsv1-1.fna.fbcdn.net/v/t39.30808-6/272686436_105369468725428_371563721064394775_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=ygGU7l60K3UQ7kNvgEUe0gT&_nc_oc=Adl4z9EEvKkbUnCLFnZBkITgGQjeq6FcbI9suMQpdCMlO9ovILitkZ4DacZVSLl_rVw&_nc_zt=23&_nc_ht=scontent.fhsv1-1.fna&_nc_gid=CU6fjZv8U5PvpQxi4HAYyA&oh=00_AYGaQdp1oPIGmF5c_wmMvIYoDXxxzquX0bgmfcISKJHxng&oe=67EF7375);
-    linear-gradient(-135deg, transparent 50%, var(--accentBg) 50%),
-    linear-gradient(-225deg, transparent 50%, var(--accentBg) 50%),
-    linear-gradient(var(--accentBg) 42%, var(--accentFg) 42%);
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  background-size: 1px 100%, 20px 22px, 20px 22px, 20px 100%;
-  background-position: right 20px center, right bottom, right bottom, right bottom;   
 }
 
 select:hover {
