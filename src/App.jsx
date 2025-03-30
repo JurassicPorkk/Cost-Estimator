@@ -327,4 +327,4 @@ const calculateEstimates = (id) => {
   </div>
 </div>
 </div>
-</div>}
+</div>)}
