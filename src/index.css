@@ -22,7 +22,7 @@ select:hover {
   background-color: ##5dade2;
 }
 select:active {
-  color: #0051ff;
+  background-color: #0051ff;
   }
   
   font-family: 'Inter', sans-serif;
