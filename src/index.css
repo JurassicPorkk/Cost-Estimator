@@ -4,16 +4,15 @@
 body {
     font-family: 'Inter', sans-serif;
     @apply bg-background text-foreground;
-  }
   
-/* Customize scrollbars for modern feel */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+/* background.css - Snapshot Pro Lending Background */
+  background: linear-gradient(to bottom right, #0a0f24, #1e2a38);
+  background-image: 
+    url('https://github.com/JurassicPorkk/Cost-Estimator/blob/main/ChatGPT%20Image%20Mar%2030,%202025,%2001_00_40%20AM.png?raw=true'),
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.03), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 70%);
+  background-repeat: no-repeat, repeat, no-repeat;
+  background-size: cover, auto, auto;
+  background-attachment: fixed;
+  color: #ffffff;
 }
