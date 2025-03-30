@@ -289,7 +289,7 @@ const calculateEstimates = (id) => {
       All Estimate Summaries
     </h2>
     <div className="grid md:grid-cols-3 gap-6">
-      {estimates.map((result) => (
+    {Object.entries(results).map(([id, result]) => (
         <motion.div
           key={result.id}
           initial={{ opacity: 0, y: 20 }}
