@@ -32,6 +32,14 @@ export default function App() {
     }));
   };
   const [results, setResults] = useState({});
+  const [selectedDownPaymentType, setSelectedDownPaymentType] = useState({});
+const [customDownPayments, setCustomDownPayments] = useState({});
+const renderDownPaymentOptions = (loanType) => {
+  if (loanType === 'FHA') return [3.5, 5];
+  if (loanType === 'Conventional') return [3, 5, 10, 15, 20];
+  if (loanType?.includes('VA')) return [0, 5, 10, 15, 20];
+  return [];
+};
 
 const calculateEstimates = (id) => {
   const data = loanData[id];
@@ -210,16 +218,72 @@ const calculateEstimates = (id) => {
       />
     </div>
 
-    <div>
-      <label className="text-sm text-blue-200 block mb-1">Down Payment %</label>
-      <input
-        type="text"
-        value={loanData[id]?.downPayment || ''}
-        onChange={(e) => handleLoanChange(id, 'downPayment', e.target.value)}
-        placeholder="e.g. 5"
-        className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
-      />
-    </div>
+    {/* Down Payment Dropdown + Optional Custom Amount */}
+<div>
+  <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
+  <select
+    value={selectedDownPaymentType[id] || ''}
+    onChange={(e) => {
+      const value = e.target.value;
+      setSelectedDownPaymentType((prev) => ({ ...prev, [id]: value }));
+
+      // If not custom, store % directly
+      if (value !== 'custom') {
+        handleLoanChange(id, 'downPayment', value);
+      }
+    }}
+    className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
+  >
+    <option value="">Select Down Payment</option>
+    {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
+      <option key={pct} value={pct}>{pct}%</option>
+    ))}
+    <option value="custom">Custom Amount</option>
+  </select>
+
+  {/* Custom Amount Input Field */}
+  {/* Custom Amount Input - Paste this directly below the dropdown */}
+{selectedDownPaymentType[id] === 'custom' && (
+  <div className="mt-2">
+    <input
+      type="text"
+      placeholder="$ Enter amount"
+      value={
+        customDownPayments[id]
+          ? Number(customDownPayments[id]).toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0
+            })
+          : ''
+      }
+      onChange={(e) => {
+        const raw = e.target.value.replace(/[^0-9]/g, '');
+        const amount = parseFloat(raw);
+        const price = parseFloat(unformatCurrency(salesPrice));
+        const percent = price ? (amount / price) * 100 : 0;
+
+        let adjustedPercent = percent;
+
+        const type = loanData[id]?.loanType;
+
+        if (type === 'FHA' && percent < 3.5) adjustedPercent = 3.5;
+        if (type === 'Conventional' && percent < 3) adjustedPercent = 3;
+
+        setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
+        handleLoanChange(id, 'downPayment', adjustedPercent.toFixed(2));
+      }}
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    {(loanData[id]?.loanType === 'FHA' && parseFloat(loanData[id]?.downPayment) < 3.5) && (
+      <p className="text-xs text-red-400 mt-1">Minimum for FHA is 3.5%</p>
+    )}
+    {(loanData[id]?.loanType === 'Conventional' && parseFloat(loanData[id]?.downPayment) < 3) && (
+      <p className="text-xs text-red-400 mt-1">Minimum for Conventional is 3%</p>
+    )}
+  </div>
+)}
+</div>
 
     <div>
       <label className="text-sm text-blue-200 block mb-1">Property Location</label>
