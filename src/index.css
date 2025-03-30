@@ -5,6 +5,7 @@
 body {
 
 select {
+  color: white;
   background-color: gray-800;
   line-height: 1;
   outline: 0;
