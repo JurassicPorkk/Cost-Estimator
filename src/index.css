@@ -10,7 +10,7 @@ select {
   -ms-appearance: none;
   appearance: none;
   appearance: none;
-  color: gray-800;
+  color: gray;
   line-height: 1;
   outline: 0;
   padding: 0.65em 2.5em 0.55em 0.75em;
@@ -19,11 +19,7 @@ select {
 }
 
 select:hover {
-  background-color: gray-800;
-  background-image: linear-gradient gray-600,
-    linear-gradient(-135deg, transparent 50%, gray-600 50%),
-    linear-gradient(-225deg, transparent 50%, gray-600 50%),
-    linear-gradient(gray-600) 42%, gray-600 42%);
+  background-color: gray;
 }
 
   
