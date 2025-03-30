@@ -318,7 +318,7 @@ const resetForm = () => {
         handleLoanChange(id, 'downPayment', value);
       }
     }}
-    className="w-full px-4 py-2 rounded-md border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    className="w-full px-4 py-2 rounded-md border border-white/20 backdrop-blur-lg bg-transparent text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-gray-700"
   >
     <option value="">Select Down Payment</option>
     {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
@@ -359,7 +359,7 @@ const resetForm = () => {
         setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
         handleLoanChange(id, 'downPayment', adjustedPercent.toFixed(2));
       }}
-      className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-gray-700"
     />
     {(loanData[id]?.loanType === 'FHA' && parseFloat(loanData[id]?.downPayment) < 3.5) && (
       <p className="text-xs text-red-400 mt-1">Minimum for FHA is 3.5%</p>
@@ -376,7 +376,7 @@ const resetForm = () => {
       <select
         value={loanData[id]?.location || ''}
         onChange={(e) => handleLoanChange(id, 'location', e.target.value)}
-        className="w-full px-4 py-2 rounded-md border border-white/20 text-white"
+        className="w-full px-4 py-2 rounded-md border border-white/20 backdrop-blur-lg bg-transparent text-white focus:outline-none focus:ring-2 focus:ring-gray-700"
       >
         <option value="Columbus, GA">Columbus, GA</option>
         <option value="Harris County, GA">Harris County, GA</option>
