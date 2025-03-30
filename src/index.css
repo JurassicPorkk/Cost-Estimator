@@ -3,7 +3,6 @@
 @tailwind utilities;
 body {
     font-family: 'Inter', sans-serif;
-    @apply bg-background text-foreground;
   
 /* background.css - Snapshot Pro Lending Background */
   background: linear-gradient(to bottom right, #0a0f24, #1e2a38);
