@@ -1,451 +1,333 @@
+// App.jsx — Snapshot Pro Full UI Setup (Part 1: Imports & Setup)
+
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import { motion } from 'framer-motion';
-import "@fontsource/inter";
+import { motion, AnimatePresence } from 'framer-motion';
+import './index.css';
 
 const formatCurrency = (value) => {
   return `$${Number(value).toLocaleString(undefined, {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   })}`;
 };
 
 const unformatCurrency = (value) => value.replace(/[^0-9.]/g, '');
 
 export default function App() {
-  // Section 1: State Initialization
   const [salesPrice, setSalesPrice] = useState('');
-  const [selectedLoanTypes, setSelectedLoanTypes] = useState([]);
-  const [downPayments, setDownPayments] = useState({});
-  const [customDowns, setCustomDowns] = useState({});
-  const [interestRates, setInterestRates] = useState({});
-  const [closingDate, setClosingDate] = useState(dayjs().format('YYYY-MM-DD'));
-  const [location, setLocation] = useState('Columbus, GA');
-  const [cityLimits, setCityLimits] = useState('Inside');
-  const [results, setResults] = useState([]);
-  const resultsRef = React.useRef(null);
-
-  // Section 2: Dark Mode and Loan Types
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
-
-  const loanOptions = ['Conventional', 'FHA', 'VA First', 'VA Second', 'VA Exempt'];
-
-  const toggleLoanType = (type) => {
-    setSelectedLoanTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-    );
-  };
-
-  // Section 3: Input Handlers
-  const handleDownChange = (loanType, value) => {
-    setDownPayments({ ...downPayments, [loanType]: value });
-  };
-
-  const handleCustomChange = (loanType, value) => {
-    setCustomDowns({ ...customDowns, [loanType]: value });
-  };
-
-  const getDownPaymentAmount = (loanType) => {
-    const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
-    const custom = parseFloat(unformatCurrency(customDowns[loanType] || '')) || 0;
-    const preset = parseFloat(downPayments[loanType]);
-
-    if (downPayments[loanType] === 'custom' && custom > 0) return custom;
-    if (loanType.includes('VA') && !downPayments[loanType]) return 0;
-
-    return sales * (preset / 100);
-  };
-
-  // Section 4: Tax Calculation by County
-  const getTaxValues = (location, cityLimits, sales) => {
-    let taxHomestead = 0;
-    let taxNon = 0;
-
-    if (location === 'Columbus, GA') {
-      taxHomestead = sales * 0.4 * 0.04153 - 543;
-      taxNon = sales * 0.4 * 0.04153;
-    } else if (location === 'Lee County, AL') {
-      taxHomestead = cityLimits === 'Inside' ? sales * 0.1 * 0.054 + 169 : sales * 0.1 * 0.041 + 169;
-      taxNon = cityLimits === 'Inside' ? sales * 0.2 * 0.054 + 169 : sales * 0.2 * 0.041 + 169;
-    } else if (location === 'Russell County, AL') {
-      taxHomestead = cityLimits === 'Inside' ? sales * 0.1 * 0.059 - 74 : sales * 0.1 * 0.036 - 74;
-      taxNon = cityLimits === 'Inside' ? sales * 0.2 * 0.059 - 74 : sales * 0.2 * 0.036 - 74;
-    } else if (location === 'Harris County, GA') {
-      taxHomestead = sales * 0.4 * 0.02764;
-      taxNon = sales * 0.4 * 0.02764 - 50;
-    }
-
-    return {
-      monthlyTaxHomestead: taxHomestead / 12,
-      monthlyTaxNonHomestead: taxNon / 12
-    };
-  };
-const calculateEstimate = () => {
-    const sales = parseFloat(unformatCurrency(salesPrice));
-    const insurance = 1500;
-    const termMonths = 360;
-    const resultsArray = [];
-
-    selectedLoanTypes.forEach((loanType) => {
-      const downPaymentAmount = getDownPaymentAmount(loanType);
-      const loanBase = sales - downPaymentAmount;
-      const rate = parseFloat(unformatCurrency(interestRates[loanType])) / 100 || 0;
-      let loanAmount = 0;
-      let fundingFee = 0;
-
-      const downPaymentPercent = (downPaymentAmount / sales) * 100;
-
-      if (loanType === 'Conventional') {
-        loanAmount = loanBase;
-      } else if (loanType === 'FHA') {
-        loanAmount = loanBase * 1.0175;
-      } else if (loanType === 'VA First') {
-        if (downPaymentPercent >= 10) fundingFee = 0.0125;
-        else if (downPaymentPercent >= 5) fundingFee = 0.015;
-        else fundingFee = 0.0215;
-        loanAmount = loanBase + (loanBase * fundingFee);
-      } else if (loanType === 'VA Second') {
-        if (downPaymentPercent >= 10) fundingFee = 0.0125;
-        else if (downPaymentPercent >= 5) fundingFee = 0.015;
-        else fundingFee = 0.033;
-        loanAmount = loanBase + (loanBase * fundingFee);
-      } else if (loanType === 'VA Exempt') {
-        loanAmount = loanBase;
-      }
-
-      const monthlyRate = rate / 12;
-      const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
-      const homeownersInsurance = insurance / 12;
-      const { monthlyTaxHomestead, monthlyTaxNonHomestead } = getTaxValues(location, cityLimits, sales);
-
-      let monthlyMI = 0;
-      if (loanType === 'Conventional') {
-        if (downPaymentPercent === 3) monthlyMI = loanAmount * 0.004 / 12;
-        else if (downPaymentPercent > 3 && downPaymentPercent < 10) monthlyMI = loanAmount * 0.0035 / 12;
-        else if (downPaymentPercent >= 10 && downPaymentPercent < 15) monthlyMI = loanAmount * 0.0025 / 12;
-        else if (downPaymentPercent >= 15 && downPaymentPercent < 20) monthlyMI = loanAmount * 0.0015 / 12;
-      } else if (loanType === 'FHA') {
-        monthlyMI = loanAmount * (downPaymentPercent >= 5 ? 0.005 : 0.0055) / 12;
-      }
-
-      const pitiHomestead = principalInterest + homeownersInsurance + monthlyTaxHomestead + monthlyMI;
-      const pitiNonHomestead = principalInterest + homeownersInsurance + monthlyTaxNonHomestead + monthlyMI;
-
-      const underwritingFee = 1320;
-      const attorneyFee = 1075;
-      const titleSearchFee = 250;
-      const recordingFee = 70;
-      const creditReportFee = 140;
-      const appraisalFee = loanType.includes('VA') ? location.includes('GA') ? 650 : 600 : loanType === 'FHA' ? 600 : 525;
-      const grmaFee = location === 'Columbus, GA' || location === 'Harris County, GA' ? 10 : 0;
-
-      const ownerTitle = location === 'Columbus, GA' ? sales * 0.0022 : location === 'Harris County, GA' ? sales * 0.0024 : sales * 0.0011;
-      const lenderTitle = location === 'Columbus, GA' ? loanAmount * 0.00352 : location === 'Harris County, GA' ? loanAmount * 0.0036 : loanAmount * 0.00216;
-      const mortgageTax = location === 'Columbus, GA' || location === 'Harris County, GA' ? (loanAmount / 100) * 0.3 : (loanAmount / 100) * 0.15;
-      let transferTax = location === 'Columbus, GA' || location === 'Harris County, GA' ? sales / 1000 : (sales - loanAmount) / 1000;
-      if (transferTax < 0) transferTax = 0;
-
-      const closingCosts = underwritingFee + attorneyFee + titleSearchFee + recordingFee + creditReportFee + appraisalFee + ownerTitle + lenderTitle + mortgageTax + transferTax + grmaFee;
-
-      const closing = dayjs(closingDate);
-      const daysUntilNextMonth = closing.endOf('month').diff(closing, 'day');
-      const prepaidInterest = (loanAmount * rate / 365) * daysUntilNextMonth;
-      const insuranceCushion = insurance / 12 * 3;
-      const propertyTaxEscrow = monthlyTaxHomestead * 3;
-      const prepaids = prepaidInterest + insurance + insuranceCushion + propertyTaxEscrow;
-
-      const totalCashToClose = downPaymentAmount + closingCosts + prepaids;
-
-      resultsArray.push({
-        loanType,
-        loanAmount: formatCurrency(loanAmount),
-        downPaymentAmount: formatCurrency(downPaymentAmount),
-        principalInterest: formatCurrency(principalInterest),
-        homeownersInsurance: formatCurrency(homeownersInsurance),
-        monthlyTaxHomestead: formatCurrency(monthlyTaxHomestead),
-        monthlyTaxNonHomestead: formatCurrency(monthlyTaxNonHomestead),
-        monthlyMI: formatCurrency(monthlyMI),
-        pitiHomestead: formatCurrency(pitiHomestead),
-        pitiNonHomestead: formatCurrency(pitiNonHomestead),
-        closingCostsBreakdown: [
-          { label: 'Underwriting Fee', value: formatCurrency(underwritingFee) },
-          { label: 'Attorney Fee', value: formatCurrency(attorneyFee) },
-          { label: 'Title Search Fee', value: formatCurrency(titleSearchFee) },
-          { label: 'Recording Fee', value: formatCurrency(recordingFee) },
-          { label: 'Credit Report Fee', value: formatCurrency(creditReportFee) },
-          { label: 'Appraisal Fee', value: formatCurrency(appraisalFee) },
-          { label: "Owner's Title Insurance", value: formatCurrency(ownerTitle) },
-          { label: "Lender's Title Insurance", value: formatCurrency(lenderTitle) },
-          { label: 'Mortgage Tax', value: formatCurrency(mortgageTax) },
-          { label: 'Transfer Tax', value: formatCurrency(transferTax) },
-          { label: 'GRMA Fee', value: formatCurrency(grmaFee) }
-        ],
-        closingCosts: formatCurrency(closingCosts),
-        prepaidsBreakdown: [
-          { label: `Prepaid Interest (${daysUntilNextMonth} days)`, value: formatCurrency(prepaidInterest) },
-          { label: 'Insurance (1yr prepaid)', value: formatCurrency(insurance) },
-          { label: 'Insurance Cushion (3 mo)', value: formatCurrency(insuranceCushion) },
-          { label: 'Property Tax Escrow (3 mo)', value: formatCurrency(propertyTaxEscrow) }
-        ],
-        prepaids: formatCurrency(prepaids),
-        totalCashToClose: formatCurrency(totalCashToClose)
-      });
+  const [loanData, setLoanData] = useState({
+      1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
+      2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
+      3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
     });
-
-    setResults(resultsArray);
-    setTimeout(() => {
-      if (resultsRef.current) {
-        resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+  const [expandedEstimate, setExpandedEstimate] = useState(null);
+  const handleLoanChange = (id, field, value) => {
+    setLoanData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [field]: value
       }
-    }, 100);
+    }));
   };
-const resetForm = () => {
-    setSalesPrice('');
-    setSelectedLoanTypes([]);
-    setDownPayments({});
-    setCustomDowns({});
-    setInterestRates({});
-    setClosingDate(dayjs().format('YYYY-MM-DD'));
-    setLocation('Columbus, GA');
-    setCityLimits('Inside');
-    setResults([]);
-  };
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6 font-sans">
-    <div className="max-w-6xl mx-auto space-y-10">
-      <motion.h1
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="text-4xl font-extrabold text-center text-white tracking-tight"
-      >
-        Snapshot Pro
-      </motion.h1>
-      <p className="text-center text-sm text-gray-400">by Dustin Steele</p>
+  const [results, setResults] = useState({});
 
-      {/* Sales Price Input */}
-      <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20">
-        <label className="block mb-2 text-blue-200 font-semibold">Sales Price</label>
-        <input
-          type="text"
-          placeholder="Enter Sales Price"
-          value={salesPrice}
-          onChange={(e) => {
-            const raw = e.target.value.replace(/[^0-9]/g, '');
-            const formatted = raw
-              ? Number(raw).toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  minimumFractionDigits: 0
-                })
-              : '';
-            setSalesPrice(formatted);
-          }}
-          className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      {/* Estimate Buttons */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[1, 2, 3].map((id) => (
-          <motion.div
-            key={id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: id * 0.1 }}
-            className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md"
-          >
-            <button
-              onClick={() =>
-                setExpandedEstimate((prev) => (prev === id ? null : id))
-              }
-              className="w-full font-semibold text-white text-center text-lg py-2 px-4 bg-blue-600 hover:bg-blue-700 transition rounded-lg shadow"
-            >
-              {`Estimate ${id}`}
-            </button>
-
-            {/* Reveal Form Placeholder */}
-            <AnimatePresence>
-              {expandedEstimate === id && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="overflow-hidden mt-4 space-y-3"
-                >
-                  <p className="text-sm text-blue-300 italic">Estimate {id} details will go here.</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </div>
-  );
-{selectedLoanTypes.map((type) => {
+const calculateEstimates = (id) => {
+  const data = loanData[id];
   const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
-  const presetOptions =
-    type === 'FHA' ? [3.5, 5] :
-    type === 'Conventional' ? [3, 5, 10, 15, 20] :
-    [5, 10, 15, 20];
+  const rate = parseFloat(data.interestRate) / 100 || 0;
+  const downPercent = parseFloat(data.downPayment) || 0;
+  const loanBase = sales - (sales * downPercent / 100);
+  const insurance = 1500;
+  const termMonths = 360;
+
+  let loanAmount = 0;
+  let fundingFee = 0;
+
+  if (data.loanType === 'Conventional') {
+    loanAmount = loanBase;
+  } else if (data.loanType === 'FHA') {
+    loanAmount = loanBase * 1.0175;
+  } else if (data.loanType === 'VA First') {
+    if (downPercent >= 10) fundingFee = 0.0125;
+    else if (downPercent >= 5) fundingFee = 0.015;
+    else fundingFee = 0.0215;
+    loanAmount = loanBase + loanBase * fundingFee;
+  } else if (data.loanType === 'VA Second') {
+    if (downPercent >= 10) fundingFee = 0.0125;
+    else if (downPercent >= 5) fundingFee = 0.015;
+    else fundingFee = 0.033;
+    loanAmount = loanBase + loanBase * fundingFee;
+  } else if (data.loanType === 'VA Exempt') {
+    loanAmount = loanBase;
+  }
+
+  const monthlyRate = rate / 12;
+  const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
+  const homeownersInsurance = insurance / 12;
+
+  // Simplified tax formula — customize as needed per your rules
+  const monthlyTax = (sales * 0.4 * 0.04153) / 12;
+
+  // Simplified MI logic
+  let monthlyMI = 0;
+  if (data.loanType === 'Conventional' && downPercent < 20) {
+    monthlyMI = loanAmount * 0.0035 / 12;
+  } else if (data.loanType === 'FHA') {
+    monthlyMI = loanAmount * (downPercent >= 5 ? 0.005 : 0.0055) / 12;
+  }
+
+  const piti = principalInterest + homeownersInsurance + monthlyTax + monthlyMI;
+
+  const result = {
+    loanAmount: formatCurrency(loanAmount),
+    principalInterest: formatCurrency(principalInterest),
+    homeownersInsurance: formatCurrency(homeownersInsurance),
+    monthlyTax: formatCurrency(monthlyTax),
+    monthlyMI: formatCurrency(monthlyMI),
+    totalPayment: formatCurrency(piti),
+    finalCashToClose: formatCurrency(
+      (sales * (downPercent / 100)) + // Down Payment
+      1320 + // Underwriting Fee
+      1075 + // Attorney Fee
+      250 +  // Title Search
+      70 +   // Recording
+      140 +  // Credit Report
+      525 +  // Appraisal
+      1500   // Prepaid Homeowners
+    ),
+  };
+
+  setResults((prev) => ({
+    ...prev,
+    [id]: result
+  }));
+};
+
+  const resetForm = () => {
+    setSalesPrice('');
+    setLoanData({
+      1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
+      2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
+      3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
+    });
+    setExpandedEstimate(null);
+  }; 
 
   return (
-    <div key={type} className="bg-white/10 backdrop-blur-lg p-6 mt-6 rounded-xl shadow-lg border border-white/20 space-y-4">
-      <h2 className="text-xl font-semibold text-blue-300">{type} Options</h2>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6 font-sans">
+      <div className="max-w-6xl mx-auto space-y-10">
+        <motion.h1
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-4xl font-extrabold text-center text-white tracking-tight"
+        >
+          Snapshot Pro
+        </motion.h1>
+        <p className="text-center text-sm text-gray-400">by Dustin Steele</p>
 
-      <select
-        value={downPayments[type] || ''}
-        onChange={(e) => handleDownChange(type, e.target.value)}
-        className="w-full px-4 py-2 border border-gray-400 bg-white/10 text-white rounded"
+        {/* Sales Price Input */}
+        <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20">
+          <label className="block mb-2 text-blue-200 font-semibold">Sales Price</label>
+          <input
+            type="text"
+            placeholder="Enter Sales Price"
+            value={salesPrice}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9]/g, '');
+              const formatted = raw
+                ? Number(raw).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0
+                  })
+                : '';
+              setSalesPrice(formatted);
+            }}
+            className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        // Step 2: Add Expandable Estimate Sections with Loan Info Inputs
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  {[1, 2, 3].map((id) => (
+    <motion.div
+      key={id}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: id * 0.1 }}
+      className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md"
+    >
+      <button
+        onClick={() => setExpandedEstimate((prev) => (prev === id ? null : id))}
+        className="w-full font-semibold text-white text-center text-lg py-2 px-4 bg-blue-600 hover:bg-blue-700 transition rounded-lg shadow"
       >
-        <option value="">Select Down Payment</option>
-        {presetOptions.map((percent) => (
-          <option key={percent} value={percent}>
-            {`${percent}% – ${formatCurrency(sales * (percent / 100))}`}
-          </option>
-        ))}
-        <option value="custom">Custom Amount</option>
-      </select>
+        {`Estimate ${id}`}
+      </button>
 
-      {downPayments[type] === 'custom' && (
-        <input
-          type="text"
-          placeholder="Custom Down Payment"
-          value={customDowns[type] || ''}
-          onChange={(e) => {
-            const raw = e.target.value.replace(/[^0-9]/g, '');
-            const formatted = raw ? Number(raw).toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0
-            }) : '';
-            handleCustomChange(type, formatted);
-          }}
-          className="w-full px-4 py-2 border border-gray-400 bg-white/10 text-white rounded"
-        />
-      )}
+      <AnimatePresence>
+      {expandedEstimate === id && (
+  <motion.div
+    initial={{ opacity: 0, height: 0 }}
+    animate={{ opacity: 1, height: 'auto' }}
+    exit={{ opacity: 0, height: 0 }}
+    className="overflow-hidden mt-4 space-y-4"
+  >
+    {/* Loan Inputs */}
+    <div>
+      <label className="text-sm text-blue-200 block mb-1">Loan Type</label>
+      <select
+        value={loanData[id]?.loanType || ''}
+        onChange={(e) => handleLoanChange(id, 'loanType', e.target.value)}
+        className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
+      >
+        <option value="">Select</option>
+        <option value="Conventional">Conventional</option>
+        <option value="FHA">FHA</option>
+        <option value="VA First">VA First</option>
+        <option value="VA Second">VA Second</option>
+        <option value="VA Exempt">VA Exempt</option>
+      </select>
+    </div>
+
+    <div>
+      <label className="text-sm text-blue-200 block mb-1">Interest Rate</label>
       <input
         type="text"
-        placeholder={`${type} Interest Rate`}
-        value={interestRates[type] || ''}
-        onChange={(e) => {
-          const raw = e.target.value.replace(/[^0-9.]/g, '');
-          const formatted = raw ? `${raw}%` : '';
-          setInterestRates((prev) => ({ ...prev, [type]: formatted }));
-        }}
-        className="w-full px-4 py-2 border border-gray-400 bg-white/10 text-white rounded"
+        value={loanData[id]?.interestRate || ''}
+        onChange={(e) => handleLoanChange(id, 'interestRate', e.target.value)}
+        placeholder="e.g. 6.75"
+        className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
       />
     </div>
-  );
-})}
 
-<div className="grid gap-4 sm:grid-cols-2 mt-6">
-  <input
-    type="date"
-    value={closingDate}
-    onChange={(e) => setClosingDate(e.target.value)}
-    className="w-full px-4 py-2 border border-white/20 bg-white/10 text-white rounded-md backdrop-blur-md placeholder-white/60"
-  />
-  <div className="flex gap-2">
-    <motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  onClick={calculateEstimate}
-  className="bg-green-600 hover:bg-green-700 transition text-white font-bold px-4 py-2 rounded-md w-full shadow-md"
->
-  Get Estimate
-</motion.button>
-    <motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  onClick={calculateEstimate}
-  className="bg-red-600 hover:bg-red-700 transition text-white font-bold px-4 py-2 rounded-md w-full shadow-md"
->
-  Clear
-</motion.button>
+    <div>
+      <label className="text-sm text-blue-200 block mb-1">Down Payment %</label>
+      <input
+        type="text"
+        value={loanData[id]?.downPayment || ''}
+        onChange={(e) => handleLoanChange(id, 'downPayment', e.target.value)}
+        placeholder="e.g. 5"
+        className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
+      />
+    </div>
 
-  </div>
+    <div>
+      <label className="text-sm text-blue-200 block mb-1">Property Location</label>
+      <select
+        value={loanData[id]?.location || ''}
+        onChange={(e) => handleLoanChange(id, 'location', e.target.value)}
+        className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
+      >
+        <option value="Columbus, GA">Columbus, GA</option>
+        <option value="Harris County, GA">Harris County, GA</option>
+        <option value="Lee County, AL">Lee County, AL</option>
+        <option value="Russell County, AL">Russell County, AL</option>
+      </select>
+    </div>
+
+    <div>
+      <label className="text-sm text-blue-200 block mb-1">Closing Date</label>
+      <input
+        type="date"
+        value={loanData[id]?.closingDate || ''}
+        onChange={(e) => handleLoanChange(id, 'closingDate', e.target.value)}
+        className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
+      />
+    </div>
+
+    {/* Get Estimate Button */}
+    <button
+      onClick={() => calculateEstimates(id)}
+      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg shadow transition"
+    >
+      Get Estimate
+    </button>
+    <div className="mt-8 text-center">
+  <button
+    onClick={resetForm}
+    className="inline-block bg-red-600 hover:bg-red-700 transition text-white font-semibold px-6 py-2 rounded-lg shadow"
+  >
+    Reset All
+  </button>
 </div>
 
-{results.length > 0 && (
-  <div className="space-y-10 mt-10" ref={resultsRef}>
-    <h2 className="text-2xl font-bold text-center text-blue-400 mb-6">Estimate Results</h2>
-    <motion.div
-  className="grid md:grid-cols-2 gap-6"
-  initial={{ opacity: 0, y: 30 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6, ease: 'easeOut' }}
->
-      {results.map((res, index) => (
+    {/* Results Display */}
+    {results[id] && (
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
+      >
+        <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
+        <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
+        <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
+        <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
+        <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
+        <div className="text-green-400 font-bold border-t border-white/10 pt-2">
+          Total Monthly Payment: {results[id].totalPayment}
+        </div>
+        {/* Final Cash to Close */}
+<div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
+  <span>Final Cash to Close:</span>
+  <span>{results[id].finalCashToClose}</span>
+</div>
+      </motion.div>
+    )}
+  </motion.div>
+)}
+      </AnimatePresence>
+    </motion.div>
+  ))}
+  {/* Step 10: Results Summary Cards */}
+  {Object.keys(results).length > 0 && (
+  <div className="mt-16 space-y-10">
+    <h2 className="text-2xl font-bold text-center text-blue-400 mb-8">
+      All Estimate Summaries
+    </h2>
+    <div className="grid md:grid-cols-3 gap-6">
+      {estimates.map((result) => (
         <motion.div
-          key={index}
+          key={result.id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: index * 0.2 }}
-          className="bg-white/5 backdrop-blur-lg p-6 rounded-2xl shadow-2xl border border-white/10 text-white space-y-6 hover:ring-2 hover:ring-blue-500 transition-all duration-300"
+          transition={{ duration: 0.4 }}
+          className="bg-white/5 border border-white/20 p-6 rounded-xl text-white text-sm space-y-2 shadow-md backdrop-blur-md"
         >
-          <h2 className="text-xl font-semibold text-center text-white/80 tracking-wide">{res.loanType} Loan</h2>
-
-          {/* Loan Summary */}
-          <div className="text-sm space-y-1">
-            <div className="font-semibold text-blue-200">Loan Summary</div>
-            <div>Loan Amount: {res.loanAmount}</div>
-            <div>Down Payment: {res.downPaymentAmount}</div>
-            <div>Principal & Interest: {res.principalInterest}</div>
-            <div>Insurance: {res.homeownersInsurance}</div>
-            <div>Tax (Homestead): {res.monthlyTaxHomestead}</div>
-            <div>Tax (Non-Homestead): {res.monthlyTaxNonHomestead}</div>
-            <div>Monthly MI: {res.monthlyMI}</div>
+          <h3 className="text-xl font-bold text-blue-300 text-center">
+            Estimate {result.id}: {result.loanType}
+          </h3>
+          <div><strong>Loan Amount:</strong> {result.loanAmount}</div>
+          <div><strong>Down Payment:</strong> {result.downPayment}</div>
+          <div><strong>Principal & Interest:</strong> {result.principalAndInterest}</div>
+          <div><strong>Homeowners Insurance:</strong> {result.homeownersInsurance}</div>
+          <div><strong>Estimated Property Tax:</strong> {result.monthlyTax}</div>
+          <div><strong>Monthly MI:</strong> {result.monthlyMI}</div>
+          <div className="font-semibold text-green-400 border-t border-white/20 pt-2">
+            Total Monthly Payment: {result.totalPayment}
           </div>
-
-          {/* PITI Summary */}
-          <div className="mt-2 font-semibold text-green-400 text-sm">
-            <div>PITI (Homestead): {res.pitiHomestead}</div>
-            <div>PITI (Non-Homestead): {res.pitiNonHomestead}</div>
-          </div>
-
-          {/* Closing Costs */}
-          <div>
-            <div className="text-blue-200 font-semibold mb-1">Closing Costs</div>
-            <div className="space-y-1 text-sm text-white/80">
-              {res.closingCostsBreakdown.map((item, i) => (
-                <div key={i} className="flex justify-between">
-                  <span>{item.label}</span>
-                  <span>{item.value}</span>
-                </div>
-              ))}
-              <div className="font-semibold text-yellow-300 border-t border-white/10 pt-3 mt-4 text-sm">
-                Total Closing Costs: {res.closingCosts}
-              </div>
-            </div>
-          </div>
-
-          {/* Prepaids & Escrows */}
-          <div>
-            <div className="text-blue-200 font-semibold mb-1">Prepaids & Escrows</div>
-            <div className="space-y-1 text-sm text-white/80">
-              {res.prepaidsBreakdown.map((item, i) => (
-                <div key={i} className="flex justify-between">
-                  <span>{item.label}</span>
-                  <span>{item.value}</span>
-                </div>
-              ))}
-              <div className="font-semibold text-yellow-300 border-t border-white/10 pt-3 mt-4 text-sm">
-                Total Prepaids: {res.prepaids}
-              </div>
-            </div>
-          </div>
-
-          {/* Final Cash to Close */}
-          <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
-            <span>Final Cash to Close:</span>
-            <span>{res.totalCashToClose}</span>
+          <div className="text-orange-400 font-bold flex justify-between border-t border-white/20 pt-4 mt-2 text-lg">
+            <span>Cash to Close:</span>
+            <span>{result.finalCashToClose}</span>
           </div>
         </motion.div>
       ))}
-    </motion.div>
+    </div>
   </div>
-)}}
+)}
+
+ {/* Placeholder for Step 4: Estimate Results Display */}
+<div className="mt-12">
+  <h2 className="text-2xl font-bold text-center text-blue-300 mb-6">Estimate Results</h2>
+  <div className="grid md:grid-cols-3 gap-6">
+    {/* Result cards will be rendered here later */}
+    <div className="bg-white/10 border border-white/20 p-4 rounded-xl shadow text-sm text-white text-center italic">
+      Results will appear here after calculation.
+    </div>
+  </div>
+</div>
+</div>
+</div>//</div>)}
