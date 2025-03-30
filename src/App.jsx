@@ -213,81 +213,78 @@ const resetForm = () => {
     setResults([]);
   };
     return (
-      <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-black text-white font-sans antialiased">
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-       <motion.h1
-  initial={{ opacity: 0, scale: 0.9 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 0.6 }}
-  className="text-3xl font-bold text-center text-blue-300"
->
-  Snapshot Pro
-</motion.h1>
-
-        <p className="text-center text-gray-400 text-sm font-light">by Dustin Steele</p>
-
-       <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl p-8 space-y-6">
-  <div className="grid gap-4 sm:grid-cols-2">
-    <input
-      type="text"
-      placeholder="Sales Price"
-      value={salesPrice}
-      onChange={(e) => {
-        const raw = e.target.value.replace(/[^0-9]/g, '');
-        const formatted = raw
-          ? Number(raw).toLocaleString('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0
-            })
-          : '';
-        setSalesPrice(formatted);
-      }}
-      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-white placeholder-white/60 backdrop-blur-md shadow-inner transition focus:outline-none focus:ring-2 focus:ring-blue-400"
-    />
-
-    <select
-      value={location}
-      onChange={(e) => setLocation(e.target.value)}
-      className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-white placeholder-white/60 backdrop-blur-md shadow-inner transition focus:outline-none focus:ring-2 focus:ring-blue-400"
-    >
-      <option>Columbus, GA</option>
-      <option>Harris County, GA</option>
-      <option>Lee County, AL</option>
-      <option>Russell County, AL</option>
-    </select>
-
-    {(location === 'Lee County, AL' || location === 'Russell County, AL') && (
-      <select
-        value={cityLimits}
-        onChange={(e) => setCityLimits(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/5 text-white placeholder-white/60 backdrop-blur-md shadow-inner transition focus:outline-none focus:ring-2 focus:ring-blue-400"
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-6 font-sans">
+    <div className="max-w-6xl mx-auto space-y-10">
+      <motion.h1
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-4xl font-extrabold text-center text-white tracking-tight"
       >
-        <option>Inside</option>
-        <option>Outside</option>
-      </select>
-    )}
-  </div>
+        Snapshot Pro
+      </motion.h1>
+      <p className="text-center text-sm text-gray-400">by Dustin Steele</p>
 
- <div>
-    <p className="text-center-blue-200 font-semibold mb-2">Select Loan Types to Compare:</p>
-    <div className="flex flex-wrap gap-2">
-      {loanOptions.map((type) => (
-        <button
-          key={type}
-          className={`px-4 py-2 rounded-full border transition text-sm text-center font-medium ${
-            selectedLoanTypes.includes(type)
-              ? 'bg-blue-600 border-blue-400'
-              : 'bg-white/10 border-white/20 text-white'
-          } hover:bg-blue-700/80`}
-          onClick={() => toggleLoanType(type)}
-        >
-          {type}
-        </button>
-      ))}
+      {/* Sales Price Input */}
+      <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20">
+        <label className="block mb-2 text-blue-200 font-semibold">Sales Price</label>
+        <input
+          type="text"
+          placeholder="Enter Sales Price"
+          value={salesPrice}
+          onChange={(e) => {
+            const raw = e.target.value.replace(/[^0-9]/g, '');
+            const formatted = raw
+              ? Number(raw).toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 0
+                })
+              : '';
+            setSalesPrice(formatted);
+          }}
+          className="w-full px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* Estimate Buttons */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[1, 2, 3].map((id) => (
+          <motion.div
+            key={id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: id * 0.1 }}
+            className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md"
+          >
+            <button
+              onClick={() =>
+                setExpandedEstimate((prev) => (prev === id ? null : id))
+              }
+              className="w-full font-semibold text-white text-center text-lg py-2 px-4 bg-blue-600 hover:bg-blue-700 transition rounded-lg shadow"
+            >
+              {`Estimate ${id}`}
+            </button>
+
+            {/* Reveal Form Placeholder */}
+            <AnimatePresence>
+              {expandedEstimate === id && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden mt-4 space-y-3"
+                >
+                  <p className="text-sm text-blue-300 italic">Estimate {id} details will go here.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        ))}
+      </div>
     </div>
   </div>
-</div>
+  );
 {selectedLoanTypes.map((type) => {
   const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
   const presetOptions =
@@ -451,8 +448,4 @@ const resetForm = () => {
       ))}
     </motion.div>
   </div>
-)}
-      </div>
-    </div>
-  );
-}
+)}}
