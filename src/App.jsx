@@ -269,7 +269,7 @@ const resetForm = () => {
     )}
   </div>
 
-  <center><div>
+ <div>
     <p className="text-blue-200 font-semibold mb-2">Select Loan Types to Compare:</p>
     <div className="flex flex-wrap gap-2">
       {loanOptions.map((type) => (
@@ -288,7 +288,6 @@ const resetForm = () => {
     </div>
   </div>
 </div>
-</center>
 {selectedLoanTypes.map((type) => {
   const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
   const presetOptions =
