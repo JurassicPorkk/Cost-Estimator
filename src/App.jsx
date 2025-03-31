@@ -210,12 +210,12 @@ export default function App() {
   initial={{ opacity: 0, y: -10 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.6 }}
-  className="flex flex-col items-center mt-2 mb-4"
+  className="flex justify-center mt-1 mb-2"
 >
   <img
     src="/cash-to-close-logo.png"
     alt="Cash To Close Logo"
-    className="h-28 md:h-32 lg:h-36 object-contain drop-shadow-xl"
+    className="h-20 sm:h-24 md:h-28 lg:h-32 object-contain drop-shadow-2xl transition-transform duration-300 ease-in-out hover:scale-105 hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]"
   />
 </motion.div>
 
