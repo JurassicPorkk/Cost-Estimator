@@ -210,12 +210,12 @@ export default function App() {
   initial={{ opacity: 0, y: -10 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.6 }}
-  className="flex justify-center items-center mt-4"
+  className="flex justify-center items-center mt-2 mb-4"
 >
   <img
     src="/cash-to-close-logo.png"
-    alt="Cash to Close Logo"
-    className="h-55 md:h-68 lg:h-80 object-contain drop-shadow-lg"
+    alt="Cash To Close Logo"
+    className="h-14 md:h-16 lg:h-20 w-auto drop-shadow-lg contrast-150"
   />
 </motion.div>
 
