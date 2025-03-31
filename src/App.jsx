@@ -22,9 +22,9 @@ const renderDownPaymentOptions = (loanType) => {
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
   const [loanData, setLoanData] = useState({
-    1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
-    2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
-    3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
+    1: { loanType: '', interestRate: '', downPayment: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
+    2: { loanType: '', interestRate: '', downPayment: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
+    3: { loanType: '', interestRate: '', downPayment: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
   });
   const [expandedEstimates, setExpandedEstimates] = useState({});
   const [results, setResults] = useState({});
