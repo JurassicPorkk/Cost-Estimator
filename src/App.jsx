@@ -215,7 +215,7 @@ export default function App() {
   <img
     src="/cash-to-close-logo.png"
     alt="Cash To Close Logo"
-    className="h-55 md:h-68 lg:h-80 w-auto drop-shadow-lg contrast-150"
+    className="h-24 md:h-36 lg:h-40 w-auto drop-shadow-lg contrast-150"
   />
 </motion.div>
 
