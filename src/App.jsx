@@ -210,13 +210,15 @@ export default function App() {
   initial={{ opacity: 0, y: -10 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.6 }}
-  className="flex justify-center items-center mt-1 mb-3"
+  className="flex justify-center items-center mt-2 mb-4"
 >
-  <img
-    src="/cash-to-close-logo.png"
-    alt="Cash To Close Logo"
-    className="h-28 sm:h-32 md:h-36 lg:h-40 w-auto drop-shadow-xl contrast-200"
-  />
+  <div className="bg-black/60 p-2 rounded-xl shadow-lg">
+    <img
+      src="/cash-to-close-logo.png"
+      alt="Cash To Close Logo"
+      className="h-16 sm:h-20 md:h-24 lg:h-28 w-auto"
+    />
+  </div>
 </motion.div>
 
         {/* Sales Price Input */}
