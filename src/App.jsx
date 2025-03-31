@@ -305,15 +305,13 @@ const resetForm = () => {
     </div>
 
     {/* Down Payment Dropdown + Optional Custom Amount */}
-<div>
+    <div>
   <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
   <select
     value={selectedDownPaymentType[id] || ''}
     onChange={(e) => {
       const value = e.target.value;
       setSelectedDownPaymentType((prev) => ({ ...prev, [id]: value }));
-
-      // If not custom, store % directly
       if (value !== 'custom') {
         handleLoanChange(id, 'downPayment', value);
       }
@@ -327,9 +325,7 @@ const resetForm = () => {
     <option value="custom">Custom Amount</option>
   </select>
 
-  {/* Custom Amount Input Field */}
-  {/* Custom Amount Input - Paste this directly below the dropdown */}
-{selectedDownPaymentType[id] === 'custom' && (
+  {selectedDownPaymentType[id] === 'custom' && (
   <div className="mt-2">
     <input
       type="text"
@@ -350,7 +346,6 @@ const resetForm = () => {
         const percent = price ? (amount / price) * 100 : 0;
 
         let adjustedPercent = percent;
-
         const type = loanData[id]?.loanType;
 
         if (type === 'FHA' && percent < 3.5) adjustedPercent = 3.5;
@@ -359,7 +354,7 @@ const resetForm = () => {
         setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
         handleLoanChange(id, 'downPayment', adjustedPercent.toFixed(2));
       }}
-      className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white placeholder-white/60"
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
     {(loanData[id]?.loanType === 'FHA' && parseFloat(loanData[id]?.downPayment) < 3.5) && (
       <p className="text-xs text-red-400 mt-1">Minimum for FHA is 3.5%</p>
