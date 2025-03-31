@@ -207,15 +207,15 @@ export default function App() {
     <div className="min-h-screen text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
       <motion.div
-  initial={{ opacity: 0, y: -20 }}
+  initial={{ opacity: 0, y: -10 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.6 }}
-  className="flex justify-center mt-2 mb-4"
+  className="flex flex-col items-center mt-4 md:mt-2 mb-4 md:mb-6"
 >
   <img
     src="/cash-to-close-logo.png"
-    alt="Cash to Close by Dustin Steele"
-    className="h-24 w-auto drop-shadow-lg"
+    alt="Cash To Close Logo"
+    className="h-20 md:h-24 lg:h-28 object-contain drop-shadow-xl"
   />
 </motion.div>
 
