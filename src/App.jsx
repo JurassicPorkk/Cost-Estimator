@@ -206,15 +206,17 @@ export default function App() {
   return (
     <div className="min-h-screen text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-4xl font-extrabold text-center text-white tracking-tight"
-        >
-          Snapshot Pro
-        </motion.h1>
-        <p className="text-center text-sm text-gray-400 mb-6">by Dustin Steele</p>
+      <motion.div
+  initial={{ opacity: 0, scale: 0.95 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.5 }}
+>
+  <img
+    src="/cash-to-close-logo.png"
+    alt="Cash To Close Logo"
+    className="h-20 mx-auto mb-2"
+  />
+</motion.div>
 
         {/* Sales Price Input */}
         <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20 text-center">
