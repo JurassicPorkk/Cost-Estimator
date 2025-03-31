@@ -1,22 +1,17 @@
-// App.jsx — Snapshot Pro Full App Build (Step 1 of 4)
-
+// App.jsx — Snapshot Pro Full UI Setup (Part 1: Imports, State, Logic)
 import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { motion, AnimatePresence } from 'framer-motion';
 import './index.css';
 
-// Format currency for all dollar outputs
-const formatCurrency = (value) => {
-  return `$${Number(value).toLocaleString(undefined, {
+const formatCurrency = (value) =>
+  `$${Number(value).toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
-};
 
-// Strip $ and commas for math
 const unformatCurrency = (value) => value.replace(/[^0-9.]/g, '');
 
-// Down payment options per loan type
 const renderDownPaymentOptions = (loanType) => {
   if (loanType === 'FHA') return [3.5, 5];
   if (loanType === 'Conventional') return [3, 5, 10, 15, 20];
@@ -25,64 +20,71 @@ const renderDownPaymentOptions = (loanType) => {
 };
 
 export default function App() {
-  // Section 2: App State & Mortgage Logic
+  const [salesPrice, setSalesPrice] = useState('');
+  const [loanData, setLoanData] = useState({
+    1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
+    2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
+    3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true },
+  });
+  const [expandedEstimates, setExpandedEstimates] = useState({});
+  const [results, setResults] = useState({});
+  const [selectedDownPaymentType, setSelectedDownPaymentType] = useState({});
+  const [customDownPayments, setCustomDownPayments] = useState({});
 
-const [salesPrice, setSalesPrice] = useState('');
-const [loanData, setLoanData] = useState({
-  1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: false, cityLimits: true },
-  2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: false, cityLimits: true },
-  3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: false, cityLimits: true },
-});
+  const handleLoanChange = (id, field, value) => {
+    if (field === 'interestRate') {
+      const clean = value.replace(/[^0-9.]/g, '');
+      setLoanData((prev) => ({
+        ...prev,
+        [id]: { ...prev[id], [field]: clean }
+      }));
+    } else {
+      setLoanData((prev) => ({
+        ...prev,
+        [id]: { ...prev[id], [field]: value }
+      }));
+    }
+  };
 
-const [expandedEstimates, setExpandedEstimates] = useState({});
-const [results, setResults] = useState({});
-const [selectedDownPaymentType, setSelectedDownPaymentType] = useState({});
-const [customDownPayments, setCustomDownPayments] = useState({});
-
-const handleLoanChange = (id, field, value) => {
-  if (field === 'interestRate') {
-    const clean = value.replace(/[^0-9.]/g, '');
+  const toggleHomestead = (id) => {
     setLoanData((prev) => ({
       ...prev,
-      [id]: { ...prev[id], [field]: clean }
+      [id]: { ...prev[id], homestead: !prev[id].homestead }
     }));
-  } else {
+  };
+
+  const toggleCityLimits = (id) => {
     setLoanData((prev) => ({
       ...prev,
-      [id]: { ...prev[id], [field]: value }
+      [id]: { ...prev[id], cityLimits: !prev[id].cityLimits }
     }));
-  }
-};
+  };
 
-const calculatePropertyTax = (sales, location, homestead, cityLimits) => {
-  let yearlyTax = 0;
+  const calculatePropertyTax = (sales, location, homestead, cityLimits) => {
+    let yearlyTax = 0;
 
-  if (location === 'Columbus, GA') {
-    yearlyTax = sales * 0.4 * 0.04153;
-    if (homestead) yearlyTax -= 543;
-  } else if (location === 'Harris County, GA') {
-    yearlyTax = sales * 0.4 * 0.02764;
-    if (homestead) yearlyTax -= 50;
-  } else if (location === 'Lee County, AL') {
-    if (cityLimits) {
-      yearlyTax = (sales * 0.1 * 0.054) + 169;
-      if (!homestead) yearlyTax = (sales * 0.2 * 0.054) + 169;
-    } else {
-      yearlyTax = (sales * 0.1 * 0.041) + 169;
-      if (!homestead) yearlyTax = (sales * 0.2 * 0.041) + 169;
+    if (location === 'Columbus, GA') {
+      yearlyTax = sales * 0.4 * 0.04153;
+      if (homestead) yearlyTax -= 543;
+    } else if (location === 'Harris County, GA') {
+      yearlyTax = sales * 0.4 * 0.02764;
+      if (homestead) yearlyTax -= 50;
+    } else if (location === 'Lee County, AL') {
+      if (cityLimits) {
+        yearlyTax = (sales * (homestead ? 0.1 : 0.2) * 0.054) + 169;
+      } else {
+        yearlyTax = (sales * (homestead ? 0.1 : 0.2) * 0.041) + 169;
+      }
+    } else if (location === 'Russell County, AL') {
+      if (cityLimits) {
+        yearlyTax = (sales * (homestead ? 0.1 : 0.2) * 0.059) - 74;
+      } else {
+        yearlyTax = (sales * (homestead ? 0.1 : 0.2) * 0.036) - 74;
+      }
     }
-  } else if (location === 'Russell County, AL') {
-    if (cityLimits) {
-      yearlyTax = (sales * 0.1 * 0.059) - 74;
-      if (!homestead) yearlyTax = (sales * 0.2 * 0.059) - 74;
-    } else {
-      yearlyTax = (sales * 0.1 * 0.036) - 74;
-      if (!homestead) yearlyTax = (sales * 0.2 * 0.036) - 74;
-    }
-  }
 
-  return yearlyTax / 12;
-};
+    return yearlyTax / 12;
+  };
 
 const calculateEstimates = (id) => {
   const data = loanData[id];
