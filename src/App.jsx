@@ -25,141 +25,171 @@ const renderDownPaymentOptions = (loanType) => {
 };
 
 export default function App() {
-  const [salesPrice, setSalesPrice] = useState('');
-  const [loanData, setLoanData] = useState({
-    1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-    2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-    3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-  });
-  const [expandedEstimates, setExpandedEstimates] = useState({});
-  const [results, setResults] = useState({});
-  const [selectedDownPaymentType, setSelectedDownPaymentType] = useState({});
-  const [customDownPayments, setCustomDownPayments] = useState({});
-  // Update input fields with formatting
-  const handleLoanChange = (id, field, value) => {
-    if (field === 'interestRate') {
-      const clean = value.replace(/[^0-9.]/g, '');
-      setLoanData((prev) => ({
-        ...prev,
-        [id]: { ...prev[id], [field]: clean }
-      }));
-    } else {
-      setLoanData((prev) => ({
-        ...prev,
-        [id]: { ...prev[id], [field]: value }
-      }));
-    }
-  };
+  // Section 2: App State & Mortgage Logic
 
-  // Main calculation function
-  const calculateEstimates = (id) => {
-    const data = loanData[id];
-    const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
-    const rate = parseFloat(data.interestRate) / 100 || 0;
-    const downPercent = parseFloat(data.downPayment) || 0;
-    const loanType = data.loanType;
+const [salesPrice, setSalesPrice] = useState('');
+const [loanData, setLoanData] = useState({
+  1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: false, cityLimits: true },
+  2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: false, cityLimits: true },
+  3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: false, cityLimits: true },
+});
 
-    const downPaymentAmount = (sales * downPercent) / 100;
-    const loanBase = sales - downPaymentAmount;
-    const termMonths = 360;
-    const monthlyRate = rate / 12;
-    const insuranceAnnual = 1500;
-    const insuranceMonthly = insuranceAnnual / 12;
+const [expandedEstimates, setExpandedEstimates] = useState({});
+const [results, setResults] = useState({});
+const [selectedDownPaymentType, setSelectedDownPaymentType] = useState({});
+const [customDownPayments, setCustomDownPayments] = useState({});
 
-    let loanAmount = 0;
-    let fundingFee = 0;
-
-    if (loanType === 'Conventional') loanAmount = loanBase;
-    else if (loanType === 'FHA') loanAmount = loanBase * 1.0175;
-    else if (loanType === 'VA First') {
-      fundingFee = downPercent >= 10 ? 0.0125 : downPercent >= 5 ? 0.015 : 0.0215;
-      loanAmount = loanBase + loanBase * fundingFee;
-    } else if (loanType === 'VA Second') {
-      fundingFee = downPercent >= 10 ? 0.0125 : downPercent >= 5 ? 0.015 : 0.033;
-      loanAmount = loanBase + loanBase * fundingFee;
-    } else if (loanType === 'VA Exempt') loanAmount = loanBase;
-
-    const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
-    const monthlyTax = (sales * 0.4 * 0.04153) / 12;
-
-    // MI Logic
-    let monthlyMI = 0;
-    if (loanType === 'Conventional' && downPercent < 20) {
-      if (downPercent < 3) monthlyMI = 0;
-      else if (downPercent === 3) monthlyMI = loanAmount * 0.004 / 12;
-      else if (downPercent > 3 && downPercent < 10) monthlyMI = loanAmount * 0.0035 / 12;
-      else if (downPercent >= 10 && downPercent < 15) monthlyMI = loanAmount * 0.0025 / 12;
-      else if (downPercent >= 15 && downPercent < 20) monthlyMI = loanAmount * 0.0015 / 12;
-    } else if (loanType === 'FHA') {
-      monthlyMI = loanAmount * (downPercent >= 5 ? 0.005 : 0.0055) / 12;
-    }
-
-    const totalPITI = principalInterest + insuranceMonthly + monthlyTax + monthlyMI;
-
-    // Fixed Fees
-    const underwritingFee = 1395;
-    const appraisalFee = 525;
-    const creditReport = 140;
-    const attorneyFee = 1075;
-    const titleSearch = 250;
-    const recording = 70;
-
-    // Location-specific title/tax logic
-    let ownerTitle = 0, lenderTitle = 0, mortgageTax = 0, transferTax = 0;
-    if (data.location.includes('AL')) {
-      ownerTitle = sales * 0.0011;
-      lenderTitle = loanAmount * 0.00216;
-      mortgageTax = (loanAmount / 100) * 0.15;
-      transferTax = Math.max((sales - loanAmount) / 1000, 0);
-    } else {
-      ownerTitle = sales * 0.0022;
-      lenderTitle = loanAmount * 0.00352;
-      mortgageTax = (loanAmount / 100) * 0.3;
-      transferTax = sales / 1000;
-    }
-
-    // Prepaids & Escrows
-    const daysRemaining = 30 - new Date(data.closingDate).getDate();
-    const prepaidInterest = (loanAmount * rate / 365) * daysRemaining;
-    const insuranceEscrow = (insuranceAnnual / 12) * 3;
-    const taxEscrow = monthlyTax * 3;
-
-    const totalClosingCosts = underwritingFee + appraisalFee + creditReport + attorneyFee + titleSearch + recording + ownerTitle + lenderTitle + mortgageTax + transferTax;
-    const totalPrepaids = prepaidInterest + insuranceAnnual + insuranceEscrow + taxEscrow;
-    const finalCashToClose = downPaymentAmount + totalClosingCosts + totalPrepaids;
-
-    setResults((prev) => ({
+const handleLoanChange = (id, field, value) => {
+  if (field === 'interestRate') {
+    const clean = value.replace(/[^0-9.]/g, '');
+    setLoanData((prev) => ({
       ...prev,
-      [id]: {
-        loanAmount: formatCurrency(loanAmount),
-        principalInterest: formatCurrency(principalInterest),
-        homeownersInsurance: formatCurrency(insuranceMonthly),
-        monthlyTax: formatCurrency(monthlyTax),
-        monthlyMI: formatCurrency(monthlyMI),
-        totalPayment: formatCurrency(totalPITI),
-        downPaymentAmount: formatCurrency(downPaymentAmount),
-        totalClosingCosts: formatCurrency(totalClosingCosts),
-        totalPrepaids: formatCurrency(totalPrepaids),
-        finalCashToClose: formatCurrency(finalCashToClose),
-        breakdown: {
-          underwritingFee: formatCurrency(underwritingFee),
-          appraisalFee: formatCurrency(appraisalFee),
-          creditReport: formatCurrency(creditReport),
-          attorneyFee: formatCurrency(attorneyFee),
-          titleSearch: formatCurrency(titleSearch),
-          recording: formatCurrency(recording),
-          ownerTitle: formatCurrency(ownerTitle),
-          lenderTitle: formatCurrency(lenderTitle),
-          mortgageTax: formatCurrency(mortgageTax),
-          transferTax: formatCurrency(transferTax),
-          prepaidInterest: formatCurrency(prepaidInterest),
-          insuranceEscrow: formatCurrency(insuranceEscrow),
-          taxEscrow: formatCurrency(taxEscrow),
-          insuranceAnnual: formatCurrency(insuranceAnnual),
-        }
-      }
+      [id]: { ...prev[id], [field]: clean }
     }));
-  };
+  } else {
+    setLoanData((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], [field]: value }
+    }));
+  }
+};
+
+const calculatePropertyTax = (sales, location, homestead, cityLimits) => {
+  let yearlyTax = 0;
+
+  if (location === 'Columbus, GA') {
+    yearlyTax = sales * 0.4 * 0.04153;
+    if (homestead) yearlyTax -= 543;
+  } else if (location === 'Harris County, GA') {
+    yearlyTax = sales * 0.4 * 0.02764;
+    if (homestead) yearlyTax -= 50;
+  } else if (location === 'Lee County, AL') {
+    if (cityLimits) {
+      yearlyTax = (sales * 0.1 * 0.054) + 169;
+      if (!homestead) yearlyTax = (sales * 0.2 * 0.054) + 169;
+    } else {
+      yearlyTax = (sales * 0.1 * 0.041) + 169;
+      if (!homestead) yearlyTax = (sales * 0.2 * 0.041) + 169;
+    }
+  } else if (location === 'Russell County, AL') {
+    if (cityLimits) {
+      yearlyTax = (sales * 0.1 * 0.059) - 74;
+      if (!homestead) yearlyTax = (sales * 0.2 * 0.059) - 74;
+    } else {
+      yearlyTax = (sales * 0.1 * 0.036) - 74;
+      if (!homestead) yearlyTax = (sales * 0.2 * 0.036) - 74;
+    }
+  }
+
+  return yearlyTax / 12;
+};
+
+const calculateEstimates = (id) => {
+  const data = loanData[id];
+  const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
+  const rate = parseFloat(data.interestRate) / 100 || 0;
+  const downPercent = parseFloat(data.downPayment) || 0;
+  const loanType = data.loanType;
+
+  const downPaymentAmount = (sales * downPercent) / 100;
+  const loanBase = sales - downPaymentAmount;
+  const termMonths = 360;
+  const monthlyRate = rate / 12;
+  const insuranceAnnual = 1500;
+  const insuranceMonthly = insuranceAnnual / 12;
+
+  let loanAmount = 0;
+  let fundingFee = 0;
+
+  if (loanType === 'Conventional') loanAmount = loanBase;
+  else if (loanType === 'FHA') loanAmount = loanBase * 1.0175;
+  else if (loanType === 'VA First') {
+    fundingFee = downPercent >= 10 ? 0.0125 : downPercent >= 5 ? 0.015 : 0.0215;
+    loanAmount = loanBase + loanBase * fundingFee;
+  } else if (loanType === 'VA Second') {
+    fundingFee = downPercent >= 10 ? 0.0125 : downPercent >= 5 ? 0.015 : 0.033;
+    loanAmount = loanBase + loanBase * fundingFee;
+  } else if (loanType === 'VA Exempt') loanAmount = loanBase;
+
+  const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
+  const monthlyTax = calculatePropertyTax(sales, data.location, data.homestead, data.cityLimits);
+
+  let monthlyMI = 0;
+  if (loanType === 'Conventional' && downPercent < 20) {
+    if (downPercent < 3) monthlyMI = 0;
+    else if (downPercent === 3) monthlyMI = loanAmount * 0.004 / 12;
+    else if (downPercent > 3 && downPercent < 10) monthlyMI = loanAmount * 0.0035 / 12;
+    else if (downPercent >= 10 && downPercent < 15) monthlyMI = loanAmount * 0.0025 / 12;
+    else if (downPercent >= 15 && downPercent < 20) monthlyMI = loanAmount * 0.0015 / 12;
+  } else if (loanType === 'FHA') {
+    monthlyMI = loanAmount * (downPercent >= 5 ? 0.005 : 0.0055) / 12;
+  }
+
+  const totalPITI = principalInterest + insuranceMonthly + monthlyTax + monthlyMI;
+
+  // Fixed Fees
+  const underwritingFee = 1395;
+  const appraisalFee = 525;
+  const creditReport = 140;
+  const attorneyFee = 1075;
+  const titleSearch = 250;
+  const recording = 70;
+
+  let ownerTitle, lenderTitle, mortgageTax, transferTax = 0;
+
+  if (data.location.includes('AL')) {
+    ownerTitle = sales * 0.0011;
+    lenderTitle = loanAmount * 0.00216;
+    mortgageTax = (loanAmount / 100) * 0.15;
+    transferTax = Math.max((sales - loanAmount) / 1000, 0);
+  } else {
+    ownerTitle = sales * 0.0022;
+    lenderTitle = loanAmount * 0.00352;
+    mortgageTax = (loanAmount / 100) * 0.3;
+    transferTax = sales / 1000;
+  }
+
+  const daysRemaining = 30 - new Date(data.closingDate).getDate();
+  const prepaidInterest = (loanAmount * rate / 365) * daysRemaining;
+  const insuranceEscrow = (insuranceAnnual / 12) * 3;
+  const taxEscrow = monthlyTax * 3;
+
+  const totalClosingCosts = underwritingFee + appraisalFee + creditReport + attorneyFee + titleSearch + recording + ownerTitle + lenderTitle + mortgageTax + transferTax;
+  const totalPrepaids = prepaidInterest + insuranceAnnual + insuranceEscrow + taxEscrow;
+  const finalCashToClose = downPaymentAmount + totalClosingCosts + totalPrepaids;
+
+  setResults((prev) => ({
+    ...prev,
+    [id]: {
+      loanAmount: formatCurrency(loanAmount),
+      principalInterest: formatCurrency(principalInterest),
+      homeownersInsurance: formatCurrency(insuranceMonthly),
+      monthlyTax: formatCurrency(monthlyTax),
+      monthlyMI: formatCurrency(monthlyMI),
+      totalPayment: formatCurrency(totalPITI),
+      downPaymentAmount: formatCurrency(downPaymentAmount),
+      totalClosingCosts: formatCurrency(totalClosingCosts),
+      totalPrepaids: formatCurrency(totalPrepaids),
+      finalCashToClose: formatCurrency(finalCashToClose),
+      breakdown: {
+        underwritingFee: formatCurrency(underwritingFee),
+        appraisalFee: formatCurrency(appraisalFee),
+        creditReport: formatCurrency(creditReport),
+        attorneyFee: formatCurrency(attorneyFee),
+        titleSearch: formatCurrency(titleSearch),
+        recording: formatCurrency(recording),
+        ownerTitle: formatCurrency(ownerTitle),
+        lenderTitle: formatCurrency(lenderTitle),
+        mortgageTax: formatCurrency(mortgageTax),
+        transferTax: formatCurrency(transferTax),
+        prepaidInterest: formatCurrency(prepaidInterest),
+        insuranceEscrow: formatCurrency(insuranceEscrow),
+        taxEscrow: formatCurrency(taxEscrow),
+        insuranceAnnual: formatCurrency(insuranceAnnual),
+      },
+    },
+  }));
+};
   // Reset entire form (all 3 estimates)
   const resetForm = () => {
     setSalesPrice('');
