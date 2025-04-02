@@ -346,64 +346,58 @@ if (loanType === 'FHA') {
 
             {/* Down Payment Dropdown */}
             <div>
-              <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
-              <select
-                value={selectedDownPaymentType[id] || ''}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSelectedDownPaymentType((prev) => ({ ...prev, [id]: value }));
-                  if (value !== 'custom') {
-                    handleLoanChange(id, 'downPayment', value);
-                  }
-                }}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-  style={{
-    backgroundColor: '#1f2937',
-    color: 'white',
-    WebkitAppearance: 'none',
-    MozAppearance: 'none',
-    appearance: 'none',
-  }}
->
-                <option value="">Select Down Payment</option>
-                {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
-                  <option key={pct} value={pct}>{pct}%</option>
-                ))}
-                <option value="custom">Custom Amount</option>
-              </select>
+  <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
+  <select
+    value={selectedDownPaymentType[id] || ''}
+    onChange={(e) => {
+      const value = e.target.value;
+      setSelectedDownPaymentType((prev) => ({ ...prev, [id]: value }));
+      if (value !== 'custom') {
+        handleLoanChange(id, 'downPayment', value);
+      }
+    }}
+    className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+    style={{ backgroundColor: '#1f2937', color: 'white' }}
+  >
+    <option value="">Select Down Payment</option>
+    {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
+      <option key={pct} value={pct}>{pct}%</option>
+    ))}
+    <option value="custom">Custom Amount</option>
+  </select>
 
-              {/* Custom Down Payment Input */}
-              {selectedDownPaymentType[id] === 'custom' && (
-  <div>
-    <input
-      type="text"
-      placeholder="$ Enter amount"
-      value={customDownPayments[id] || ''}
-      onChange={(e) => {
-        const raw = e.target.value.replace(/[^0-9]/g, '');
-        const amount = parseFloat(raw);
-        const price = parseFloat(unformatCurrency(salesPrice));
-        const percent = price ? (amount / price) * 100 : 0;
+  {selectedDownPaymentType[id] === 'custom' && (
+    <div className="mt-2">
+      <input
+        type="text"
+        placeholder="$ Enter amount"
+        value={customDownPayments[id] || ''}
+        onChange={(e) => {
+          const raw = e.target.value.replace(/[^0-9]/g, '');
+          const amount = parseFloat(raw);
+          const price = parseFloat(unformatCurrency(salesPrice));
+          const percent = price ? (amount / price) * 100 : 0;
 
-        let adjusted = percent;
-        const type = loanData[id]?.loanType;
-        if (type === 'FHA' && percent < 3.5) adjusted = 3.5;
-        if (type === 'Conventional' && percent < 3) adjusted = 3;
+          let adjusted = percent;
+          const type = loanData[id]?.loanType;
+          if (type === 'FHA' && percent < 3.5) adjusted = 3.5;
+          if (type === 'Conventional' && percent < 3) adjusted = 3;
 
-        setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
-        handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
-      }}
-      className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-      style={{
-        backgroundColor: '#1f2937',
-        color: 'white',
-        WebkitAppearance: 'none',
-        MozAppearance: 'none',
-        appearance: 'none',
-      }}
-    />
-  </div>
-)}
+          setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
+          handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
+        }}
+        className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+        style={{
+          backgroundColor: '#1f2937',
+          color: 'white',
+          WebkitAppearance: 'none',
+          MozAppearance: 'none',
+          appearance: 'none',
+        }}
+      />
+    </div>
+  )}
+</div>
             {/* Location */}
             <div>
               <label className="text-sm text-blue-200 block mb-1">Property Location</label>
