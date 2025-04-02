@@ -314,8 +314,9 @@ if (loanType === 'FHA') {
               <select
                 value={loanData[id]?.loanType || ''}
                 onChange={(e) => handleLoanChange(id, 'loanType', e.target.value)}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-              >
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+  style={{ backgroundColor: '#1f2937', color: 'white' }}
+>
                 <option value="">Select</option>
                 <option value="Conventional">Conventional</option>
                 <option value="FHA">FHA</option>
@@ -349,8 +350,9 @@ if (loanType === 'FHA') {
                     handleLoanChange(id, 'downPayment', value);
                   }
                 }}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-              >
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+  style={{ backgroundColor: '#1f2937', color: 'white' }}
+>
                 <option value="">Select Down Payment</option>
                 {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
                   <option key={pct} value={pct}>{pct}%</option>
@@ -378,7 +380,8 @@ if (loanType === 'FHA') {
                     setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
                     handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
                   }}
-                  className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                  className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+  style={{ backgroundColor: '#1f2937', color: 'white' }}
                 />
               )}
             </div>
@@ -389,8 +392,9 @@ if (loanType === 'FHA') {
               <select
                 value={loanData[id]?.location || ''}
                 onChange={(e) => handleLoanChange(id, 'location', e.target.value)}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-              >
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+  style={{ backgroundColor: '#1f2937', color: 'white' }}
+>
                 <option value="Columbus, GA">Columbus, GA</option>
                 <option value="Harris County, GA">Harris County, GA</option>
                 <option value="Lee County, AL">Lee County, AL</option>
