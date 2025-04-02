@@ -21,22 +21,32 @@ body {
   min-height: 100vh;
 }
 
-/* === Custom Select Styles for ALL Devices === */
 select {
-  @apply bg-white/10 text-white border border-white/20 rounded-md px-4 py-2 w-full appearance-none transition duration-200 ease-in-out;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem; /* rounded-md */
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
 }
 
+/* Optional: Better focus/hover effects */
 select:hover {
-  @apply bg-white/20;
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 select:focus {
-  @apply outline-none ring-2 ring-blue-500;
-}
-
-/* === Placeholder and Input Text === */
-::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
 }
 
 /* === Remove Number Input Arrows === */
