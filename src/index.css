@@ -3,35 +3,45 @@
 @tailwind utilities;
 
 body {
-
-select {
-  color: gray;
-  line-height: 1;
-  outline: 0;
-  padding: 0.65em 2.5em 0.55em 0.75em;
-  background-color: gray-800;
-}
-
-select:hover {
-   background-color: gray-800;
-}
-
-  select:active {
-   background-color: gray-800;
-}
-  
   font-family: 'Inter', sans-serif;
 
-  /* ✨ Optimized Mortgage Background for Snapshot Pro */
-  background: 
-  linear-gradient(to bottom right, rgba(10, 15, 36, 0.6), rgba(30, 42, 56, 0.6)),
+  /* Optimized Glassmorphic Background for Cash to Close */
+  background:
+    linear-gradient(to bottom right, rgba(10, 15, 36, 0.6), rgba(30, 42, 56, 0.6)),
     url('/ChatGPT%20Image%20Mar%2030,%202025,%2001_00_40%20AM.png'),
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.03), transparent 60%),
-  radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 70%);
-  
+    radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 70%);
+    
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+
   color: #ffffff;
+  min-height: 100vh;
+}
+
+/* === Custom Select Styles for ALL Devices === */
+select {
+  @apply bg-white/10 text-white border border-white/20 rounded-md px-4 py-2 w-full appearance-none transition duration-200 ease-in-out;
+}
+
+select:hover {
+  @apply bg-white/20;
+}
+
+select:focus {
+  @apply outline-none ring-2 ring-blue-500;
+}
+
+/* === Placeholder and Input Text === */
+::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* === Remove Number Input Arrows === */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
