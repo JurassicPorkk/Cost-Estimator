@@ -314,7 +314,7 @@ if (loanType === 'FHA') {
               <select
                 value={loanData[id]?.loanType || ''}
                 onChange={(e) => handleLoanChange(id, 'loanType', e.target.value)}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10"
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
                 <option value="">Select</option>
                 <option value="Conventional">Conventional</option>
@@ -349,7 +349,7 @@ if (loanType === 'FHA') {
                     handleLoanChange(id, 'downPayment', value);
                   }
                 }}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10"
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
                 <option value="">Select Down Payment</option>
                 {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
@@ -378,7 +378,7 @@ if (loanType === 'FHA') {
                     setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
                     handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
                   }}
-                  className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-white/10 text-white"
+                  className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
                 />
               )}
             </div>
@@ -389,7 +389,7 @@ if (loanType === 'FHA') {
               <select
                 value={loanData[id]?.location || ''}
                 onChange={(e) => handleLoanChange(id, 'location', e.target.value)}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10"
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
               >
                 <option value="Columbus, GA">Columbus, GA</option>
                 <option value="Harris County, GA">Harris County, GA</option>
