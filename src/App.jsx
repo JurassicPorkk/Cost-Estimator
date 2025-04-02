@@ -348,29 +348,31 @@ if (loanType === 'FHA') {
             <div>
   <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
   <select
-    value={selectedDownPaymentType[id] || ''}
-    onChange={(e) => {
-      const value = e.target.value;
-      setSelectedDownPaymentType((prev) => ({ ...prev, [id]: value }));
-      if (value !== 'custom') {
-        handleLoanChange(id, 'downPayment', value);
-      }
-    }}
-    className="w-full px-4 py-2 rounded-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800"
-    style={{
-      backgroundColor: '#1f2937',
-      color: 'white',
-      WebkitAppearance: 'none',
-      MozAppearance: 'none',
-      appearance: 'none',
-    }}
-  >
-    <option value="">Select Down Payment</option>
-    {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
-      <option key={pct} value={pct}>{pct}%</option>
-    ))}
-    <option value="custom">Custom Amount</option>
-  </select>
+  value={selectedDownPaymentType[id] || ''}
+  onChange={(e) => {
+    const value = e.target.value;
+    setSelectedDownPaymentType((prev) => ({ ...prev, [id]: value }));
+    if (value !== 'custom') {
+      handleLoanChange(id, 'downPayment', value);
+    }
+  }}
+  className="w-full px-4 py-2 rounded-md border text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+  style={{
+    backgroundColor: '#1f2937', // same as gray-800
+    color: 'white',
+    appearance: 'none',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    paddingRight: '2rem', // makes room for caret
+  }}
+>
+  <option value="">Select Down Payment</option>
+  {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
+    <option key={pct} value={pct}>{pct}%</option>
+  ))}
+  <option value="custom">Custom Amount</option>
+</select>
 
   {selectedDownPaymentType[id] === 'custom' && (
     <input
