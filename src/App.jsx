@@ -314,8 +314,14 @@ if (loanType === 'FHA') {
               <select
                 value={loanData[id]?.loanType || ''}
                 onChange={(e) => handleLoanChange(id, 'loanType', e.target.value)}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-  style={{ backgroundColor: '#1f2937', color: 'white' }}
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+  style={{
+    backgroundColor: '#1f2937',
+    color: 'white',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+    appearance: 'none',
+  }}
 >
                 <option value="">Select</option>
                 <option value="Conventional">Conventional</option>
@@ -350,8 +356,14 @@ if (loanType === 'FHA') {
                     handleLoanChange(id, 'downPayment', value);
                   }
                 }}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-  style={{ backgroundColor: '#1f2937', color: 'white' }}
+                className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+  style={{
+    backgroundColor: '#1f2937',
+    color: 'white',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+    appearance: 'none',
+  }}
 >
                 <option value="">Select Down Payment</option>
                 {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
@@ -362,30 +374,36 @@ if (loanType === 'FHA') {
 
               {/* Custom Down Payment Input */}
               {selectedDownPaymentType[id] === 'custom' && (
-                <input
-                  type="text"
-                  placeholder="$ Enter amount"
-                  value={customDownPayments[id] || ''}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^0-9]/g, '');
-                    const amount = parseFloat(raw);
-                    const price = parseFloat(unformatCurrency(salesPrice));
-                    const percent = price ? (amount / price) * 100 : 0;
+  <div>
+    <input
+      type="text"
+      placeholder="$ Enter amount"
+      value={customDownPayments[id] || ''}
+      onChange={(e) => {
+        const raw = e.target.value.replace(/[^0-9]/g, '');
+        const amount = parseFloat(raw);
+        const price = parseFloat(unformatCurrency(salesPrice));
+        const percent = price ? (amount / price) * 100 : 0;
 
-                    let adjusted = percent;
-                    const type = loanData[id]?.loanType;
-                    if (type === 'FHA' && percent < 3.5) adjusted = 3.5;
-                    if (type === 'Conventional' && percent < 3) adjusted = 3;
+        let adjusted = percent;
+        const type = loanData[id]?.loanType;
+        if (type === 'FHA' && percent < 3.5) adjusted = 3.5;
+        if (type === 'Conventional' && percent < 3) adjusted = 3;
 
-                    setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
-                    handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
-                  }}
-                  className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-  style={{ backgroundColor: '#1f2937', color: 'white' }}
-                />
-              )}
-            </div>
-
+        setCustomDownPayments((prev) => ({ ...prev, [id]: raw }));
+        handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
+      }}
+      className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+      style={{
+        backgroundColor: '#1f2937',
+        color: 'white',
+        WebkitAppearance: 'none',
+        MozAppearance: 'none',
+        appearance: 'none',
+      }}
+    />
+  </div>
+)}
             {/* Location */}
             <div>
               <label className="text-sm text-blue-200 block mb-1">Property Location</label>
