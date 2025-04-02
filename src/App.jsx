@@ -334,15 +334,22 @@ if (loanType === 'FHA') {
 
             {/* Interest Rate */}
             <div>
-              <label className="text-sm text-blue-200 block mb-1">Interest Rate</label>
-              <input
-                type="text"
-                value={loanData[id]?.interestRate || ''}
-                onChange={(e) => handleLoanChange(id, 'interestRate', e.target.value)}
-                placeholder="e.g. 6.75"
-                className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
-              />
-            </div>
+  <label className="text-sm text-blue-200 block mb-1">Interest Rate</label>
+  <input
+    type="text"
+    value={
+      loanData[id]?.interestRate
+        ? `${loanData[id]?.interestRate}%`
+        : ''
+    }
+    onChange={(e) => {
+      const raw = e.target.value.replace(/[^0-9.]/g, '');
+      handleLoanChange(id, 'interestRate', raw);
+    }}
+    placeholder="e.g. 6.75%"
+    className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+</div>
 
             {/* Down Payment Dropdown */}
             <div>
