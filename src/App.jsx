@@ -131,7 +131,14 @@ const calculateEstimates = (id) => {
 
   // Fixed Fees
   const underwritingFee = 1395;
-  const appraisalFee = 525;
+  let appraisalFee = 525;
+
+if (loanType === 'FHA') {
+  appraisalFee = 600;
+} else if (loanType?.includes('VA')) {
+  if (data.location.includes('GA')) appraisalFee = 650;
+  else if (data.location.includes('AL')) appraisalFee = 600;
+}
   const creditReport = 140;
   const attorneyFee = 1075;
   const titleSearch = 250;
