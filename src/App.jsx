@@ -407,27 +407,42 @@ export default function App() {
   )}
 </div>
             {/* Location */}
-            <div>
-              <label className="text-sm text-blue-200 block mb-1">Property Location</label>
-              <select
-                value={loanData[id]?.location || ''}
-                onChange={(e) => handleLoanChange(id, 'location', e.target.value)}
-                className="w-full px-4 py-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-  style={{ backgroundColor: '#1f2937', color: 'white' }}
->
-                <option value="Columbus, GA">Columbus, GA</option>
-                <option value="Harris County, GA">Harris County, GA</option>
-                <option value="Lee County, AL">Lee County, AL</option>
-                <option value="Russell County, AL">Russell County, AL</option>
-              </select>
-            </div>
-            {/* Closing Attorney */}
+<div>
+  <label className="text-sm text-blue-200 block mb-1">Property Location</label>
+  <select
+    value={loanData[id]?.location || ''}
+    onChange={(e) => handleLoanChange(id, 'location', e.target.value)}
+    className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+    style={{
+      backgroundColor: '#1f2937', // matches Tailwind gray-800
+      color: 'white',
+      WebkitAppearance: 'none',
+      MozAppearance: 'none',
+      appearance: 'none',
+    }}
+  >
+    <option value="">Select Location</option>
+    <option value="Columbus, GA">Columbus, GA</option>
+    <option value="Harris County, GA">Harris County, GA</option>
+    <option value="Lee County, AL">Lee County, AL</option>
+    <option value="Russell County, AL">Russell County, AL</option>
+  </select>
+</div>
+
+{/* Closing Attorney */}
 <div>
   <label className="text-sm text-blue-200 block mb-1">Closing Attorney</label>
   <select
     value={loanData[id]?.attorney || ''}
     onChange={(e) => handleLoanChange(id, 'attorney', e.target.value)}
-    className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+    style={{
+      backgroundColor: '#1f2937', // same deep gray
+      color: 'white',
+      WebkitAppearance: 'none',
+      MozAppearance: 'none',
+      appearance: 'none',
+    }}
   >
     <option value="">Closing Attorney</option>
     <option value="Graham Legal Firm">Graham Legal Firm</option>
