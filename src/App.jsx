@@ -421,7 +421,56 @@ export default function App() {
                 <option value="Russell County, AL">Russell County, AL</option>
               </select>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+  {[1, 2, 3].map((id) => (
+    <motion.div
+      key={id}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: id * 0.1 }}
+      className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md"
+    >
+      <button
+        onClick={() =>
+          setExpandedEstimates((prev) => ({ ...prev, [id]: !prev[id] }))
+        }
+        className="w-full font-semibold text-white text-center text-lg py-2 px-4 bg-blue-600 hover:bg-blue-700 transition rounded-lg shadow"
+      >
+        {`Estimate ${id}`}
+      </button>
 
+      <AnimatePresence>
+        {expandedEstimates[id] && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden mt-4 space-y-4"
+          >
+            {/* Closing Attorney Dropdown */}
+            <div>
+              <label className="text-sm text-blue-200 block mb-1">Closing Attorney</label>
+              <select
+                value={loanData[id]?.attorney || ''}
+                onChange={(e) => handleLoanChange(id, 'attorney', e.target.value)}
+                className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Closing Attorney</option>
+                <option value="Graham Legal Firm">Graham Legal Firm</option>
+                <option value="PSSTF">PSSTF</option>
+                <option value="GSHWM">GSHWM</option>
+              </select>
+            </div>
+
+            {/* REMAINING JSX INPUTS — Loan Type, Interest Rate, Down Payment, Location, Homestead, City Limits, Closing Date, Action Buttons, and Results */}
+            {/* KEEP ALL EXISTING STRUCTURE AND CLASSNAMES */}
+
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  ))}
+</div>
             {/* Homestead Toggle */}
             <div className="flex items-center gap-3">
               <input
