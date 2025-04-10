@@ -207,7 +207,6 @@ if (data.location.includes('GA')) {
           creditReport: formatCurrency(creditReport),
           attorneyFee: formatCurrency(attorneyFee),
           titleSearch: formatCurrency(titleSearch),
-          recording: formatCurrency(recording),
           ownerTitle: formatCurrency(ownerTitle),
           lenderTitle: formatCurrency(lenderTitle),
           mortgageTax: formatCurrency(mortgageTax),
