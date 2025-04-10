@@ -140,7 +140,6 @@ export default function App() {
     else if (data.attorney === 'GSHWM') attorneyFee = 1854;
 
     const titleSearch = 250;
-    const recording = 70;
 
     let ownerTitle, lenderTitle, mortgageTax, transferTax = 0;
 
@@ -161,7 +160,7 @@ export default function App() {
     const insuranceEscrow = (insuranceAnnual / 12) * 3;
     const taxEscrow = monthlyTax * 3;
 
-    const totalClosingCosts = underwritingFee + appraisalFee + creditReport + attorneyFee + titleSearch + recording + ownerTitle + lenderTitle + mortgageTax + transferTax;
+    const totalClosingCosts = underwritingFee + appraisalFee + creditReport + attorneyFee + titleSearch + ownerTitle + lenderTitle + mortgageTax + transferTax;
     const totalPrepaids = prepaidInterest + insuranceAnnual + insuranceEscrow + taxEscrow;
     const finalCashToClose = downPaymentAmount + totalClosingCosts + totalPrepaids;
 
@@ -184,7 +183,6 @@ export default function App() {
           creditReport: formatCurrency(creditReport),
           attorneyFee: formatCurrency(attorneyFee),
           titleSearch: formatCurrency(titleSearch),
-          recording: formatCurrency(recording),
           ownerTitle: formatCurrency(ownerTitle),
           lenderTitle: formatCurrency(lenderTitle),
           mortgageTax: formatCurrency(mortgageTax),
@@ -501,7 +499,6 @@ export default function App() {
                       <div><strong>Credit Report:</strong> {results[id].breakdown.creditReport}</div>
                       <div><strong>Attorney Fee:</strong> {results[id].breakdown.attorneyFee}</div>
                       <div><strong>Title Search:</strong> {results[id].breakdown.titleSearch}</div>
-                      <div><strong>Recording Fee:</strong> {results[id].breakdown.recording}</div>
                       <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
                       <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
                       <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
