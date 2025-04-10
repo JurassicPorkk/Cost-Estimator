@@ -141,19 +141,40 @@ export default function App() {
 
     const titleSearch = 250;
 
-    let ownerTitle, lenderTitle, mortgageTax, transferTax = 0;
+    let ownerTitle = 0, lenderTitle = 0, mortgageTax = 0, transferTax = 0;
 
-    if (data.location.includes('AL')) {
-      ownerTitle = sales * 0.0011;
-      lenderTitle = loanAmount * 0.00216;
-      mortgageTax = (loanAmount / 100) * 0.15;
-      transferTax = Math.max((sales - loanAmount) / 1000, 0);
-    } else {
-      ownerTitle = sales * 0.0022;
-      lenderTitle = loanAmount * 0.00352;
-      mortgageTax = (loanAmount / 100) * 0.3;
-      transferTax = sales / 1000;
-    }
+if (data.location.includes('GA')) {
+  // Georgia Owner's Title based on down payment %
+  if (downPercent <= 5) {
+    ownerTitle = sales * 0.00226;
+  } else if (downPercent <= 10) {
+    ownerTitle = sales * 0.00243;
+  } else if (downPercent <= 15) {
+    ownerTitle = sales * 0.00259;
+  } else {
+    ownerTitle = sales * 0.00284;
+  }
+
+  lenderTitle = loanAmount * 0.00352;
+  mortgageTax = (loanAmount / 100) * 0.3;
+  transferTax = sales / 1000;
+
+} else if (data.location.includes('AL')) {
+  // Alabama Owner's Title based on down payment %
+  if (downPercent <= 5) {
+    ownerTitle = sales * 0.00109;
+  } else if (downPercent <= 10) {
+    ownerTitle = sales * 0.0012;
+  } else if (downPercent <= 15) {
+    ownerTitle = sales * 0.00129;
+  } else {
+    ownerTitle = sales * 0.00149;
+  }
+
+  lenderTitle = loanAmount * 0.00216;
+  mortgageTax = (loanAmount / 100) * 0.15;
+  transferTax = Math.max((sales - loanAmount) / 1000, 0);
+}
 
     const daysRemaining = 30 - new Date(data.closingDate).getDate();
     const prepaidInterest = (loanAmount * rate / 365) * daysRemaining;
