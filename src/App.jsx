@@ -513,20 +513,21 @@ if (data.location.includes('GA')) {
                       <div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
                       <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
                       <div><strong>Sales Price:</strong> {salesPrice}</div>
+                      {/* VA Funding Fee (only for VA loans) */}
+                      {loanData[id]?.loanType?.includes('VA') && results[id]?.vaFundingFee && (
+                      <div><strong>VA Funding Fee:</strong> {results[id].vaFundingFee}</div>
+                      )}
+                      {/* FHA UFMIP (only for FHA) */}
+                      {loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
+                      <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
+                      )}
                       <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
-                      {results[id].downPaymentAmount && (
+                      {/* Show Down Payment only if it's greater than $0 */}
+                      {parseFloat(results[id]?.downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
                       <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
                       )}
                       <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
                       <div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
-
-                      {/* 🚀 Show VA Funding Fee or FHA UFMIP only if present */}
-                      {results[id].fundingFee && (
-                      <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
-                      )}
-                      {results[id].ufmip && (
-                      <div><strong>FHA UFMIP (rolled into loan):</strong> {results[id].ufmip}</div>
-                      )}
 
 
 
