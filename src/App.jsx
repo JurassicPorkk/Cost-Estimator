@@ -518,8 +518,8 @@ if (data.location.includes('GA')) {
 <div><strong>Sales Price:</strong> {salesPrice}</div>
 
 {/* VA Funding Fee (only for VA loans) */}
-{loanData[id]?.loanType?.includes('VA') && results[id]?.vaFundingFee && (
-  <div><strong>VA Funding Fee:</strong> {results[id].vaFundingFee}</div>
+{loanData[id]?.loanType?.includes('VA') && results[id]?.FundingFee && (
+  <div><strong>VA Funding Fee:</strong> {results[id].FundingFee}</div>
 )}
 
 {/* FHA UFMIP (only for FHA) */}
