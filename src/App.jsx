@@ -509,27 +509,33 @@ if (data.location.includes('GA')) {
                       transition={{ duration: 0.3 }}
                       className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
                     >
-                      <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">Loan Summary</h3>
-                      <div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
-                      <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
-                      <div><strong>Sales Price:</strong> {salesPrice}</div>
-                      {/* VA Funding Fee (only for VA loans) */}
-                      {loanData[id]?.loanType?.includes('VA') && results[id]?.vaFundingFee && (
-                      <div><strong>VA Funding Fee:</strong> {results[id].vaFundingFee}</div>
-                      )}
-                      {/* FHA UFMIP (only for FHA) */}
-                      {loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
-                      <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
-                      )}
-                      <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
-                      {/* Show Down Payment only if it's greater than $0 */}
-                      {parseFloat(results[id]?.downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
-                      <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
-                      )}
-                      <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
-                      <div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
+                      <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">
+  Loan Summary
+</h3>
 
+<div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
+<div><strong>Property Location:</strong> {loanData[id]?.location}</div>
+<div><strong>Sales Price:</strong> {salesPrice}</div>
 
+{/* VA Funding Fee (only for VA loans) */}
+{loanData[id]?.loanType?.includes('VA') && results[id]?.vaFundingFee && (
+  <div><strong>VA Funding Fee:</strong> {results[id].vaFundingFee}</div>
+)}
+
+{/* FHA UFMIP (only for FHA) */}
+{loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
+  <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
+)}
+
+<div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
+
+{/* Show Down Payment only if it's greater than $0 */}
+{parseFloat(results[id]?.downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
+  <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
+)}
+
+<div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
+<div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
 
                       <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
                       <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
