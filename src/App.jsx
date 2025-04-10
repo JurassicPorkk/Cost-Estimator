@@ -517,12 +517,12 @@ if (data.location.includes('GA')) {
 <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
 <div><strong>Sales Price:</strong> {salesPrice}</div>
 
-{/* VA Funding Fee (only for VA loans) */}
-{loanData[id]?.loanType?.includes('VA') && results[id]?.FundingFee && (
-  <div><strong>VA Funding Fee:</strong> {results[id].FundingFee}</div>
+{/* ✅ Correct casing for VA Funding Fee */}
+{loanData[id]?.loanType?.includes('VA') && results[id]?.fundingFee && (
+  <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
 )}
 
-{/* FHA UFMIP (only for FHA) */}
+{/* ✅ FHA UFMIP is correct */}
 {loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
   <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
 )}
@@ -530,7 +530,7 @@ if (data.location.includes('GA')) {
 <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
 
 {/* Show Down Payment only if it's greater than $0 */}
-{parseFloat(results[id]?.downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
+{parseFloat(results[id]?.downPaymentAmount?.replace(/[^0-9.]/g, '')) > 0 && (
   <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
 )}
 
