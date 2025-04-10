@@ -510,10 +510,21 @@ if (data.location.includes('GA')) {
                       <div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
                       <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
                       <div><strong>Sales Price:</strong> {salesPrice}</div>
-                      <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
                       <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
-                      <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate ? `${loanData[id]?.interestRate}%` : ''}</div>
+                      {results[id].downPaymentAmount && (
+                      <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
+                      )}
+                      <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
                       <div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
+
+                      {/* 🚀 Show VA Funding Fee or FHA UFMIP only if present */}
+                      {results[id].fundingFee && (
+                      <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
+                      )}
+                      {results[id].ufmip && (
+                      <div><strong>FHA UFMIP (rolled into loan):</strong> {results[id].ufmip}</div>
+                      )}
+
 
 
                       <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
