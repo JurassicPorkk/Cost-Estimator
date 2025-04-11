@@ -600,8 +600,8 @@ if (data.location.includes('GA')) {
 </motion.div>   )/* ✅ Closes motion.div for expanded estimate form */}
 )
 </AnimatePresence>  {/* ✅ Properly closes AnimatePresence */}
-</motion.div>  ),{/* ✅ Closes motion.div for entire Estimate Card */}
-)}
+</motion.div>  )/* ✅ Closes motion.div for entire Estimate Card */
+          )}
 </div>  {/* ✅ Closes .map grid wrapper */}
 
 <div className="mt-10 text-center">
