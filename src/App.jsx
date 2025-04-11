@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { motion, AnimatePresence } from 'framer-motion';
 import './index.css';
+import html2pdf from 'html2pdf.js';
 
 const formatCurrency = (value) =>
   `$${Number(value).toLocaleString(undefined, {
@@ -267,13 +268,11 @@ if (data.location.includes('GA')) {
       margin: 0.3,
       filename: `Loan_Estimate_${id}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
     };
-  
-    import('html2pdf.js').then((html2pdf) => {
-      html2pdf.default().from(element).set(options).save();
-    });
+    html2pdf().from(element).set(options).save();
+  };  
   };  
   return (
     <div className="min-h-screen text-white p-6 font-sans">
@@ -615,4 +614,4 @@ if (data.location.includes('GA')) {
 </div>
 </div>
 </div>
-)}
+);
