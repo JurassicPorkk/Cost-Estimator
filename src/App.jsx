@@ -595,14 +595,14 @@ if (data.location.includes('GA')) {
   </button>
 </div>
 
-</motion.div>  )/* ✅ Closes motion.div for results[id] */}
-)
-</motion.div>   )/* ✅ Closes motion.div for expanded estimate form */}
-)
-</AnimatePresence>  {/* ✅ Properly closes AnimatePresence */}
-</motion.div>  )/* ✅ Closes motion.div for entire Estimate Card */
-          )}
-</div>  {/* ✅ Closes .map grid wrapper */}
+</motion.div> 
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  ))}
+</div>
 
 <div className="mt-10 text-center">
   <button
@@ -612,6 +612,7 @@ if (data.location.includes('GA')) {
     Reset All
   </button>
 </div>
+
 </div>
 </div>
 );
