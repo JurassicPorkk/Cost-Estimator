@@ -261,7 +261,20 @@ if (data.location.includes('GA')) {
       return copy;
     });
   };
-
+  const exportToPDF = (id) => {
+    const element = document.getElementById(`estimate-card-${id}`);
+    const options = {
+      margin: 0.3,
+      filename: `Loan_Estimate_${id}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+  
+    import('html2pdf.js').then((html2pdf) => {
+      html2pdf.default().from(element).set(options).save();
+    });
+  };  
   return (
     <div className="min-h-screen text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
@@ -503,90 +516,104 @@ if (data.location.includes('GA')) {
 
                   {/* Results Display */}
                   {results[id] && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
-                    >
-                      <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">
-  Loan Summary
-</h3>
+  <motion.div
+    id={`estimate-card-${id}`}
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
+  >
+    {/* Loan Summary */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">Loan Summary</h3>
+    <div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
+    <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
+    <div><strong>Sales Price:</strong> {salesPrice}</div>
 
-<div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
-<div><strong>Property Location:</strong> {loanData[id]?.location}</div>
-<div><strong>Sales Price:</strong> {salesPrice}</div>
+    {/* VA Funding Fee (only for VA loans) */}
+    {loanData[id]?.loanType?.includes('VA') && results[id]?.fundingFee && (
+      <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
+    )}
 
-{/* ✅ Correct casing for VA Funding Fee */}
-{loanData[id]?.loanType?.includes('VA') && results[id]?.fundingFee && (
-  <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
-)}
+    {/* FHA UFMIP (only for FHA) */}
+    {loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
+      <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
+    )}
 
-{/* ✅ FHA UFMIP is correct */}
-{loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
-  <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
-)}
+    <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
 
-<div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
+    {/* Only show Down Payment if > $0 */}
+    {results[id].downPaymentAmount && parseFloat(results[id].downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
+      <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
+    )}
 
-{/* Show Down Payment only if it's greater than $0 */}
-{parseFloat(results[id]?.downPaymentAmount?.replace(/[^0-9.]/g, '')) > 0 && (
-  <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
-)}
+    <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
+    <div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
 
-<div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
-<div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
-
-                      <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
-                      <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
-                      <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
-                      <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
-                      <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
-                      <div className="text-green-400 font-bold border-t border-white/10 pt-2">
-                        Total Monthly Payment: {results[id].totalPayment}
-                      </div>
-
-                      <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Closing Costs</h3>
-                      <div><strong>Underwriting Fee:</strong> {results[id].breakdown.underwritingFee}</div>
-                      <div><strong>Appraisal Fee:</strong> {results[id].breakdown.appraisalFee}</div>
-                      <div><strong>Credit Report:</strong> {results[id].breakdown.creditReport}</div>
-                      <div><strong>Attorney Fee:</strong> {results[id].breakdown.attorneyFee}</div>
-                      <div><strong>Title Search:</strong> {results[id].breakdown.titleSearch}</div>
-                      <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
-                      <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
-                      <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
-                      <div><strong>Transfer Tax:</strong> {results[id].breakdown.transferTax}</div>
-                      <div className="text-orange-400 font-bold pt-1">Total Closing Costs: {results[id].totalClosingCosts}</div>
-
-                      <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Prepaids & Escrows</h3>
-                      <div><strong>Prepaid Interest:</strong> {results[id].breakdown.prepaidInterest}</div>
-                      <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
-                      <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
-                      <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
-                      <div className="text-orange-400 font-bold pt-1">Total Prepaids & Escrows: {results[id].totalPrepaids}</div>
-
-                      <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
-                        <span>Final Cash to Close:</span>
-                        <span>{results[id].finalCashToClose}</span>
-                      </div>
-                    </motion.div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Global Reset */}
-      <div className="mt-10 text-center">
-        <button
-          onClick={resetForm}
-          className="bg-red-700 hover:bg-red-800 text-white font-semibold px-6 py-2 rounded-lg shadow"
-        >
-          Reset All
-        </button>
-      </div>
+    {/* Monthly Payment Section */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
+    <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
+    <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
+    <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
+    <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
+    <div className="text-green-400 font-bold border-t border-white/10 pt-2">
+      Total Monthly Payment: {results[id].totalPayment}
     </div>
-  </div>
-);}
+
+    {/* Closing Costs */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Closing Costs</h3>
+    <div><strong>Underwriting Fee:</strong> {results[id].breakdown.underwritingFee}</div>
+    <div><strong>Appraisal Fee:</strong> {results[id].breakdown.appraisalFee}</div>
+    <div><strong>Credit Report:</strong> {results[id].breakdown.creditReport}</div>
+    <div><strong>Attorney Fee:</strong> {results[id].breakdown.attorneyFee}</div>
+    <div><strong>Title Search:</strong> {results[id].breakdown.titleSearch}</div>
+    <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
+    <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
+    <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
+    <div><strong>Transfer Tax:</strong> {results[id].breakdown.transferTax}</div>
+    <div className="text-orange-400 font-bold pt-1">Total Closing Costs: {results[id].totalClosingCosts}</div>
+
+    {/* Prepaids & Escrows */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Prepaids & Escrows</h3>
+    <div><strong>Prepaid Interest:</strong> {results[id].breakdown.prepaidInterest}</div>
+    <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
+    <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
+    <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
+    <div className="text-orange-400 font-bold pt-1">Total Prepaids & Escrows: {results[id].totalPrepaids}</div>
+
+    {/* Final Cash to Close */}
+    <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
+      <span>Final Cash to Close:</span>
+      <span>{results[id].finalCashToClose}</span>
+    </div>
+
+    {/* Export Button */}
+    <div className="mt-4 text-right">
+  <button
+    onClick={() => exportToPDF(id)}
+    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition"
+  >
+    Export as PDF
+  </button>
+</div>
+
+</motion.div>  )/* ✅ Closes motion.div for results[id] */}
+)
+</motion.div>   )/* ✅ Closes motion.div for expanded estimate form */}
+)
+</AnimatePresence>  {/* ✅ Properly closes AnimatePresence */}
+</motion.div>  ),{/* ✅ Closes motion.div for entire Estimate Card */}
+)}
+</div>  {/* ✅ Closes .map grid wrapper */}
+
+/* Global Reset */
+<div className="mt-10 text-center">
+  <button
+    onClick={resetForm}
+    className="bg-red-700 hover:bg-red-800 text-white font-semibold px-6 py-2 rounded-lg shadow"
+  >
+    Reset All
+  </button>
+</div>
+</div>
+</div>
+)}
