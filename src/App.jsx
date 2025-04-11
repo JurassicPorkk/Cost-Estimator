@@ -115,7 +115,7 @@ export default function App() {
     } else if (loanType === 'VA Exempt') loanAmount = loanBase;
 
     const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
-    const monthlyTax = calculatePropertyTax(sales, data.location, data.homestead, data.cityLimits);
+    const monthlyTax = calculatePropertyTax(sales, data.location, data.homestead, data.inCityLimits);
 
     let monthlyMI = 0;
     if (loanType === 'Conventional' && downPercent < 20) {
