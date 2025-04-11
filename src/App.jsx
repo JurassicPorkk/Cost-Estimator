@@ -272,7 +272,7 @@ if (data.location.includes('GA')) {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
     };
     html2pdf().from(element).set(options).save();
-  };  
+};  
   };  
   return (
     <div className="min-h-screen text-white p-6 font-sans">
