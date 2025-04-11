@@ -605,7 +605,6 @@ if (data.location.includes('GA')) {
 )}
 </div>  {/* ✅ Closes .map grid wrapper */}
 
-/* Global Reset */
 <div className="mt-10 text-center">
   <button
     onClick={resetForm}
