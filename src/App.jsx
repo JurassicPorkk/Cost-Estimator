@@ -265,14 +265,17 @@ if (data.location.includes('GA')) {
   const exportToPDF = (id) => {
     const element = document.getElementById(`estimate-card-${id}`);
     const options = {
-      margin: 0.3,
+      margin: 0.1, // Smaller margin
       filename: `Loan_Estimate_${id}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: {
+        scale: 0.85, // Shrinks everything to fit better
+        useCORS: true
+      },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
     };
     html2pdf().from(element).set(options).save();
-};    
+  };      
   return (
     <div className="min-h-screen text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
