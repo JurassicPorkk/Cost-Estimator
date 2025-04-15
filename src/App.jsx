@@ -22,9 +22,9 @@ const renderDownPaymentOptions = (loanType) => {
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
   const [loanData, setLoanData] = useState({
-    1: { loanType: '', interestRate: '', downPayment: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
-    2: { loanType: '', interestRate: '', downPayment: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
-    3: { loanType: '', interestRate: '', downPayment: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
+    1: { loanType: '', interestRate: '', downPayment: '', downPaymentAmount: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
+    2: { loanType: '', interestRate: '', downPayment: '', downPaymentAmount: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
+    3: { loanType: '', interestRate: '', downPayment: '', downPaymentAmount: '', location: '', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
   });
   const [expandedEstimates, setExpandedEstimates] = useState({});
   const [results, setResults] = useState({});
@@ -93,7 +93,13 @@ export default function App() {
     const downPercent = parseFloat(data.downPayment) || 0;
     const loanType = data.loanType;
 
-    const downPaymentAmount = (sales * downPercent) / 100;
+    let downPaymentAmount = (sales * downPercent) / 100;
+
+// Override if custom dollar amount exists
+    if (customDownPayments[id]) {
+    const amount = parseFloat(unformatCurrency(customDownPayments[id])) || 0;
+    downPaymentAmount = amount;
+}
     const loanBase = sales - downPaymentAmount;
     const termMonths = 360;
     const monthlyRate = rate / 12;
@@ -394,9 +400,9 @@ if (data.location.includes('GA')) {
     value={customDownPayments[id] || ''}
     onChange={(e) => {
       const raw = e.target.value.replace(/[^0-9]/g, '');
-      const amount = parseFloat(raw);
       const formatted = raw ? `$${Number(raw).toLocaleString()}` : '';
 
+      const amount = parseFloat(raw) || 0;
       const price = parseFloat(unformatCurrency(salesPrice));
       const percent = price ? (amount / price) * 100 : 0;
 
@@ -407,6 +413,7 @@ if (data.location.includes('GA')) {
 
       setCustomDownPayments((prev) => ({ ...prev, [id]: formatted }));
       handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
+      handleLoanChange(id, 'downPaymentAmount', amount); // ✅ Store actual down payment amount
     }}
     className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
     style={{
