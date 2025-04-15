@@ -3,12 +3,12 @@
   "name": "Cash To Close by Dustin Steele",
   "icons": [
     {
-      "src": "/face-icon.png",
+      "src": "/cash-to-close-icon.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/face-icon.png",
+      "src": "/cash-to-close-icon.png",
       "type": "image/png",
       "sizes": "512x512"
     }
