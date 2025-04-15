@@ -1,0 +1,20 @@
+{
+    "short_name": "Snapshot Pro",
+    "name": "Snapshot Pro by Dustin Steele",
+    "icons": [
+      {
+        "src": "/cash-to-close-icon.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/cash-to-close-icon.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#0f172a",
+    "background_color": "#0f172a"
+  }  
