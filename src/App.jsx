@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { motion, AnimatePresence } from 'framer-motion';
 import './index.css';
-import html2pdf from 'html2pdf.js';
 
 const formatCurrency = (value) =>
   `$${Number(value).toLocaleString(undefined, {
@@ -262,20 +261,7 @@ if (data.location.includes('GA')) {
       return copy;
     });
   };
-  const exportToPDF = (id) => {
-    const element = document.getElementById(`estimate-card-${id}`);
-    const options = {
-      margin: 0.1, // Smaller margin
-      filename: `Loan_Estimate_${id}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 0.85, // Shrinks everything to fit better
-        useCORS: true
-      },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-    };
-    html2pdf().from(element).set(options).save();
-  };      
+      
   return (
     <div className="min-h-screen text-white p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-10">
@@ -586,16 +572,6 @@ if (data.location.includes('GA')) {
       <span>Final Cash to Close:</span>
       <span>{results[id].finalCashToClose}</span>
     </div>
-
-    {/* Export Button */}
-    <div className="mt-4 text-right">
-  <button
-    onClick={() => exportToPDF(id)}
-    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition"
-  >
-    Export as PDF
-  </button>
-</div>
 
 </motion.div> 
             )}
