@@ -229,15 +229,15 @@ if (data.location.includes('GA')) {
   const resetForm = () => {
     setSalesPrice('');
     setLoanData({
-      1: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-      2: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
-      3: { loanType: '', interestRate: '', downPayment: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD') },
+      1: { loanType: '', interestRate: '', downPayment: '', downPaymentAmount: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
+      2: { loanType: '', interestRate: '', downPayment: '', downPaymentAmount: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
+      3: { loanType: '', interestRate: '', downPayment: '', downPaymentAmount: '', location: 'Columbus, GA', closingDate: dayjs().format('YYYY-MM-DD'), homestead: true, cityLimits: true, attorney: '' },
     });
     setExpandedEstimates({});
     setResults({});
     setSelectedDownPaymentType({});
     setCustomDownPayments({});
-  };
+  };  
 
   // Reset an individual estimate card
   const resetSingleCard = (id) => {
@@ -247,9 +247,13 @@ if (data.location.includes('GA')) {
         loanType: '',
         interestRate: '',
         downPayment: '',
+        downPaymentAmount: '',
         location: 'Columbus, GA',
         closingDate: dayjs().format('YYYY-MM-DD'),
-      },
+        homestead: true,
+        cityLimits: true,
+        attorney: ''
+      }
     }));
     setResults((prev) => {
       const copy = { ...prev };
@@ -266,7 +270,7 @@ if (data.location.includes('GA')) {
       delete copy[id];
       return copy;
     });
-  };
+  };  
       
   return (
     <div className="min-h-screen text-white p-6 font-sans">
