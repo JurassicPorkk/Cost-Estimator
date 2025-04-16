@@ -30,6 +30,7 @@ export default function App() {
   const [results, setResults] = useState({});
   const [selectedDownPaymentType, setSelectedDownPaymentType] = useState({});
   const [customDownPayments, setCustomDownPayments] = useState({});
+  const [attorneyFees, setAttorneyFees] = useState({});
 
   const handleLoanChange = (id, field, value) => {
     if (field === 'interestRate') {
@@ -92,23 +93,24 @@ export default function App() {
     const rate = parseFloat(data.interestRate) / 100 || 0;
     const downPercent = parseFloat(data.downPayment) || 0;
     const loanType = data.loanType;
-
+  
     let downPaymentAmount = (sales * downPercent) / 100;
-
-// Override if custom dollar amount exists
+  
+    // ✅ Override with custom dollar amount if set
     if (customDownPayments[id]) {
-    const amount = parseFloat(unformatCurrency(customDownPayments[id])) || 0;
-    downPaymentAmount = amount;
-}
+      const amount = parseFloat(unformatCurrency(customDownPayments[id])) || 0;
+      downPaymentAmount = amount;
+    }
+  
     const loanBase = sales - downPaymentAmount;
     const termMonths = 360;
     const monthlyRate = rate / 12;
     const insuranceAnnual = 1500;
     const insuranceMonthly = insuranceAnnual / 12;
-
+  
     let loanAmount = 0;
     let fundingFee = 0;
-
+  
     if (loanType === 'Conventional') loanAmount = loanBase;
     else if (loanType === 'FHA') loanAmount = loanBase * 1.0175;
     else if (loanType === 'VA First') {
@@ -118,10 +120,10 @@ export default function App() {
       fundingFee = downPercent >= 10 ? 0.0125 : downPercent >= 5 ? 0.015 : 0.033;
       loanAmount = loanBase + loanBase * fundingFee;
     } else if (loanType === 'VA Exempt') loanAmount = loanBase;
-
+  
     const principalInterest = (monthlyRate * loanAmount) / (1 - Math.pow(1 + monthlyRate, -termMonths));
     const monthlyTax = calculatePropertyTax(sales, data.location, data.homestead, data.inCityLimits);
-
+  
     let monthlyMI = 0;
     if (loanType === 'Conventional' && downPercent < 20) {
       if (downPercent < 3) monthlyMI = 0;
@@ -132,65 +134,90 @@ export default function App() {
     } else if (loanType === 'FHA') {
       monthlyMI = loanAmount * (downPercent >= 5 ? 0.005 : 0.0055) / 12;
     }
-
+  
     const totalPITI = principalInterest + insuranceMonthly + monthlyTax + monthlyMI;
-
-    // Fixed Fees
+  
     const underwritingFee = 1395;
     const appraisalFee = loanType === 'FHA' ? 600 : loanType?.includes('VA') ? (data.location.includes('GA') ? 650 : 600) : 525;
     const creditReport = 140;
-
-    let attorneyFee = 0;
-    if (data.attorney === 'Graham Legal Firm') attorneyFee = 1535;
-    else if (data.attorney === 'PSSTF') attorneyFee = 1508;
-    else if (data.attorney === 'GSHWM') attorneyFee = 1854;
-
     const titleSearch = 250;
+  
+    // ✅ Attorney Fee Itemization
+    let attorneyFees = {};
 
-    let ownerTitle = 0, lenderTitle = 0, mortgageTax = 0, transferTax = 0;
-
-if (data.location.includes('GA')) {
-  // Georgia Owner's Title based on down payment %
-  if (downPercent <= 5) {
-    ownerTitle = sales * 0.00226;
-  } else if (downPercent <= 10) {
-    ownerTitle = sales * 0.00243;
-  } else if (downPercent <= 15) {
-    ownerTitle = sales * 0.00259;
-  } else {
-    ownerTitle = sales * 0.00284;
-  }
-
-  lenderTitle = loanAmount * 0.00352;
-  mortgageTax = (loanAmount / 100) * 0.3;
-  transferTax = sales / 1000;
-
-} else if (data.location.includes('AL')) {
-  // Alabama Owner's Title based on down payment %
-  if (downPercent <= 5) {
-    ownerTitle = sales * 0.00109;
-  } else if (downPercent <= 10) {
-    ownerTitle = sales * 0.0012;
-  } else if (downPercent <= 15) {
-    ownerTitle = sales * 0.00129;
-  } else {
-    ownerTitle = sales * 0.00149;
-  }
-
-  lenderTitle = loanAmount * 0.00216;
-  mortgageTax = (loanAmount / 100) * 0.15;
-  transferTax = Math.max((sales - loanAmount) / 1000, 0);
+if (data.attorney === 'Graham Legal Firm') {
+  attorneyFees = {
+    cpl: 25,
+    courier: 100,
+    endorsements: 125,
+    expressPayoff: 35,
+    processing: 50,
+    settlement: 1075,
+    wire: 25,
+    recording: 100,
+  };
+} else if (data.attorney === 'GSHWM') {
+  attorneyFees = {
+    cpl: 55,
+    courier: 375,
+    docPrep: 110,
+    eRecording: 14,
+    expressPayoff: 115,
+    titleExam: 240,
+    settlement: 830,
+    titleCommitment: 80,
+    recording: 100,
+    wire: 35,
+  };
+} else if (data.attorney === 'PSSTF') {
+  attorneyFees = {
+    cpl: 25,
+    docPrep: 99,
+    eRecording: 10,
+    endorsements: 125,
+    postClosing: 99,
+    titleExam: 250,
+    settlement: 675,
+    titleBinder: 125,
+    recording: 100,
+  };
 }
 
+// ⬇️ This is required for all calculations using attorney fees:
+const totalAttorneyFee = Object.values(attorneyFees).reduce((sum, fee) => sum + fee, 0);
+  
+    let ownerTitle = 0, lenderTitle = 0, mortgageTax = 0, transferTax = 0;
+  
+    if (data.location.includes('GA')) {
+      if (downPercent <= 5) ownerTitle = sales * 0.00226;
+      else if (downPercent <= 10) ownerTitle = sales * 0.00243;
+      else if (downPercent <= 15) ownerTitle = sales * 0.00259;
+      else ownerTitle = sales * 0.00284;
+  
+      lenderTitle = loanAmount * 0.00352;
+      mortgageTax = (loanAmount / 100) * 0.3;
+      transferTax = sales / 1000;
+    } else if (data.location.includes('AL')) {
+      if (downPercent <= 5) ownerTitle = sales * 0.00109;
+      else if (downPercent <= 10) ownerTitle = sales * 0.0012;
+      else if (downPercent <= 15) ownerTitle = sales * 0.00129;
+      else ownerTitle = sales * 0.00149;
+  
+      lenderTitle = loanAmount * 0.00216;
+      mortgageTax = (loanAmount / 100) * 0.15;
+      transferTax = Math.max((sales - loanAmount) / 1000, 0);
+    }
+  
     const daysRemaining = 30 - new Date(data.closingDate).getDate();
     const prepaidInterest = (loanAmount * rate / 365) * daysRemaining;
     const insuranceEscrow = (insuranceAnnual / 12) * 3;
     const taxEscrow = monthlyTax * 3;
-
-    const totalClosingCosts = underwritingFee + appraisalFee + creditReport + attorneyFee + titleSearch + ownerTitle + lenderTitle + mortgageTax + transferTax;
+  
+    const attorneyTotal = Object.values(attorneyFees).reduce((sum, val) => sum + val, 0);
+    const totalClosingCosts = underwritingFee + appraisalFee + creditReport + totalAttorneyFee + titleSearch + ownerTitle + lenderTitle + mortgageTax + transferTax;
     const totalPrepaids = prepaidInterest + insuranceAnnual + insuranceEscrow + taxEscrow;
     const finalCashToClose = downPaymentAmount + totalClosingCosts + totalPrepaids;
-
+  
     setResults((prev) => ({
       ...prev,
       [id]: {
@@ -204,14 +231,12 @@ if (data.location.includes('GA')) {
         totalClosingCosts: formatCurrency(totalClosingCosts),
         totalPrepaids: formatCurrency(totalPrepaids),
         finalCashToClose: formatCurrency(finalCashToClose),
-        // ✅ Show only in Loan Summary — not used in totals
         fundingFee: loanType.includes('VA') ? formatCurrency(loanAmount - loanBase) : '',
         ufmip: loanType === 'FHA' ? formatCurrency(loanAmount - loanBase) : '',
         breakdown: {
           underwritingFee: formatCurrency(underwritingFee),
           appraisalFee: formatCurrency(appraisalFee),
           creditReport: formatCurrency(creditReport),
-          attorneyFee: formatCurrency(attorneyFee),
           titleSearch: formatCurrency(titleSearch),
           ownerTitle: formatCurrency(ownerTitle),
           lenderTitle: formatCurrency(lenderTitle),
@@ -221,10 +246,11 @@ if (data.location.includes('GA')) {
           insuranceEscrow: formatCurrency(insuranceEscrow),
           taxEscrow: formatCurrency(taxEscrow),
           insuranceAnnual: formatCurrency(insuranceAnnual),
-        },
-      },
+          ...Object.fromEntries(Object.entries(attorneyFees).map(([key, val]) => [key, formatCurrency(val)])),
+        }
+      }
     }));
-  };
+  };  
   // Reset entire form (all 3 estimates)
   const resetForm = () => {
     setSalesPrice('');
@@ -515,75 +541,94 @@ if (data.location.includes('GA')) {
                   {/* Results Display */}
                   {results[id] && (
   <motion.div
-    id={`estimate-card-${id}`}
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-    className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
-  >
-    {/* Loan Summary */}
-    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">Loan Summary</h3>
-    <div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
-    <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
-    <div><strong>Sales Price:</strong> {salesPrice}</div>
+  id={`estimate-card-${id}`}
+  initial={{ opacity: 0, y: 10 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3 }}
+  className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
+>
+  {/* Loan Summary */}
+  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">Loan Summary</h3>
+  <div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
+  <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
+  <div><strong>Sales Price:</strong> {salesPrice}</div>
 
-    {/* VA Funding Fee (only for VA loans) */}
-    {loanData[id]?.loanType?.includes('VA') && results[id]?.fundingFee && (
-      <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
-    )}
+  {loanData[id]?.loanType?.includes('VA') && results[id]?.fundingFee && (
+    <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
+  )}
 
-    {/* FHA UFMIP (only for FHA) */}
-    {loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
-      <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
-    )}
+  {loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
+    <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
+  )}
 
-    <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
+  <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
 
-    {/* Only show Down Payment if > $0 */}
-    {results[id].downPaymentAmount && parseFloat(results[id].downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
-      <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
-    )}
+  {results[id].downPaymentAmount && parseFloat(results[id].downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
+    <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
+  )}
 
-    <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
-    <div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
+  <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
+  <div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
 
-    {/* Monthly Payment Section */}
-    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
-    <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
-    <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
-    <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
-    <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
-    <div className="text-green-400 font-bold border-t border-white/10 pt-2">
-      Total Monthly Payment: {results[id].totalPayment}
-    </div>
+  {/* Monthly Payment */}
+  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
+  <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
+  <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
+  <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
+  <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
+  <div className="text-green-400 font-bold border-t border-white/10 pt-2">
+    Total Monthly Payment: {results[id].totalPayment}
+  </div>
 
-    {/* Closing Costs */}
-    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Closing Costs</h3>
-    <div><strong>Underwriting Fee:</strong> {results[id].breakdown.underwritingFee}</div>
-    <div><strong>Appraisal Fee:</strong> {results[id].breakdown.appraisalFee}</div>
-    <div><strong>Credit Report:</strong> {results[id].breakdown.creditReport}</div>
-    <div><strong>Attorney Fee:</strong> {results[id].breakdown.attorneyFee}</div>
-    <div><strong>Title Search:</strong> {results[id].breakdown.titleSearch}</div>
-    <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
-    <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
-    <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
-    <div><strong>Transfer Tax:</strong> {results[id].breakdown.transferTax}</div>
-    <div className="text-orange-400 font-bold pt-1">Total Closing Costs: {results[id].totalClosingCosts}</div>
+  {/* Closing Costs */}
+  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Closing Costs</h3>
+  <div><strong>Underwriting Fee:</strong> {results[id].breakdown.underwritingFee}</div>
+  <div><strong>Appraisal Fee:</strong> {results[id].breakdown.appraisalFee}</div>
+  <div><strong>Credit Report:</strong> {results[id].breakdown.creditReport}</div>
+  <div><strong>Title Search:</strong> {results[id].breakdown.titleSearch}</div>
+  <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
+  <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
+  <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
+  <div><strong>Transfer Tax:</strong> {results[id].breakdown.transferTax}</div>
 
-    {/* Prepaids & Escrows */}
-    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Prepaids & Escrows</h3>
-    <div><strong>Prepaid Interest:</strong> {results[id].breakdown.prepaidInterest}</div>
-    <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
-    <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
-    <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
-    <div className="text-orange-400 font-bold pt-1">Total Prepaids & Escrows: {results[id].totalPrepaids}</div>
+  {/* Dynamic Attorney Fees */}
+  {Object.entries(results[id].breakdown).map(([key, val]) => {
+    const labelMap = {
+      cpl: 'CPL',
+      courier: 'Courier Fee',
+      endorsements: 'Endorsements',
+      expressPayoff: 'Express Payoff',
+      processing: 'Processing Fee',
+      settlement: 'Settlement Fee',
+      wire: 'Wire Fee',
+      docPrep: 'Document Preparation',
+      eRecording: 'E-Recording',
+      titleExam: 'Title Exam',
+      titleCommitment: 'Title Commitment',
+      postClosing: 'Post Closing Fee',
+      binder: 'Title Insurance Binder',
+      recording: 'Recording Fee'
+    };
+    return labelMap[key] && (
+      <div key={key}><strong>{labelMap[key]}:</strong> {val}</div>
+    );
+  })}
 
-    {/* Final Cash to Close */}
-    <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
-      <span>Final Cash to Close:</span>
-      <span>{results[id].finalCashToClose}</span>
-    </div>
+  <div className="text-orange-400 font-bold pt-1">Total Closing Costs: {results[id].totalClosingCosts}</div>
 
+  {/* Prepaids & Escrows */}
+  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Prepaids & Escrows</h3>
+  <div><strong>Prepaid Interest:</strong> {results[id].breakdown.prepaidInterest}</div>
+  <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
+  <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
+  <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
+  <div className="text-orange-400 font-bold pt-1">Total Prepaids & Escrows: {results[id].totalPrepaids}</div>
+
+  {/* Final Cash to Close */}
+  <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
+    <span>Final Cash to Close:</span>
+    <span>{results[id].finalCashToClose}</span>
+  </div>
 </motion.div> 
             )}
           </motion.div>
