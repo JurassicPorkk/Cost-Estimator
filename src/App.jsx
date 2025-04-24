@@ -339,303 +339,384 @@ const totalAttorneyFee = Object.values(attorneyFees).reduce((sum, fee) => sum + 
         </div>
   
         {/* Estimate Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-          {[1, 2, 3].map((id) => (
+        {/* Single Estimate Card */}
+<div className="grid grid-cols-1 gap-6 mt-10">
+  <motion.div
+    key={1}
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.1 }}
+    className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md"
+  >
+    {/* Toggle form open/closed */}
+    <button
+      onClick={() =>
+        setExpandedEstimates((prev) => ({ ...prev, [1]: !prev[1] }))
+      }
+      className="w-full font-semibold text-white text-lg py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+    >
+      Estimate
+    </button>
+
+    <AnimatePresence>
+      {expandedEstimates[1] && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="overflow-hidden mt-4 space-y-4"
+        >
+          {/* Loan Type */}
+          <div>
+            <label className="text-sm text-blue-200 block mb-1">
+              Loan Type
+            </label>
+            <select
+              value={loanData[1]?.loanType || ""}
+              onChange={(e) =>
+                handleLoanChange(1, "loanType", e.target.value)
+              }
+              className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              style={{ backgroundColor: "#1f2937", color: "white" }}
+            >
+              <option value="">Select</option>
+              <option value="Conventional">Conventional</option>
+              <option value="FHA">FHA</option>
+              <option value="VA First">VA First</option>
+              <option value="VA Second">VA Second</option>
+              <option value="VA Exempt">VA Exempt</option>
+            </select>
+          </div>
+
+          {/* Interest Rate */}
+          <div>
+            <label className="text-sm text-blue-200 block mb-1">
+              Interest Rate
+            </label>
+            <input
+              type="text"
+              value={
+                loanData[1]?.interestRate
+                  ? `${loanData[1].interestRate}%`
+                  : ""
+              }
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^0-9.]/g, "");
+                handleLoanChange(1, "interestRate", raw);
+              }}
+              placeholder="e.g. 6.75%"
+              className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Down Payment */}
+          <div>
+            <label className="text-sm text-blue-200 block mb-1">
+              Down Payment
+            </label>
+            <select
+              value={selectedDownPaymentType[1] || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSelectedDownPaymentType((p) => ({ ...p, [1]: val }));
+                if (val !== "custom") {
+                  handleLoanChange(1, "downPayment", val);
+                }
+              }}
+              className="w-full px-4 py-2 rounded-md border text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ backgroundColor: "#1f2937", color: "white" }}
+            >
+              <option value="">Select Down Payment</option>
+              {renderDownPaymentOptions(loanData[1]?.loanType).map((pct) => (
+                <option key={pct} value={pct}>
+                  {pct}%
+                </option>
+              ))}
+              <option value="custom">Custom Amount</option>
+            </select>
+
+            {selectedDownPaymentType[1] === "custom" && (
+              <input
+                type="text"
+                placeholder="$ Enter amount"
+                value={customDownPayments[1] || ""}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^0-9]/g, "");
+                  const amount = parseFloat(raw);
+                  const price = parseFloat(unformatCurrency(salesPrice)) || 0;
+                  const pct = price ? (amount / price) * 100 : 0;
+                  let adjusted = pct;
+                  if (loanData[1]?.loanType === "FHA" && pct < 3.5)
+                    adjusted = 3.5;
+                  if (loanData[1]?.loanType === "Conventional" && pct < 3)
+                    adjusted = 3;
+                  setCustomDownPayments((p) => ({ ...p, [1]: raw }));
+                  handleLoanChange(1, "downPayment", adjusted.toFixed(2));
+                }}
+                className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                style={{ backgroundColor: "#1f2937", color: "white" }}
+              />
+            )}
+          </div>
+
+          {/* Property Location */}
+          <div>
+            <label className="text-sm text-blue-200 block mb-1">
+              Property Location
+            </label>
+            <select
+              value={loanData[1]?.location || ""}
+              onChange={(e) =>
+                handleLoanChange(1, "location", e.target.value)
+              }
+              className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              style={{ backgroundColor: "#1f2937", color: "white" }}
+            >
+              <option value="">Select Location</option>
+              <option value="Columbus, GA">Columbus, GA</option>
+              <option value="Harris County, GA">Harris County, GA</option>
+              <option value="Lee County, AL">Lee County, AL</option>
+              <option value="Russell County, AL">Russell County, AL</option>
+            </select>
+          </div>
+
+          {/* Closing Attorney */}
+          <div>
+            <label className="text-sm text-blue-200 block mb-1">
+              Closing Attorney
+            </label>
+            <select
+              value={loanData[1]?.attorney || ""}
+              onChange={(e) =>
+                handleLoanChange(1, "attorney", e.target.value)
+              }
+              className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+              style={{ backgroundColor: "#1f2937", color: "white" }}
+            >
+              <option value="">Closing Attorney</option>
+              <option value="Graham Legal Firm">Graham Legal Firm</option>
+              <option value="PSSTF">PSSTF</option>
+              <option value="GSHWM">GSHWM</option>
+            </select>
+          </div>
+
+          {/* Homestead Toggle */}
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={loanData[1]?.homestead || false}
+              onChange={(e) =>
+                handleLoanChange(1, "homestead", e.target.checked)
+              }
+              className="form-checkbox h-5 w-5 text-blue-500 rounded focus:ring-blue-400"
+            />
+            <label className="text-sm text-blue-200">
+              Apply Homestead Exemption
+            </label>
+          </div>
+
+          {/* Inside City Limits Toggle */}
+          {(loanData[1]?.location === "Lee County, AL" ||
+            loanData[1]?.location === "Russell County, AL") && (
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={loanData[1]?.inCityLimits || false}
+                onChange={(e) =>
+                  handleLoanChange(1, "inCityLimits", e.target.checked)
+                }
+                className="form-checkbox h-5 w-5 text-blue-500 rounded focus:ring-blue-400"
+              />
+              <label className="text-sm text-blue-200">
+                Property is Inside City Limits
+              </label>
+            </div>
+          )}
+
+          {/* Closing Date */}
+          <div>
+            <label className="text-sm text-blue-200 block mb-1">
+              Closing Date
+            </label>
+            <input
+              type="date"
+              value={loanData[1]?.closingDate || ""}
+              onChange={(e) =>
+                handleLoanChange(1, "closingDate", e.target.value)
+              }
+              className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => calculateEstimates(1)}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg shadow"
+            >
+              Get Estimate
+            </button>
+            <button
+              onClick={() => resetSingleCard(1)}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow"
+            >
+              Reset Estimate
+            </button>
+          </div>
+
+          {/* Results Display */}
+          {results[1] && (
             <motion.div
-              key={id}
+              id="estimate-card-1"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: id * 0.1 }}
-              className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md"
+              transition={{ duration: 0.3 }}
+              className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
             >
-              <button
-                onClick={() =>
-                  setExpandedEstimates((prev) => ({
-                    ...prev,
-                    [id]: !prev[id],
-                  }))
-                }
-                className="w-full font-semibold text-white text-center text-lg py-2 px-4 bg-blue-600 hover:bg-blue-700 transition rounded-lg shadow"
-              >
-                {`Estimate ${id}`}
-              </button>
-  
-              <AnimatePresence>
-                {expandedEstimates[id] && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="overflow-hidden mt-4 space-y-4"
-                  >
-                    {/* Loan Type */}
-                    <div>
-                      <label className="text-sm text-blue-200 block mb-1">Loan Type</label>
-                      <select
-                        value={loanData[id]?.loanType || ''}
-                        onChange={(e) => handleLoanChange(id, 'loanType', e.target.value)}
-                        className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-                        style={{ backgroundColor: '#1f2937', color: 'white' }}
-                      >
-                        <option value="">Select</option>
-                        <option value="Conventional">Conventional</option>
-                        <option value="FHA">FHA</option>
-                        <option value="VA First">VA First</option>
-                        <option value="VA Second">VA Second</option>
-                        <option value="VA Exempt">VA Exempt</option>
-                      </select>
-                    </div>
-  
-                    {/* Interest Rate */}
-                    <div>
-                      <label className="text-sm text-blue-200 block mb-1">Interest Rate</label>
-                      <input
-                        type="text"
-                        value={loanData[id]?.interestRate ? `${loanData[id]?.interestRate}%` : ''}
-                        onChange={(e) => {
-                          const raw = e.target.value.replace(/[^0-9.]/g, '');
-                          handleLoanChange(id, 'interestRate', raw);
-                        }}
-                        placeholder="e.g. 6.75%"
-                        className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-  
-                    {/* Down Payment */}
-                    <div>
-                      <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
-                      <select
-                        value={selectedDownPaymentType[id] || ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          setSelectedDownPaymentType((prev) => ({ ...prev, [id]: value }));
-                          if (value !== 'custom') {
-                            handleLoanChange(id, 'downPayment', value);
-                          }
-                        }}
-                        className="w-full px-4 py-2 rounded-md border text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        style={{ backgroundColor: '#1f2937', color: 'white' }}
-                      >
-                        <option value="">Select Down Payment</option>
-                        {renderDownPaymentOptions(loanData[id]?.loanType).map((pct) => (
-                          <option key={pct} value={pct}>{pct}%</option>
-                        ))}
-                        <option value="custom">Custom Amount</option>
-                      </select>
-  
-                      {selectedDownPaymentType[id] === 'custom' && (
-  <input
-    type="text"
-    placeholder="$ Enter amount"
-    value={customDownPayments[id] || ''}
-    onChange={(e) => {
-      const raw = e.target.value.replace(/[^0-9]/g, '');
-      const formatted = raw ? `$${Number(raw).toLocaleString()}` : '';
-
-      const amount = parseFloat(raw) || 0;
-      const price = parseFloat(unformatCurrency(salesPrice));
-      const percent = price ? (amount / price) * 100 : 0;
-
-      let adjusted = percent;
-      const type = loanData[id]?.loanType;
-      if (type === 'FHA' && percent < 3.5) adjusted = 3.5;
-      if (type === 'Conventional' && percent < 3) adjusted = 3;
-
-      setCustomDownPayments((prev) => ({ ...prev, [id]: formatted }));
-      handleLoanChange(id, 'downPayment', adjusted.toFixed(2));
-      handleLoanChange(id, 'downPaymentAmount', amount); // ✅ Store actual down payment amount
-    }}
-    className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 text-white bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-    style={{
-      backgroundColor: '#1f2937',
-      color: 'white',
-    }}
-  />
-)}
-                    </div>
-  
-                    {/* Location */}
-                    <div>
-                      <label className="text-sm text-blue-200 block mb-1">Property Location</label>
-                      <select
-                        value={loanData[id]?.location || ''}
-                        onChange={(e) => handleLoanChange(id, 'location', e.target.value)}
-                        className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-                        style={{ backgroundColor: '#1f2937', color: 'white' }}
-                      >
-                        <option value="">Select Location</option>
-                        <option value="Columbus, GA">Columbus, GA</option>
-                        <option value="Harris County, GA">Harris County, GA</option>
-                        <option value="Lee County, AL">Lee County, AL</option>
-                        <option value="Russell County, AL">Russell County, AL</option>
-                      </select>
-                    </div>
-  
-                    {/* Closing Attorney */}
-                    <div>
-                      <label className="text-sm text-blue-200 block mb-1">Closing Attorney</label>
-                      <select
-                        value={loanData[id]?.attorney || ''}
-                        onChange={(e) => handleLoanChange(id, 'attorney', e.target.value)}
-                        className="w-full px-4 py-2 rounded-md border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
-                        style={{ backgroundColor: '#1f2937', color: 'white' }}
-                      >
-                        <option value="">Closing Attorney</option>
-                        <option value="Graham Legal Firm">Graham Legal Firm</option>
-                        <option value="PSSTF">PSSTF</option>
-                        <option value="GSHWM">GSHWM</option>
-                      </select>
-                    </div>
-  
-                    {/* Homestead Toggle */}
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={loanData[id]?.homestead || false}
-                        onChange={(e) => handleLoanChange(id, 'homestead', e.target.checked)}
-                        className="form-checkbox h-5 w-5 text-blue-500 rounded focus:ring-blue-400"
-                      />
-                      <label className="text-sm text-blue-200">Apply Homestead Exemption</label>
-                    </div>
-  
-                    {/* City Limits Toggle */}
-                    {(loanData[id]?.location === 'Lee County, AL' || loanData[id]?.location === 'Russell County, AL') && (
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          checked={loanData[id]?.inCityLimits || false}
-                          onChange={(e) => handleLoanChange(id, 'inCityLimits', e.target.checked)}
-                          className="form-checkbox h-5 w-5 text-blue-500 rounded focus:ring-blue-400"
-                        />
-                        <label className="text-sm text-blue-200">Property is Inside City Limits</label>
-                      </div>
-                    )}
-  
-                    {/* Closing Date */}
-                    <div>
-                    <label className="text-sm text-blue-200 block mb-1">Closing Date</label>
-                    <input
-                      type="date"
-                      value={loanData[id]?.closingDate || ''}
-                      onChange={(e) => handleLoanChange(id, 'closingDate', e.target.value)}
-                      className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
-                    />
+              {/* Loan Summary */}
+              <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">
+                Loan Summary
+              </h3>
+              <div>
+                <strong>Loan Type:</strong> {loanData[1]?.loanType}
+              </div>
+              <div>
+                <strong>Property Location:</strong> {loanData[1]?.location}
+              </div>
+              <div>
+                <strong>Sales Price:</strong> {salesPrice}
+              </div>
+              {loanData[1]?.loanType?.includes("VA") &&
+                results[1]?.fundingFee && (
+                  <div>
+                    <strong>VA Funding Fee:</strong> {results[1].fundingFee}
                   </div>
-
-                  {/* Estimate Actions */}
-                  <div className="flex flex-col gap-3">
-                    <button
-                      onClick={() => calculateEstimates(id)}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-lg shadow transition"
-                    >
-                      Get Estimate
-                    </button>
-                    <button
-                      onClick={() => resetSingleCard(id)}
-                      className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow transition"
-                    >
-                      Reset Estimate
-                    </button>
+                )}
+              {loanData[1]?.loanType === "FHA" && results[1]?.ufmip && (
+                <div>
+                  <strong>UFMIP:</strong> {results[1].ufmip}
+                </div>
+              )}
+              <div>
+                <strong>Loan Amount:</strong> {results[1].loanAmount}
+              </div>
+              {results[1].downPaymentAmount &&
+                parseFloat(
+                  results[1].downPaymentAmount.replace(/[^0-9.]/g, "")
+                ) > 0 && (
+                  <div>
+                    <strong>Down Payment:</strong>{" "}
+                    {results[1].downPaymentAmount}
                   </div>
+                )}
+              <div>
+                <strong>Interest Rate:</strong> {loanData[1]?.interestRate}%
+              </div>
+              <div>
+                <strong>Closing Date:</strong> {loanData[1]?.closingDate}
+              </div>
 
-                  {/* Results Display */}
-                  {results[id] && (
-  <motion.div
-  id={`estimate-card-${id}`}
-  initial={{ opacity: 0, y: 10 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.3 }}
-  className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-4"
->
-  {/* Loan Summary */}
-  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">Loan Summary</h3>
-  <div><strong>Loan Type:</strong> {loanData[id]?.loanType}</div>
-  <div><strong>Property Location:</strong> {loanData[id]?.location}</div>
-  <div><strong>Sales Price:</strong> {salesPrice}</div>
+              {/* Monthly Payment */}
+              <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
+                Monthly Payment
+              </h3>
+              <div>
+                <strong>Principal & Interest:</strong>{" "}
+                {results[1].principalInterest}
+              </div>
+              <div>
+                <strong>Homeowners Insurance:</strong>{" "}
+                {results[1].homeownersInsurance}
+              </div>
+              <div>
+                <strong>Estimated Property Tax:</strong> {results[1].monthlyTax}
+              </div>
+              <div>
+                <strong>Monthly MI:</strong> {results[1].monthlyMI}
+              </div>
+              <div className="text-green-400 font-bold border-t border-white/10 pt-2">
+                Total Monthly Payment: {results[1].totalPayment}
+              </div>
 
-  {loanData[id]?.loanType?.includes('VA') && results[id]?.fundingFee && (
-    <div><strong>VA Funding Fee:</strong> {results[id].fundingFee}</div>
-  )}
+              {/* Closing Costs */}
+              <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
+                Closing Costs
+              </h3>
+              <div>
+                <strong>Underwriting Fee:</strong>{" "}
+                {results[1].breakdown.underwritingFee}
+              </div>
+              <div>
+                <strong>Appraisal Fee:</strong>{" "}
+                {results[1].breakdown.appraisalFee}
+              </div>
+              <div>
+                <strong>Credit Report:</strong>{" "}
+                {results[1].breakdown.creditReport}
+              </div>
+              <div>
+                <strong>Attorney Fee:</strong>{" "}
+                {results[1].breakdown.attorneyFee}
+              </div>
+              <div>
+                <strong>Title Search:</strong>{" "}
+                {results[1].breakdown.titleSearch}
+              </div>
+              <div>
+                <strong>Owner’s Title Insurance:</strong>{" "}
+                {results[1].breakdown.ownerTitle}
+              </div>
+              <div>
+                <strong>Lender’s Title Insurance:</strong>{" "}
+                {results[1].breakdown.lenderTitle}
+              </div>
+              <div>
+                <strong>Mortgage Tax:</strong>{" "}
+                {results[1].breakdown.mortgageTax}
+              </div>
+              <div>
+                <strong>Transfer Tax:</strong>{" "}
+                {results[1].breakdown.transferTax}
+              </div>
+              <div className="text-orange-400 font-bold pt-1">
+                Total Closing Costs: {results[1].totalClosingCosts}
+              </div>
 
-  {loanData[id]?.loanType === 'FHA' && results[id]?.ufmip && (
-    <div><strong>UFMIP:</strong> {results[id].ufmip}</div>
-  )}
+              {/* Prepaids & Escrows */}
+              <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">
+                Prepaids & Escrows
+              </h3>
+              <div>
+                <strong>Prepaid Interest:</strong>{" "}
+                {results[1].breakdown.prepaidInterest}
+              </div>
+              <div>
+                <strong>Homeowners Insurance (1yr):</strong>{" "}
+                {results[1].breakdown.insuranceAnnual}
+              </div>
+              <div>
+                <strong>Insurance Escrow (3 mo):</strong>{" "}
+                {results[1].breakdown.insuranceEscrow}
+              </div>
+              <div>
+                <strong>Tax Escrow (3 mo):</strong>{" "}
+                {results[1].breakdown.taxEscrow}
+              </div>
+              <div className="text-orange-400 font-bold pt-1">
+                Total Prepaids & Escrows: {results[1].totalPrepaids}
+              </div>
 
-  <div><strong>Loan Amount:</strong> {results[id].loanAmount}</div>
-
-  {results[id].downPaymentAmount && parseFloat(results[id].downPaymentAmount.replace(/[^0-9.]/g, '')) > 0 && (
-    <div><strong>Down Payment:</strong> {results[id].downPaymentAmount}</div>
-  )}
-
-  <div><strong>Interest Rate:</strong> {loanData[id]?.interestRate}%</div>
-  <div><strong>Closing Date:</strong> {loanData[id]?.closingDate}</div>
-
-  {/* Monthly Payment */}
-  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
-  <div><strong>Principal & Interest:</strong> {results[id].principalInterest}</div>
-  <div><strong>Homeowners Insurance:</strong> {results[id].homeownersInsurance}</div>
-  <div><strong>Estimated Property Tax:</strong> {results[id].monthlyTax}</div>
-  <div><strong>Monthly MI:</strong> {results[id].monthlyMI}</div>
-  <div className="text-green-400 font-bold border-t border-white/10 pt-2">
-    Total Monthly Payment: {results[id].totalPayment}
-  </div>
-
-  {/* Closing Costs */}
-  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Closing Costs</h3>
-  <div><strong>Underwriting Fee:</strong> {results[id].breakdown.underwritingFee}</div>
-  <div><strong>Appraisal Fee:</strong> {results[id].breakdown.appraisalFee}</div>
-  <div><strong>Credit Report:</strong> {results[id].breakdown.creditReport}</div>
-  <div><strong>Title Search:</strong> {results[id].breakdown.titleSearch}</div>
-  <div><strong>Owner’s Title Insurance:</strong> {results[id].breakdown.ownerTitle}</div>
-  <div><strong>Lender’s Title Insurance:</strong> {results[id].breakdown.lenderTitle}</div>
-  <div><strong>Mortgage Tax:</strong> {results[id].breakdown.mortgageTax}</div>
-  <div><strong>Transfer Tax:</strong> {results[id].breakdown.transferTax}</div>
-
-  {/* Dynamic Attorney Fees */}
-  {Object.entries(results[id].breakdown).map(([key, val]) => {
-    const labelMap = {
-      cpl: 'CPL',
-      courier: 'Courier Fee',
-      endorsements: 'Endorsements',
-      expressPayoff: 'Express Payoff',
-      processing: 'Processing Fee',
-      settlement: 'Settlement Fee',
-      wire: 'Wire Fee',
-      docPrep: 'Document Preparation',
-      eRecording: 'E-Recording',
-      titleExam: 'Title Exam',
-      titleCommitment: 'Title Commitment',
-      postClosing: 'Post Closing Fee',
-      binder: 'Title Insurance Binder',
-      recording: 'Recording Fee'
-    };
-    return labelMap[key] && (
-      <div key={key}><strong>{labelMap[key]}:</strong> {val}</div>
-    );
-  })}
-
-  <div className="text-orange-400 font-bold pt-1">Total Closing Costs: {results[id].totalClosingCosts}</div>
-
-  {/* Prepaids & Escrows */}
-  <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Prepaids & Escrows</h3>
-  <div><strong>Prepaid Interest:</strong> {results[id].breakdown.prepaidInterest}</div>
-  <div><strong>Homeowners Insurance (1yr):</strong> {results[id].breakdown.insuranceAnnual}</div>
-  <div><strong>Insurance Escrow (3 mo):</strong> {results[id].breakdown.insuranceEscrow}</div>
-  <div><strong>Tax Escrow (3 mo):</strong> {results[id].breakdown.taxEscrow}</div>
-  <div className="text-orange-400 font-bold pt-1">Total Prepaids & Escrows: {results[id].totalPrepaids}</div>
-
-  {/* Final Cash to Close */}
-  <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
-    <span>Final Cash to Close:</span>
-    <span>{results[id].finalCashToClose}</span>
-  </div>
-</motion.div> 
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  ))}
+              {/* Final Cash to Close */}
+              <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
+                <span>Final Cash to Close:</span>
+                <span>{results[1].finalCashToClose}</span>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </motion.div>
 </div>
 
 <div className="mt-10 text-center">
