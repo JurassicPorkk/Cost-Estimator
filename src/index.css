@@ -6,10 +6,10 @@ body {
   font-family: 'Inter', sans-serif;
 
   background:
-    linear-gradient(to bottom right, rgba(10, 15, 36, 0.6), rgba(30, 42, 56, 0.6)),
-    url('/background.png'),
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.03), transparent 60%),
-    radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 70%);
+  linear-gradient(to bottom right, rgba(10, 15, 36, 0.6), rgba(30, 42, 56, 0.6)),
+  url('/background-image.png'),
+  radial-gradient(circle at top left, rgba(255, 255, 255, 0.03), transparent 60%),
+  radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 70%);
     
   background-repeat: no-repeat;
   background-size: cover;

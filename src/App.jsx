@@ -222,7 +222,7 @@ useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   return (
-  <div className="min-h-screen text-white p-6 font-sans bg-slate-900">
+  <div className="min-h-screen text-white p-6 font-sans">
     <div className="max-w-4xl mx-auto space-y-10">
       
       {/* Logo */}
