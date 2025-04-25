@@ -211,28 +211,9 @@ export default function App() {
     setResults(null);
   };
   return (
-    <div className="min-h-screen text-white p-6 font-sans">
-      <div className="max-w-6xl mx-auto space-y-10">
-        {/* Logo */}
-        <motion.div className="text-center">
-          <img
-            src="/cash-to-close-logo.png"
-            alt="Cash To Close Logo"
-            className="w-60 mx-auto drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-          />
-        </motion.div>
-
-        {/* Inputs and Estimate Results */}
-        {/* Paste input UI, breakdown display, etc. below this line if not already present */}
-      </div>
-    </div>
-  );
-}
-// ===================== SECTION 7: Final Render =====================
-return (
   <div className="min-h-screen text-white p-6 font-sans bg-slate-900">
     <div className="max-w-4xl mx-auto space-y-10">
-
+      
       {/* Logo */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -270,177 +251,241 @@ return (
       </div>
 
       {/* Estimate Input Card */}
-      <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20 space-y-4 text-white">
+<div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20 space-y-4 text-white">
 
-        {/* Loan Type */}
-        <div>
-          <label className="text-sm text-blue-200 block mb-1">Loan Type</label>
-          <select
-            value={loanData.loanType}
-            onChange={(e) => handleLoanChange('loanType', e.target.value)}
-            className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select</option>
-            <option value="Conventional">Conventional</option>
-            <option value="FHA">FHA</option>
-            <option value="VA First">VA First</option>
-            <option value="VA Second">VA Second</option>
-            <option value="VA Exempt">VA Exempt</option>
-          </select>
-        </div>
-
-        {/* Interest Rate */}
-        <div>
-          <label className="text-sm text-blue-200 block mb-1">Interest Rate</label>
-          <input
-            type="text"
-            placeholder="e.g. 6.75%"
-            value={loanData.interestRate ? `${loanData.interestRate}%` : ''}
-            onChange={(e) => handleLoanChange('interestRate', e.target.value)}
-            className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Down Payment */}
-        <div>
-          <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
-          <select
-            value={selectedDownPaymentType}
-            onChange={(e) => {
-              const val = e.target.value;
-              setSelectedDownPaymentType(val);
-              if (val !== "custom") {
-                handleLoanChange("downPayment", val);
-              }
-            }}
-            className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
-          >
-            <option value="">Select Down Payment</option>
-            {renderDownPaymentOptions(loanData.loanType).map((pct) => (
-              <option key={pct} value={pct}>{pct}%</option>
-            ))}
-            <option value="custom">Custom Amount</option>
-          </select>
-
-          {selectedDownPaymentType === "custom" && (
-            <input
-              type="text"
-              placeholder="$ Enter amount"
-              value={customDownPayment}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9]/g, "");
-                const amount = parseFloat(raw);
-                const price = parseFloat(unformatCurrency(salesPrice)) || 0;
-                const pct = price ? (amount / price) * 100 : 0;
-                let adjusted = pct;
-                if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
-                if (loanData.loanType === "Conventional" && pct < 3) adjusted = 3;
-                setCustomDownPayment(raw);
-                handleLoanChange("downPayment", adjusted.toFixed(2));
-              }}
-              className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-gray-800 text-white"
-            />
-          )}
-        </div>
-
-        {/* Property Location */}
-        <div>
-          <label className="text-sm text-blue-200 block mb-1">Property Location</label>
-          <select
-            value={loanData.location}
-            onChange={(e) => handleLoanChange('location', e.target.value)}
-            className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
-          >
-            <option value="">Select Location</option>
-            <option value="Columbus, GA">Columbus, GA</option>
-            <option value="Harris County, GA">Harris County, GA</option>
-            <option value="Lee County, AL">Lee County, AL</option>
-            <option value="Russell County, AL">Russell County, AL</option>
-          </select>
-        </div>
-
-        {/* Closing Attorney */}
-        <div>
-          <label className="text-sm text-blue-200 block mb-1">Closing Attorney</label>
-          <select
-            value={loanData.attorney}
-            onChange={(e) => handleLoanChange('attorney', e.target.value)}
-            className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
-          >
-            <option value="">Select Attorney</option>
-            <option value="Graham Legal Firm">Graham Legal Firm</option>
-            <option value="PSSTF">PSSTF</option>
-            <option value="GSHWM">GSHWM</option>
-          </select>
-        </div>
-
-        {/* Homestead Toggle */}
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            checked={loanData.homestead}
-            onChange={toggleHomestead}
-            className="form-checkbox h-5 w-5 text-blue-500 rounded"
-          />
-          <label className="text-sm text-blue-200">Apply Homestead Exemption</label>
-        </div>
-
-        {/* Inside City Limits Toggle */}
-        {(loanData.location === "Lee County, AL" || loanData.location === "Russell County, AL") && (
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={loanData.cityLimits}
-              onChange={toggleCityLimits}
-              className="form-checkbox h-5 w-5 text-blue-500 rounded"
-            />
-            <label className="text-sm text-blue-200">Inside City Limits</label>
-          </div>
-        )}
-
-        {/* Closing Date */}
-        <div>
-          <label className="text-sm text-blue-200 block mb-1">Closing Date</label>
-          <input
-            type="date"
-            value={loanData.closingDate}
-            onChange={(e) => handleLoanChange('closingDate', e.target.value)}
-            className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-3 pt-4">
-          <button
-            onClick={calculateEstimates}
-            disabled={!isValidForm()}
-            className={`w-full text-white font-semibold py-2 rounded-lg shadow transition ${
-              isValidForm() ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 cursor-not-allowed'
-            }`}
-          >
-            Get Estimate
-          </button>
-          <button
-            onClick={resetForm}
-            className="w-full bg-red-700 hover:bg-red-800 text-white font-semibold py-2 rounded-lg shadow"
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-
-      {/* Estimate Display */}
-      {results && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-8"
-        >
-          {/* Full results layout already included in Section 5 */}
-          {/* Do not duplicate here to avoid inconsistency */}
-        </motion.div>
-      )}
-    </div>
+  {/* Loan Type */}
+  <div>
+    <label className="text-sm text-blue-200 block mb-1">Loan Type</label>
+    <select
+      value={loanData.loanType}
+      onChange={(e) => handleLoanChange('loanType', e.target.value)}
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="">Select</option>
+      <option value="Conventional">Conventional</option>
+      <option value="FHA">FHA</option>
+      <option value="VA First">VA First</option>
+      <option value="VA Second">VA Second</option>
+      <option value="VA Exempt">VA Exempt</option>
+    </select>
   </div>
-);
+
+  {/* Interest Rate */}
+  <div>
+    <label className="text-sm text-blue-200 block mb-1">Interest Rate</label>
+    <input
+      type="text"
+      placeholder="e.g. 6.75%"
+      value={loanData.interestRate ? `${loanData.interestRate}%` : ''}
+      onChange={(e) => handleLoanChange('interestRate', e.target.value)}
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  {/* Down Payment */}
+  <div>
+    <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
+    <select
+      value={selectedDownPaymentType}
+      onChange={(e) => {
+        const val = e.target.value;
+        setSelectedDownPaymentType(val);
+        if (val !== "custom") {
+          handleLoanChange("downPayment", val);
+        }
+      }}
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
+    >
+      <option value="">Select Down Payment</option>
+      {renderDownPaymentOptions(loanData.loanType).map((pct) => (
+        <option key={pct} value={pct}>{pct}%</option>
+      ))}
+      <option value="custom">Custom Amount</option>
+    </select>
+
+    {selectedDownPaymentType === "custom" && (
+      <input
+        type="text"
+        placeholder="$ Enter amount"
+        value={customDownPayment}
+        onChange={(e) => {
+          const raw = e.target.value.replace(/[^0-9]/g, "");
+          const amount = parseFloat(raw);
+          const price = parseFloat(unformatCurrency(salesPrice)) || 0;
+          const pct = price ? (amount / price) * 100 : 0;
+          let adjusted = pct;
+          if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
+          if (loanData.loanType === "Conventional" && pct < 3) adjusted = 3;
+          setCustomDownPayment(raw);
+          handleLoanChange("downPayment", adjusted.toFixed(2));
+        }}
+        className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-gray-800 text-white"
+      />
+    )}
+  </div>
+
+  {/* Property Location */}
+  <div>
+    <label className="text-sm text-blue-200 block mb-1">Property Location</label>
+    <select
+      value={loanData.location}
+      onChange={(e) => handleLoanChange('location', e.target.value)}
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
+    >
+      <option value="">Select Location</option>
+      <option value="Columbus, GA">Columbus, GA</option>
+      <option value="Harris County, GA">Harris County, GA</option>
+      <option value="Lee County, AL">Lee County, AL</option>
+      <option value="Russell County, AL">Russell County, AL</option>
+    </select>
+  </div>
+
+  {/* Closing Attorney */}
+  <div>
+    <label className="text-sm text-blue-200 block mb-1">Closing Attorney</label>
+    <select
+      value={loanData.attorney}
+      onChange={(e) => handleLoanChange('attorney', e.target.value)}
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
+    >
+      <option value="">Select Attorney</option>
+      <option value="Graham Legal Firm">Graham Legal Firm</option>
+      <option value="PSSTF">PSSTF</option>
+      <option value="GSHWM">GSHWM</option>
+    </select>
+  </div>
+
+  {/* Homestead Toggle */}
+  <div className="flex items-center gap-3">
+    <input
+      type="checkbox"
+      checked={loanData.homestead}
+      onChange={toggleHomestead}
+      className="form-checkbox h-5 w-5 text-blue-500 rounded"
+    />
+    <label className="text-sm text-blue-200">Apply Homestead Exemption</label>
+  </div>
+
+  {/* Inside City Limits Toggle */}
+  {(loanData.location === "Lee County, AL" || loanData.location === "Russell County, AL") && (
+    <div className="flex items-center gap-3">
+      <input
+        type="checkbox"
+        checked={loanData.cityLimits}
+        onChange={toggleCityLimits}
+        className="form-checkbox h-5 w-5 text-blue-500 rounded"
+      />
+      <label className="text-sm text-blue-200">Inside City Limits</label>
+    </div>
+  )}
+
+  {/* Closing Date */}
+  <div>
+    <label className="text-sm text-blue-200 block mb-1">Closing Date</label>
+    <input
+      type="date"
+      value={loanData.closingDate}
+      onChange={(e) => handleLoanChange('closingDate', e.target.value)}
+      className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/10 text-white"
+    />
+  </div>
+
+  {/* Action Buttons */}
+  <div className="flex flex-col gap-3 pt-4">
+    <button
+      onClick={calculateEstimates}
+      disabled={!isValidForm()}
+      className={`w-full text-white font-semibold py-2 rounded-lg shadow transition ${
+        isValidForm() ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 cursor-not-allowed'
+      }`}
+    >
+      Get Estimate
+    </button>
+    <button
+      onClick={resetForm}
+      className="w-full bg-red-700 hover:bg-red-800 text-white font-semibold py-2 rounded-lg shadow"
+    >
+      Reset
+    </button>
+  </div>
+</div>
+{/* Estimate Results Display */}
+{results && (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+    className="bg-white/5 border border-white/20 p-4 rounded-xl text-sm space-y-2 text-white mt-8"
+  >
+    {/* Loan Summary */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pb-1 mb-2">Loan Summary</h3>
+    <div><strong>Loan Type:</strong> {loanData.loanType}</div>
+    <div><strong>Property Location:</strong> {loanData.location}</div>
+    <div><strong>Sales Price:</strong> {salesPrice}</div>
+    {loanData.loanType?.includes("VA") && results.fundingFee && (
+      <div><strong>VA Funding Fee:</strong> {results.fundingFee}</div>
+    )}
+    {loanData.loanType === "FHA" && results.ufmip && (
+      <div><strong>UFMIP:</strong> {results.ufmip}</div>
+    )}
+    <div><strong>Loan Amount:</strong> {results.loanAmount}</div>
+    {results.downPaymentAmount && (
+      <div><strong>Down Payment:</strong> {results.downPaymentAmount}</div>
+    )}
+    <div><strong>Interest Rate:</strong> {loanData.interestRate}%</div>
+    <div><strong>Closing Date:</strong> {loanData.closingDate}</div>
+
+    {/* Monthly Payment */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Monthly Payment</h3>
+    <div><strong>Principal & Interest:</strong> {results.principalInterest}</div>
+    <div><strong>Homeowners Insurance:</strong> {results.homeownersInsurance}</div>
+    <div><strong>Estimated Property Tax:</strong> {results.monthlyTax}</div>
+    <div><strong>Monthly MI:</strong> {results.monthlyMI}</div>
+    <div className="text-green-400 font-bold border-t border-white/10 pt-2">
+      Total Monthly Payment: {results.totalPayment}
+    </div>
+
+    {/* Closing Costs */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Closing Costs</h3>
+    <div><strong>Underwriting Fee:</strong> {results.breakdown.underwritingFee}</div>
+    <div><strong>Appraisal Fee:</strong> {results.breakdown.appraisalFee}</div>
+    <div><strong>Credit Report:</strong> {results.breakdown.creditReport}</div>
+    <div><strong>Title Search:</strong> {results.breakdown.titleSearch}</div>
+    <div><strong>Owner’s Title Insurance:</strong> {results.breakdown.ownerTitle}</div>
+    <div><strong>Lender’s Title Insurance:</strong> {results.breakdown.lenderTitle}</div>
+    <div><strong>Mortgage Tax:</strong> {results.breakdown.mortgageTax}</div>
+    <div><strong>Transfer Tax:</strong> {results.breakdown.transferTax}</div>
+    {Object.entries(results.breakdown).map(([label, value]) => (
+      label !== "ownerTitle" &&
+      label !== "lenderTitle" &&
+      label !== "mortgageTax" &&
+      label !== "transferTax" &&
+      label !== "underwritingFee" &&
+      label !== "appraisalFee" &&
+      label !== "creditReport" &&
+      label !== "titleSearch" &&
+      label !== "prepaidInterest" &&
+      label !== "insuranceEscrow" &&
+      label !== "taxEscrow" &&
+      label !== "insuranceAnnual" &&
+      !["principalInterest", "monthlyTax", "monthlyMI"].includes(label) &&
+      <div key={label}><strong>{label.replace(/([A-Z])/g, ' $1')}:</strong> {value}</div>
+    ))}
+    <div className="text-orange-400 font-bold pt-1">Total Closing Costs: {results.totalClosingCosts}</div>
+
+    {/* Prepaids & Escrows */}
+    <h3 className="text-lg font-bold text-blue-300 border-b border-white/10 pt-4 pb-1 mb-2">Prepaids & Escrows</h3>
+    <div><strong>Prepaid Interest:</strong> {results.breakdown.prepaidInterest}</div>
+    <div><strong>Homeowners Insurance (1yr):</strong> {results.breakdown.insuranceAnnual}</div>
+    <div><strong>Insurance Escrow (3 mo):</strong> {results.breakdown.insuranceEscrow}</div>
+    <div><strong>Tax Escrow (3 mo):</strong> {results.breakdown.taxEscrow}</div>
+    <div className="text-orange-400 font-bold pt-1">Total Prepaids & Escrows: {results.totalPrepaids}</div>
+
+    {/* Final Cash to Close */}
+    <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
+      <span>Final Cash to Close:</span>
+      <span>{results.finalCashToClose}</span>
+    </div>
+  </motion.div>
+)}</div>
+</div>)}
