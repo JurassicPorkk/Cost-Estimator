@@ -20,6 +20,12 @@ export default function App() {
   const [customDownPayment, setCustomDownPayment] = useState('');
   const [results, setResults] = useState(null);
   const resultsRef = useRef(null);
+
+useEffect(() => {
+  if (results && resultsRef.current) {
+    resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+}, [results]);
   const formatCurrency = (value) =>
     `$${Number(value).toLocaleString(undefined, {
       minimumFractionDigits: 2,
