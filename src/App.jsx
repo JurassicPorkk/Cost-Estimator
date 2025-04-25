@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { motion } from 'framer-motion';
 import './index.css';
-import React, { useState, useRef } from 'react';
 
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
