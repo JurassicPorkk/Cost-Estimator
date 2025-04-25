@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import dayjs from 'dayjs';
 import { motion } from 'framer-motion';
 import './index.css';
+import React, { useState, useRef } from 'react';
 
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
@@ -19,6 +20,7 @@ export default function App() {
   const [selectedDownPaymentType, setSelectedDownPaymentType] = useState('');
   const [customDownPayment, setCustomDownPayment] = useState('');
   const [results, setResults] = useState(null);
+  const resultsRef = useRef(null);
   const formatCurrency = (value) =>
     `$${Number(value).toLocaleString(undefined, {
       minimumFractionDigits: 2,
@@ -192,6 +194,11 @@ export default function App() {
         ...Object.fromEntries(Object.entries(attorneyFees).map(([k, v]) => [k, formatCurrency(v)])),
       },
     });
+    
+    // ✅ Smooth scroll to results
+    if (resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
   const resetForm = () => {
     setSalesPrice('');
@@ -209,6 +216,9 @@ export default function App() {
     setSelectedDownPaymentType('');
     setCustomDownPayment('');
     setResults(null);
+  
+    // ✅ Scroll to top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   return (
   <div className="min-h-screen text-white p-6 font-sans bg-slate-900">
@@ -412,6 +422,7 @@ export default function App() {
 {/* Estimate Results Display */}
 {results && (
   <motion.div
+    ref={resultsRef}
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.4 }}
