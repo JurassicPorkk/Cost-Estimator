@@ -200,10 +200,6 @@ useEffect(() => {
       },
     });
     
-    // ✅ Smooth scroll to results
-    if (resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
   };
   const resetForm = () => {
     setSalesPrice('');
