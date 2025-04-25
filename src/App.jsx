@@ -228,8 +228,11 @@ export default function App() {
         />
       </motion.div>
 
-      {/* Sales Price Input */}
-      <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20">
+      {/* Estimate Input Card */}
+<div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20 space-y-4 text-white">
+
+{/* Sales Price Input */}
+<div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20">
         <label className="block mb-2 text-blue-200 font-semibold text-center">Sales Price</label>
         <input
           type="text"
@@ -249,9 +252,6 @@ export default function App() {
           className="mx-auto block w-full max-w-xs px-4 py-3 rounded-lg border border-white/20 bg-white/10 text-center text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-
-      {/* Estimate Input Card */}
-<div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20 space-y-4 text-white">
 
   {/* Loan Type */}
   <div>
