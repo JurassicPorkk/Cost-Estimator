@@ -233,7 +233,7 @@ export default function App() {
 
 {/* Sales Price Input */}
 <div>
-        <label className="text-sm text-blue-200 block mb-1">Sales Price</label>
+        <label className="text-sm text-blue-200 block mb-1 text-centered">Sales Price</label>
         <input
           type="text"
           placeholder="Enter"
