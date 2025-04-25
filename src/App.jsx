@@ -232,8 +232,8 @@ export default function App() {
 <div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20 space-y-4 text-white">
 
 {/* Sales Price Input */}
-<div className="bg-white/10 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-white/20">
-        <label className="block mb-2 text-blue-200 font-semibold text-center">Sales Price</label>
+<div>
+        <label className="text-sm text-blue-200 block mb-1">Sales Price</label>
         <input
           type="text"
           placeholder="Enter"
