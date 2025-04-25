@@ -5,10 +5,9 @@
 body {
   font-family: 'Inter', sans-serif;
 
-  /* Optimized Glassmorphic Background for Cash to Close */
   background:
     linear-gradient(to bottom right, rgba(10, 15, 36, 0.6), rgba(30, 42, 56, 0.6)),
-    url('/ChatGPT%20Image%20Mar%2030,%202025,%2001_00_40%20AM.png'),
+    url('/background.png'),
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.03), transparent 60%),
     radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 70%);
     
