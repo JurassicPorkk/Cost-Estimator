@@ -315,24 +315,24 @@ useEffect(() => {
     </select>
 
     {selectedDownPaymentType === "custom" && (
-      <input
-        type="text"
-        placeholder="$ Enter amount"
-        value={customDownPayment}
-        onChange={(e) => {
-          const raw = e.target.value.replace(/[^0-9]/g, "");
-          const amount = parseFloat(raw);
-          const price = parseFloat(unformatCurrency(salesPrice)) || 0;
-          const pct = price ? (amount / price) * 100 : 0;
-          let adjusted = pct;
-          if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
-          if (loanData.loanType === "Conventional" && pct < 3) adjusted = 3;
-          setCustomDownPayment(raw);
-          handleLoanChange("downPayment", adjusted.toFixed(2));
-        }}
-        className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-gray-800 text-white"
-      />
-    )}
+  <input
+    type="text"
+    placeholder="$ Enter amount"
+    value={customDownPayment}
+    onChange={(e) => {
+      const formatted = formatCurrency(unformatCurrency(e.target.value));
+      const numeric = parseFloat(unformatCurrency(formatted)) || 0;
+      const price = parseFloat(unformatCurrency(salesPrice)) || 0;
+      const pct = price ? (numeric / price) * 100 : 0;
+      let adjusted = pct;
+      if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
+      if (loanData.loanType === "Conventional" && pct < 3) adjusted = 3;
+      setCustomDownPayment(formatted);
+      handleLoanChange("downPayment", adjusted.toFixed(2));
+    }}
+    className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-gray-800 text-white"
+  />
+)}
   </div>
 
   {/* Property Location */}
