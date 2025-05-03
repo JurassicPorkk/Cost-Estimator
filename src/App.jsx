@@ -318,17 +318,35 @@ useEffect(() => {
   <input
     type="text"
     placeholder="$ Enter amount"
+    inputMode="decimal"
     value={customDownPayment}
     onChange={(e) => {
-      const formatted = formatCurrency(unformatCurrency(e.target.value));
-      const numeric = parseFloat(unformatCurrency(formatted)) || 0;
+      const raw = e.target.value.replace(/[^0-9.]/g, '');
+      const numeric = parseFloat(raw) || 0;
       const price = parseFloat(unformatCurrency(salesPrice)) || 0;
       const pct = price ? (numeric / price) * 100 : 0;
       let adjusted = pct;
+
       if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
       if (loanData.loanType === "Conventional" && pct < 3) adjusted = 3;
-      setCustomDownPayment(formatted);
+
+      setCustomDownPayment(raw); // store raw number during typing
       handleLoanChange("downPayment", adjusted.toFixed(2));
+    }}
+    onBlur={(e) => {
+      const raw = e.target.value.replace(/[^0-9.]/g, '');
+      const numeric = parseFloat(raw) || 0;
+      setCustomDownPayment(
+        numeric.toLocaleString("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+        })
+      );
+    }}
+    onFocus={(e) => {
+      const raw = e.target.value.replace(/[^0-9.]/g, '');
+      setCustomDownPayment(raw);
     }}
     className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-gray-800 text-white"
   />
