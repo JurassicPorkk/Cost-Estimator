@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { motion } from 'framer-motion';
 import './index.css';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
@@ -518,4 +519,5 @@ useEffect(() => {
     </div>
   </motion.div>
 )}</div>
+<Analytics />
 </div>)}
