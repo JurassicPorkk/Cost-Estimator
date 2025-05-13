@@ -40,7 +40,7 @@ export default function App() {
 
   const renderDownPaymentOptions = (loanType) => {
     if (loanType === 'FHA') return [3.5, 5];
-    if (loanType === 'Conventional') return [3, 5, 10, 15, 20];
+    if (loanType === 'Conventional') return [5, 10, 15, 20];
     if (loanType?.includes('VA')) return [0, 5, 10, 15, 20];
     return [];
   };
@@ -350,7 +350,7 @@ export default function App() {
       let adjusted = pct;
 
       if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
-      if (loanData.loanType === "Conventional" && pct < 3) adjusted = 3;
+      if (loanData.loanType === "Conventional" && pct < 5) adjusted = 5;
 
       setCustomDownPayment(raw); // store raw number during typing
       handleLoanChange("downPayment", adjusted.toFixed(2));
