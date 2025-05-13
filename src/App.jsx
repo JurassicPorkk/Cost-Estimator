@@ -91,7 +91,7 @@ export default function App() {
 
   // ✅ Sales Price Cap Check
   if (sales > 1000000) {
-    alert("This app only supports sales prices up to $1,000,000 for accurate title insurance quotes.");
+    alert("This app only supports sales prices up to $1,000,000.");
     return;
   }
 
