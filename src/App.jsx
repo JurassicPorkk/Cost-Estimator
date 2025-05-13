@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import './index.css';
 import { Analytics } from '@vercel/analytics/react';
 import { getOwnerTitleRate } from './utils/titleUtils';
+import { getLenderTitleRate } from './utils/lenderTitleUtils';
 
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
@@ -149,16 +150,16 @@ export default function App() {
     const state = loanData.location.includes('GA') ? 'georgia' : loanData.location.includes('AL') ? 'alabama' : '';
     const titleRate = getOwnerTitleRate(state, sales, loanAmount);
     ownerTitle = sales * titleRate;
+    const lenderRate = getLenderTitleRate(state, sales, loanAmount);
+lenderTitle = loanAmount * lenderRate;
 
-    if (state === 'georgia') {
-      lenderTitle = loanAmount * 0.00352;
-      mortgageTax = (loanAmount / 100) * 0.3;
-      transferTax = sales / 1000;
-    } else if (state === 'alabama') {
-      lenderTitle = loanAmount * 0.00216;
-      mortgageTax = (loanAmount / 100) * 0.15;
-      transferTax = Math.max((sales - loanAmount) / 1000, 0);
-    }
+if (state === 'georgia') {
+  mortgageTax = (loanAmount / 100) * 0.3;
+  transferTax = sales / 1000;
+} else if (state === 'alabama') {
+  mortgageTax = (loanAmount / 100) * 0.15;
+  transferTax = Math.max((sales - loanAmount) / 1000, 0);
+}
 
     const daysRemaining = 30 - new Date(loanData.closingDate).getDate();
     const prepaidInterest = (loanAmount * rate / 365) * daysRemaining;
