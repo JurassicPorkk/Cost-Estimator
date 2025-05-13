@@ -535,10 +535,16 @@ export default function App() {
 
     {/* Final Cash to Close */}
     <div className="flex justify-between text-lg font-bold text-orange-400 border-t border-white/20 pt-4 mt-4">
-      <span>Final Cash to Close:</span>
-      <span>{results.finalCashToClose}</span>
-    </div>
-  </motion.div>
-)}</div>
+  <span>Final Cash to Close:</span>
+  <span>{results.finalCashToClose}</span>
+</div>
+
+{/* Estimate Disclaimer */}
+<p className="text-xs text-gray-400 mt-6 italic">
+  This estimate is for informational purposes only and does not represent a loan approval or final cost breakdown. Actual figures may vary. Always consult with your loan officer before making any financial decisions.
+</p>
+</motion.div>
+)}
+</div>
 <Analytics />
 </div>)}
