@@ -47,7 +47,10 @@ select:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
 }
-
+select option {
+  background-color: #1f2937;
+  color: #ffffff;
+}
 /* === Remove Number Input Arrows === */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
