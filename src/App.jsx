@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { motion } from 'framer-motion';
 import './index.css';
 import { Analytics } from '@vercel/analytics/react';
+import { getOwnerTitleRate } from './utils/titleUtils';
 
 export default function App() {
   const [salesPrice, setSalesPrice] = useState('');
@@ -22,11 +23,12 @@ export default function App() {
   const [results, setResults] = useState(null);
   const resultsRef = useRef(null);
 
-useEffect(() => {
-  if (results && resultsRef.current) {
-    resultsRef.current.scrollIntoView({ behavior: 'smooth' });
-  }
-}, [results]);
+  useEffect(() => {
+    if (results && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [results]);
+
   const formatCurrency = (value) =>
     `$${Number(value).toLocaleString(undefined, {
       minimumFractionDigits: 2,
@@ -45,9 +47,7 @@ useEffect(() => {
   const handleLoanChange = (field, value) => {
     setLoanData((prev) => ({
       ...prev,
-      [field]: field === 'interestRate'
-        ? value.replace(/[^0-9.]/g, '')
-        : value,
+      [field]: field === 'interestRate' ? value.replace(/[^0-9.]/g, '') : value,
     }));
   };
 
@@ -68,6 +68,7 @@ useEffect(() => {
       loanData.attorney
     );
   };
+
   const calculatePropertyTax = (sales, location, homestead, cityLimits) => {
     let yearlyTax = 0;
     if (location === 'Columbus, GA') {
@@ -83,6 +84,7 @@ useEffect(() => {
     }
     return yearlyTax / 12;
   };
+
   const calculateEstimates = () => {
     const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
     const rate = parseFloat(loanData.interestRate) / 100 || 0;
@@ -144,19 +146,15 @@ useEffect(() => {
     const totalAttorneyFee = Object.values(attorneyFees).reduce((sum, v) => sum + v, 0);
 
     let ownerTitle = 0, lenderTitle = 0, mortgageTax = 0, transferTax = 0;
-    if (loanData.location.includes('GA')) {
-      if (downPercent <= 5) ownerTitle = sales * 0.00226;
-      else if (downPercent <= 10) ownerTitle = sales * 0.00243;
-      else if (downPercent <= 15) ownerTitle = sales * 0.00259;
-      else ownerTitle = sales * 0.00284;
+    const state = loanData.location.includes('GA') ? 'georgia' : loanData.location.includes('AL') ? 'alabama' : '';
+    const titleRate = getOwnerTitleRate(state, sales, loanAmount);
+    ownerTitle = sales * titleRate;
+
+    if (state === 'georgia') {
       lenderTitle = loanAmount * 0.00352;
       mortgageTax = (loanAmount / 100) * 0.3;
       transferTax = sales / 1000;
-    } else if (loanData.location.includes('AL')) {
-      if (downPercent <= 5) ownerTitle = sales * 0.00109;
-      else if (downPercent <= 10) ownerTitle = sales * 0.0012;
-      else if (downPercent <= 15) ownerTitle = sales * 0.00129;
-      else ownerTitle = sales * 0.00149;
+    } else if (state === 'alabama') {
       lenderTitle = loanAmount * 0.00216;
       mortgageTax = (loanAmount / 100) * 0.15;
       transferTax = Math.max((sales - loanAmount) / 1000, 0);
@@ -200,8 +198,8 @@ useEffect(() => {
         ...Object.fromEntries(Object.entries(attorneyFees).map(([k, v]) => [k, formatCurrency(v)])),
       },
     });
-    
   };
+  
   const resetForm = () => {
     setSalesPrice('');
     setLoanData({
