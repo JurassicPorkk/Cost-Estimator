@@ -297,9 +297,9 @@ export default function App() {
       <option value="">Select</option>
       <option value="Conventional">Conventional</option>
       <option value="FHA">FHA</option>
-      <option value="VA First">VA First</option>
-      <option value="VA Second">VA Second</option>
-      <option value="VA Exempt">VA Exempt</option>
+      <option value="VA First">VA – First-Time Use</option>
+      <option value="VA Second">VA – Subsequent Use</option>
+      <option value="VA Exempt">VA – Exempt (Disability)</option>
     </select>
   </div>
 
