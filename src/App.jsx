@@ -159,11 +159,11 @@ export default function App() {
 
   let attorneyFees = {};
   if (loanData.attorney === 'Graham Legal Firm') {
-    attorneyFees = { cpl: 25, courier: 100, endorsements: 125, expressPayoff: 35, processing: 50, settlement: 1075, wire: 25, recording: 100 };
+    attorneyFees = { CPL: 25, Courier: 100, Endorsements: 125, ExpressPayoff: 35, Processing: 50, Settlement: 1075, Wire: 25, Recording: 100 };
   } else if (loanData.attorney === 'GSHWM') {
-    attorneyFees = { cpl: 55, courier: 375, docPrep: 110, eRecording: 14, expressPayoff: 115, titleExam: 240, settlement: 830, titleCommitment: 80, recording: 100, wire: 35 };
+    attorneyFees = { CPL: 55, Courier: 375, DocPrep: 110, eRecording: 14, ExpressPayoff: 115, TitleExam: 240, Settlement: 830, TitleCommitment: 80, Recording: 100, Wire: 35 };
   } else if (loanData.attorney === 'PSSTF') {
-    attorneyFees = { cpl: 25, docPrep: 99, eRecording: 10, endorsements: 125, postClosing: 99, titleExam: 250, settlement: 675, titleBinder: 125, recording: 100 };
+    attorneyFees = { CPL: 25, DocPrep: 99, eRecording: 10, Endorsements: 125, PostClosing: 99, TitleExam: 250, Settlement: 675, TitleBinder: 125, Recording: 100 };
   }
 
   const totalAttorneyFee = Object.values(attorneyFees).reduce((sum, v) => sum + v, 0);
