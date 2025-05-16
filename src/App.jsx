@@ -301,7 +301,7 @@ export default function App() {
         className="flex justify-center -mt-6 -mb-6"
       >
         <img
-  src="/closing-clerk-logo.png"
+  src="/closing-clerk-logo-transparent.png"
   alt="Closing Clerk Logo"
   className="w-72 md:w-80 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
 />
