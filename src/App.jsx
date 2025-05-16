@@ -71,20 +71,66 @@ export default function App() {
   };
 
   const calculatePropertyTax = (sales, location, homestead, cityLimits) => {
-    let yearlyTax = 0;
-    if (location === 'Columbus, GA') {
-      yearlyTax = sales * 0.4 * 0.04153;
-      if (homestead) yearlyTax -= 543;
-    } else if (location === 'Harris County, GA') {
-      yearlyTax = sales * 0.4 * 0.02764;
-      if (homestead) yearlyTax -= 50;
-    } else if (location === 'Lee County, AL') {
-      yearlyTax = (sales * (homestead ? 0.1 : 0.2) * (cityLimits ? 0.054 : 0.041)) + 169;
-    } else if (location === 'Russell County, AL') {
-      yearlyTax = (sales * (homestead ? 0.1 : 0.2) * (cityLimits ? 0.059 : 0.036)) - 74;
+  const taxRules = {
+    'Columbus, GA': () => {
+      let tax = sales * 0.4 * 0.04125;
+      if (homestead) tax -= 547;
+      return tax;
+    },
+    'Harris County, GA': () => {
+      let tax = sales * 0.4 * 0.02663 + 149;
+      if (homestead) tax -= 91.80;
+      return tax;
+    },
+    'Phenix City, AL - Lee County': () => {
+      if (cityLimits) {
+        return homestead
+          ? sales * 0.1 * 0.054 - 53
+          : sales * 0.2 * 0.054;
+      } else {
+        return homestead
+          ? sales * 0.1 * 0.041 + 50
+          : sales * 0.2 * 0.041 + 50;
+      }
+    },
+    'Phenix City, AL - Russell County': () => {
+      if (cityLimits) {
+        return homestead
+          ? sales * 0.1 * 0.059 - 74
+          : sales * 0.2 * 0.059;
+      } else {
+        return homestead
+          ? sales * 0.1 * 0.036 - 50
+          : sales * 0.2 * 0.036;
+      }
+    },
+    'Smiths Station, AL': () => {
+      if (cityLimits) {
+        return homestead
+          ? sales * 0.1 * 0.054 - 53
+          : sales * 0.2 * 0.054;
+      } else {
+        return homestead
+          ? sales * 0.1 * 0.041 + 50
+          : sales * 0.2 * 0.041 + 50;
+      }
+    },
+    'Salem, AL': () => {
+      return homestead
+        ? sales * 0.1 * 0.041 + 50
+        : sales * 0.2 * 0.041 + 50;
+    },
+    'Fort Mitchell, AL': () => {
+      return homestead
+        ? sales * 0.1 * 0.036 - 50
+        : sales * 0.2 * 0.036;
     }
-    return yearlyTax / 12;
   };
+
+  const calc = taxRules[location];
+  const yearlyTax = typeof calc === 'function' ? calc() : 0;
+  return yearlyTax / 12;
+};
 
   const calculateEstimates = () => {
   const sales = parseFloat(unformatCurrency(salesPrice)) || 0;
