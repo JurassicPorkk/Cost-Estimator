@@ -423,19 +423,22 @@ export default function App() {
 
   {/* Property Location */}
   <div>
-    <label className="text-sm text-blue-200 block mb-1">Property Location</label>
-    <select
-      value={loanData.location}
-      onChange={(e) => handleLoanChange('location', e.target.value)}
-      className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
-    >
-      <option value="">Select Location</option>
-      <option value="Columbus, GA">Columbus, GA</option>
-      <option value="Harris County, GA">Harris County, GA</option>
-      <option value="Lee County, AL">Lee County, AL</option>
-      <option value="Russell County, AL">Russell County, AL</option>
-    </select>
-  </div>
+  <label className="text-sm text-blue-200 block mb-1">Property Location</label>
+  <select
+    value={loanData.location}
+    onChange={(e) => handleLoanChange('location', e.target.value)}
+    className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
+  >
+    <option value="">Select Location</option>
+    <option value="Columbus, GA">Columbus, GA</option>
+    <option value="Harris County, GA">Harris County, GA</option>
+    <option value="Phenix City, AL - Lee County">Phenix City, AL – Lee County</option>
+    <option value="Phenix City, AL - Russell County">Phenix City, AL – Russell County</option>
+    <option value="Smiths Station, AL">Smiths Station, AL</option>
+    <option value="Salem, AL">Salem, AL</option>
+    <option value="Fort Mitchell, AL">Fort Mitchell, AL</option>
+  </select>
+</div>
 
   {/* Closing Attorney */}
   <div>
