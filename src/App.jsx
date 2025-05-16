@@ -467,17 +467,21 @@ export default function App() {
   </div>
 
   {/* Inside City Limits Toggle */}
-  {(loanData.location === "Lee County, AL" || loanData.location === "Russell County, AL") && (
-    <div className="flex items-center gap-3">
-      <input
-        type="checkbox"
-        checked={loanData.cityLimits}
-        onChange={toggleCityLimits}
-        className="form-checkbox h-5 w-5 text-blue-500 rounded"
-      />
-      <label className="text-sm text-blue-200">Inside City Limits</label>
-    </div>
-  )}
+  {(
+  loanData.location === "Phenix City, AL - Lee County" ||
+  loanData.location === "Phenix City, AL - Russell County" ||
+  loanData.location === "Smiths Station, AL"
+) && (
+  <div className="flex items-center gap-3">
+    <input
+      type="checkbox"
+      checked={loanData.cityLimits}
+      onChange={toggleCityLimits}
+      className="form-checkbox h-5 w-5 text-blue-500 rounded"
+    />
+    <label className="text-sm text-blue-200">Inside City Limits</label>
+  </div>
+)}
 
   {/* Closing Date */}
   <div>
