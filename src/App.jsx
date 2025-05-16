@@ -301,10 +301,10 @@ export default function App() {
         className="flex justify-center -mt-6 -mb-6"
       >
         <img
-          src="/cash-to-close-logo.png"
-          alt="Cash To Close Logo"
-          className="w-72 md:w-80 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-        />
+  src="/closing-clerk-logo.png"
+  alt="Closing Clerk Logo"
+  className="w-72 md:w-80 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+/>
       </motion.div>
 
       {/* Estimate Input Card */}
