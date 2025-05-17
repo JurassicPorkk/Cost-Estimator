@@ -596,6 +596,13 @@ export default function App() {
 <p className="text-xs text-gray-400 mt-6 italic">
   This estimate is for informational purposes only and does not represent a loan approval or final cost breakdown. Actual figures may vary. Always consult with your loan officer before making any financial decisions.
 </p>
+<div className="mt-8 text-center text-sm text-gray-400">
+  <p className="font-semibold text-white">Dustin Steele</p>
+  <p>Loan Officer, Northpointe Bank</p>
+  <p>NMLS #1516101</p>
+  <p>Phone: <a href="tel:7064056555" className="text-blue-400 hover:underline">706.405.6555</a></p>
+  <p>Email: <a href="mailto:dustin.steele@northpointe.com" className="text-blue-400 hover:underline">dustin.steele@northpointe.com</a></p>
+</div>
 </motion.div>
 )}
 </div>
