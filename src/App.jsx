@@ -22,6 +22,7 @@ export default function App() {
   const [selectedDownPaymentType, setSelectedDownPaymentType] = useState('');
   const [customDownPayment, setCustomDownPayment] = useState('');
   const [results, setResults] = useState(null);
+  const [isCustomDownPayment, setIsCustomDownPayment] = useState(false);
   const resultsRef = useRef(null);
 
   useEffect(() => {
@@ -146,10 +147,10 @@ export default function App() {
   const loanType = loanData.loanType;
 
   let downPaymentAmount = (sales * downPercent) / 100;
-  if (customDownPayment) {
-    const custom = parseFloat(unformatCurrency(customDownPayment)) || 0;
-    downPaymentAmount = custom;
-  }
+  if (isCustomDownPayment && customDownPayment) {
+  const custom = parseFloat(unformatCurrency(customDownPayment)) || 0;
+  downPaymentAmount = custom;
+}
 
   const loanBase = sales - downPaymentAmount;
 
@@ -362,64 +363,73 @@ export default function App() {
   </div>
 
   {/* Down Payment */}
-  <div>
-    <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
-    <select
-      value={selectedDownPaymentType}
-      onChange={(e) => {
-        const val = e.target.value;
-        setSelectedDownPaymentType(val);
-        if (val !== "custom") {
-          handleLoanChange("downPayment", val);
-        }
-      }}
-      className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
-    >
-      <option value="">Select Down Payment</option>
-      {renderDownPaymentOptions(loanData.loanType).map((pct) => (
-        <option key={pct} value={pct}>{pct}%</option>
-      ))}
-      <option value="custom">Custom Amount</option>
-    </select>
-
-    {selectedDownPaymentType === "custom" && (
-  <input
-    type="text"
-    placeholder="$ Enter amount"
-    inputMode="decimal"
-    value={customDownPayment}
+<div>
+  <label className="text-sm text-blue-200 block mb-1">Down Payment</label>
+  <select
+    value={selectedDownPaymentType}
     onChange={(e) => {
-      const raw = e.target.value.replace(/[^0-9.]/g, '');
-      const numeric = parseFloat(raw) || 0;
-      const price = parseFloat(unformatCurrency(salesPrice)) || 0;
-      const pct = price ? (numeric / price) * 100 : 0;
-      let adjusted = pct;
+      const val = e.target.value;
+      setSelectedDownPaymentType(val);
 
-      if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
-      if (loanData.loanType === "Conventional" && pct < 5) adjusted = 5;
+      if (val !== "custom") {
+        const pct = parseFloat(val) || 0;
+        const price = parseFloat(unformatCurrency(salesPrice)) || 0;
+        const downAmt = price * (pct / 100);
 
-      setCustomDownPayment(raw); // store raw number during typing
-      handleLoanChange("downPayment", adjusted.toFixed(2));
+        handleLoanChange("downPayment", pct.toFixed(2));
+        handleLoanChange("downPaymentAmount", downAmt);
+      }
     }}
-    onBlur={(e) => {
-      const raw = e.target.value.replace(/[^0-9.]/g, '');
-      const numeric = parseFloat(raw) || 0;
-      setCustomDownPayment(
-        numeric.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-          minimumFractionDigits: 2,
-        })
-      );
-    }}
-    onFocus={(e) => {
-      const raw = e.target.value.replace(/[^0-9.]/g, '');
-      setCustomDownPayment(raw);
-    }}
-    className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-gray-800 text-white"
-  />
-)}
-  </div>
+    className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
+  >
+    <option value="">Select Down Payment</option>
+    {renderDownPaymentOptions(loanData.loanType).map((pct) => (
+      <option key={pct} value={pct}>
+        {pct}%
+      </option>
+    ))}
+    <option value="custom">Custom Amount</option>
+  </select>
+
+  {selectedDownPaymentType === "custom" && (
+    <input
+      type="text"
+      placeholder="$ Enter amount"
+      inputMode="decimal"
+      value={customDownPayment}
+      onChange={(e) => {
+        const raw = e.target.value.replace(/[^0-9.]/g, '');
+        const numeric = parseFloat(raw) || 0;
+        const price = parseFloat(unformatCurrency(salesPrice)) || 0;
+        const pct = price ? (numeric / price) * 100 : 0;
+        let adjusted = pct;
+
+        if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
+        if (loanData.loanType === "Conventional" && pct < 5) adjusted = 5;
+
+        setCustomDownPayment(raw); // store raw number during typing
+        handleLoanChange("downPayment", adjusted.toFixed(2));
+        handleLoanChange("downPaymentAmount", numeric);
+      }}
+      onBlur={(e) => {
+        const raw = e.target.value.replace(/[^0-9.]/g, '');
+        const numeric = parseFloat(raw) || 0;
+        setCustomDownPayment(
+          numeric.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+            minimumFractionDigits: 2,
+          })
+        );
+      }}
+      onFocus={(e) => {
+        const raw = e.target.value.replace(/[^0-9.]/g, '');
+        setCustomDownPayment(raw);
+      }}
+      className="w-full px-4 py-2 mt-2 rounded-md border border-white/20 bg-gray-800 text-white"
+    />
+  )}
+</div>
 
   {/* Property Location */}
   <div>
