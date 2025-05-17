@@ -402,22 +402,22 @@ export default function App() {
       placeholder="$ Enter amount"
       inputMode="decimal"
       value={customDownPayment}
-      onChange={(e) => {
-        const raw = e.target.value.replace(/[^0-9.]/g, '');
-        const numeric = parseFloat(raw) || 0;
-        const price = parseFloat(unformatCurrency(salesPrice)) || 0;
-        const pct = price ? (numeric / price) * 100 : 0;
-        let adjusted = pct;
+onChange={(e) => {
+  const raw = e.target.value.replace(/[^0-9.]/g, '');
+  const numeric = parseFloat(raw) || 0;
+  const price = parseFloat(unformatCurrency(salesPrice)) || 0;
+  const pct = price ? (numeric / price) * 100 : 0;
+  let adjusted = pct;
 
-        if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
-        if (loanData.loanType === "Conventional" && pct < 5) adjusted = 5;
+  if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
+  if (loanData.loanType === "Conventional" && pct < 5) adjusted = 5;
 
-        setCustomDownPayment(raw);
-        setIsCustomDownPayment(true);
+  setCustomDownPayment(raw);
+  setIsCustomDownPayment(true);
 
-        handleLoanChange("downPayment", adjusted.toFixed(2));
-        handleLoanChange("downPaymentAmount", price * (adjusted / 100));
-      }}
+  handleLoanChange("downPayment", adjusted.toFixed(2));
+  handleLoanChange("downPaymentAmount", numeric); // ✅ Use actual value
+}}
       onBlur={(e) => {
         const raw = e.target.value.replace(/[^0-9.]/g, '');
         const numeric = parseFloat(raw) || 0;
