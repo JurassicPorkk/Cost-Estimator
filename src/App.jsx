@@ -376,8 +376,13 @@ export default function App() {
         const price = parseFloat(unformatCurrency(salesPrice)) || 0;
         const downAmt = price * (pct / 100);
 
+        setIsCustomDownPayment(false);
+        setCustomDownPayment('');
+
         handleLoanChange("downPayment", pct.toFixed(2));
         handleLoanChange("downPaymentAmount", downAmt);
+      } else {
+        setIsCustomDownPayment(true);
       }
     }}
     className="w-full px-4 py-2 rounded-md border border-white/20 bg-gray-800 text-white"
@@ -407,9 +412,11 @@ export default function App() {
         if (loanData.loanType === "FHA" && pct < 3.5) adjusted = 3.5;
         if (loanData.loanType === "Conventional" && pct < 5) adjusted = 5;
 
-        setCustomDownPayment(raw); // store raw number during typing
+        setCustomDownPayment(raw);
+        setIsCustomDownPayment(true);
+
         handleLoanChange("downPayment", adjusted.toFixed(2));
-        handleLoanChange("downPaymentAmount", numeric);
+        handleLoanChange("downPaymentAmount", price * (adjusted / 100));
       }}
       onBlur={(e) => {
         const raw = e.target.value.replace(/[^0-9.]/g, '');
